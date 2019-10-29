@@ -1,6 +1,8 @@
 # GameFrame
 All your iOS game needs. Apart from the game.
 
+![GameFrame Logo](./images/GameFrame.png)
+
 GameFrame is a FrameWork, that implements all the nitty-gritty little code for InApp purchases, GameCenter, synchronization of CoreData and iCloud, advertisements, players reviews and more. You can simply add it to your project and design and develop your game idea.
 
 Implementing all this features is necessary to earn money with the App but often not the first priority. Learning how it works means to read a lot of documentation - often ending in a few lines of code for each.
