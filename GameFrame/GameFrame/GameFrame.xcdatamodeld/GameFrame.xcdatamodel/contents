@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="15400" systemVersion="19A602" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="GFAchievement" representedClassName=".GFEntityAchievement" syncable="YES">
+        <attribute name="current" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="highest" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="GFConsumable" representedClassName=".GFEntityConsumable" syncable="YES">
+        <attribute name="bought" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="consumed" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="earned" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="prebooked" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="GFNonConsumable" representedClassName=".GFEntityNonConsumable" syncable="YES">
+        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="isOpened" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="prebooked" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+    </entity>
+    <entity name="GFScore" representedClassName=".GFEntityScore" syncable="YES">
+        <attribute name="current" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="highest" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
+    </entity>
+    <elements>
+        <element name="GFAchievement" positionX="-63" positionY="-18" width="128" height="88"/>
+        <element name="GFConsumable" positionX="-36" positionY="45" width="128" height="118"/>
+        <element name="GFNonConsumable" positionX="-18" positionY="81" width="128" height="88"/>
+        <element name="GFScore" positionX="-54" positionY="18" width="128" height="88"/>
+    </elements>
+</model>
