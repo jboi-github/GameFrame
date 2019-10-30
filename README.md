@@ -31,6 +31,19 @@ With this four objects, you get:
 ## How to use in your project
 
 ## Checklist to setup a project with full featured GameFrame
+- [ ] Clone the GameFrame project and build it
+- [ ] Create a new project for your App, give it a name and ensure the follwoign features:
+  - [ ] Check "Use CoreData" and "Use CloudKit"
+- [ ] Find a place in your folder structure, ensure that "Don't add to any project or workspace" is selected
+- In the project setting, "Signing&Capabilities" add:
+  - [ ] "iCloud", check "CloudKit" and create or check a container. This will also add the "Push Notifications" capability
+  - [ ] "In-App Purchase"
+  - [ ] "Game Center"
+  - [ ] "Background Modes", here check the "Remote Notifications" to get notified on changes in iCloud-Data, when changed on other devices
+- [ ] Now you have a Framework folder in your project. Drag and drop in XCode, from the window that has the GameFrame project open, the GameFrame product `GameFrame.framework` into the XCode window that has your project open, into the Framework-Folder. 
+  - [ ] Check "Copy items if needed"
+  
+Close the GameFrame project.
 
 ## Checklist to deploy ready implemented App
 You're ready to go? Did all the implementation? It's tested? It's profiled and performance tuned?
