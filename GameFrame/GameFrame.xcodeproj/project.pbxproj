@@ -12,8 +12,6 @@
 		156A9A492368C740002732FC /* GoogleUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 156A9A452368C73F002732FC /* GoogleUtilities.framework */; };
 		156A9A4A2368C740002732FC /* GoogleAppMeasurement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 156A9A462368C740002732FC /* GoogleAppMeasurement.framework */; };
 		156A9A4B2368C740002732FC /* nanopb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 156A9A472368C740002732FC /* nanopb.framework */; };
-		15DF92D22368B5DA008E8A56 /* GameFrame.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15DF92C82368B5DA008E8A56 /* GameFrame.framework */; };
-		15DF92D72368B5DA008E8A56 /* GameFrameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DF92D62368B5DA008E8A56 /* GameFrameTests.swift */; };
 		15DF92D92368B5DA008E8A56 /* GameFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 15DF92CB2368B5DA008E8A56 /* GameFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		15DF92F32368B6A8008E8A56 /* GFGameCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DF92EE2368B6A8008E8A56 /* GFGameCenter.swift */; };
 		15DF92F42368B6A8008E8A56 /* GameFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DF92E92368B6A7008E8A56 /* GameFrame.swift */; };
@@ -36,16 +34,6 @@
 		15DF932B2368BEEC008E8A56 /* GFEntityConsumable+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DF93232368BEEC008E8A56 /* GFEntityConsumable+CoreDataProperties.swift */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		15DF92D32368B5DA008E8A56 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 15DF92BF2368B5DA008E8A56 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 15DF92C72368B5DA008E8A56;
-			remoteInfo = GameFrame;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		15DF930B2368B7E2008E8A56 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -67,9 +55,6 @@
 		15DF92C82368B5DA008E8A56 /* GameFrame.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = GameFrame.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		15DF92CB2368B5DA008E8A56 /* GameFrame.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameFrame.h; sourceTree = "<group>"; };
 		15DF92CC2368B5DA008E8A56 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		15DF92D12368B5DA008E8A56 /* GameFrameTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GameFrameTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		15DF92D62368B5DA008E8A56 /* GameFrameTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameFrameTests.swift; sourceTree = "<group>"; };
-		15DF92D82368B5DA008E8A56 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		15DF92E62368B6A7008E8A56 /* GFScore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GFScore.swift; sourceTree = "<group>"; };
 		15DF92E92368B6A7008E8A56 /* GameFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameFrame.swift; sourceTree = "<group>"; };
 		15DF92EA2368B6A7008E8A56 /* GFAchievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GFAchievement.swift; sourceTree = "<group>"; };
@@ -104,14 +89,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		15DF92CE2368B5DA008E8A56 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				15DF92D22368B5DA008E8A56 /* GameFrame.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -119,7 +96,6 @@
 			isa = PBXGroup;
 			children = (
 				15DF92CA2368B5DA008E8A56 /* GameFrame */,
-				15DF92D52368B5DA008E8A56 /* GameFrameTests */,
 				15DF92C92368B5DA008E8A56 /* Products */,
 				15DF92FE2368B7E2008E8A56 /* Frameworks */,
 			);
@@ -129,7 +105,6 @@
 			isa = PBXGroup;
 			children = (
 				15DF92C82368B5DA008E8A56 /* GameFrame.framework */,
-				15DF92D12368B5DA008E8A56 /* GameFrameTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -141,18 +116,8 @@
 				15DF931B2368BEAE008E8A56 /* Source */,
 				15DF92CB2368B5DA008E8A56 /* GameFrame.h */,
 				15DF92CC2368B5DA008E8A56 /* Info.plist */,
-				15DF93102368BC11008E8A56 /* GameFrame.xcdatamodeld */,
 			);
 			path = GameFrame;
-			sourceTree = "<group>";
-		};
-		15DF92D52368B5DA008E8A56 /* GameFrameTests */ = {
-			isa = PBXGroup;
-			children = (
-				15DF92D62368B5DA008E8A56 /* GameFrameTests.swift */,
-				15DF92D82368B5DA008E8A56 /* Info.plist */,
-			);
-			path = GameFrameTests;
 			sourceTree = "<group>";
 		};
 		15DF92FE2368B7E2008E8A56 /* Frameworks */ = {
@@ -187,6 +152,7 @@
 		15DF932C2368BEF8008E8A56 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				15DF93102368BC11008E8A56 /* GameFrame.xcdatamodeld */,
 				15DF931C2368BEEC008E8A56 /* GFEntityNonConsumable+CoreDataClass.swift */,
 				15DF931D2368BEEC008E8A56 /* GFEntityNonConsumable+CoreDataProperties.swift */,
 				15DF931E2368BEEC008E8A56 /* GFEntityScore+CoreDataClass.swift */,
@@ -233,24 +199,6 @@
 			productReference = 15DF92C82368B5DA008E8A56 /* GameFrame.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		15DF92D02368B5DA008E8A56 /* GameFrameTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 15DF92DF2368B5DA008E8A56 /* Build configuration list for PBXNativeTarget "GameFrameTests" */;
-			buildPhases = (
-				15DF92CD2368B5DA008E8A56 /* Sources */,
-				15DF92CE2368B5DA008E8A56 /* Frameworks */,
-				15DF92CF2368B5DA008E8A56 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				15DF92D42368B5DA008E8A56 /* PBXTargetDependency */,
-			);
-			name = GameFrameTests;
-			productName = GameFrameTests;
-			productReference = 15DF92D12368B5DA008E8A56 /* GameFrameTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -262,9 +210,6 @@
 				ORGANIZATIONNAME = "Juergen Boiselle";
 				TargetAttributes = {
 					15DF92C72368B5DA008E8A56 = {
-						CreatedOnToolsVersion = 11.1;
-					};
-					15DF92D02368B5DA008E8A56 = {
 						CreatedOnToolsVersion = 11.1;
 					};
 				};
@@ -283,7 +228,6 @@
 			projectRoot = "";
 			targets = (
 				15DF92C72368B5DA008E8A56 /* GameFrame */,
-				15DF92D02368B5DA008E8A56 /* GameFrameTests */,
 			);
 		};
 /* End PBXProject section */
@@ -294,13 +238,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				156A9A432368C666002732FC /* GameFrame.xcdatamodeld in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		15DF92CF2368B5DA008E8A56 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -333,23 +270,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		15DF92CD2368B5DA008E8A56 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				15DF92D72368B5DA008E8A56 /* GameFrameTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		15DF92D42368B5DA008E8A56 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 15DF92C72368B5DA008E8A56 /* GameFrame */;
-			targetProxy = 15DF92D32368B5DA008E8A56 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		15DF92DA2368B5DA008E8A56 /* Debug */ = {
@@ -530,44 +451,6 @@
 			};
 			name = Release;
 		};
-		15DF92E02368B5DA008E8A56 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = YW52XX5QKJ;
-				INFOPLIST_FILE = GameFrameTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = apps4live.GameFrameTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		15DF92E12368B5DA008E8A56 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = YW52XX5QKJ;
-				INFOPLIST_FILE = GameFrameTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = apps4live.GameFrameTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -585,15 +468,6 @@
 			buildConfigurations = (
 				15DF92DD2368B5DA008E8A56 /* Debug */,
 				15DF92DE2368B5DA008E8A56 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		15DF92DF2368B5DA008E8A56 /* Build configuration list for PBXNativeTarget "GameFrameTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				15DF92E02368B5DA008E8A56 /* Debug */,
-				15DF92E12368B5DA008E8A56 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
