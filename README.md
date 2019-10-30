@@ -1,19 +1,19 @@
-# GameFrame
+# **GameFrame**
 All your iOS game needs. Apart from the game.
 
-![GameFrame Logo](./images/GameFrame.png)
+![**GameFrame** Logo](./images/GameFrame.png)
 
-GameFrame is a FrameWork, that implements all the nitty-gritty little code for InApp purchases, GameCenter, synchronization of CoreData and iCloud, advertisements, players reviews and more. You can simply add it to your project and design and develop your game idea.
+**GameFrame** is a FrameWork, that implements all the nitty-gritty code-snippets for InApp purchases, GameCenter, synchronization of CoreData and iCloud, advertisements, player reviews and more. You can simply add it to your project and design and develop your game idea.
 
 Implementing all this features is necessary to earn money with the App but often not the first priority. Learning how it works means to read a lot of documentation - often ending in a few lines of code for each.
 I read all the documents, ran through deploying Apps based on the extracted code and bundled it then in this FrameWork.
 
 ## What it implements
 The idea is simple. Four types of objects define the status of your game:
-1. Scores: Integer numbers to count things like points, energy or whatever your game needs. Usually the player earns these things during game play. A score can be linked to a GameCenter Leaderboard by giving the GameFrame-Score the same ID as the Leaderboard in GameCenter has. In this case, if the player is logged in to GameCenter, scores are automatically reported when player leaves a level, the game or switches to another app. The score is locally saved in the same cases and synchronized with iCloud, if the player is logged in with an Apple-Id.
-2. Achievements: Float numbers to measure achievements like gold medals, levels etc. Usually the player earns these things during game play. An achievement can be linked to a GameCenter Achievements by giving the GameFrame-Achievement the same ID as the Achievement in GameCenter has. In this case, if the player is logged in to GameCenter, achievements are automatically reported when player leaves a level, the game or switches to another app. The achievement is locally saved in the same cases and synchronized with iCloud, if the player is logged in with an Apple-Id.
-3. NonConsumables: Products in the store for in-app purchases. Examples are unlocking a level, stop advertisements, etc. NonConsumables can be linked to the app store by giving the GameFrame-NonConsumable the same ID as the NonConsumable product in the Apple Store has. NonConsumables can be bought one time.
-4. Consumables: Products in the store for in-app purchases. Examples are collectable goods, bullets, a number of hints and anything that can be earned or bought and will be consumed during gameplay. GameFrame allows consumables to be purchased in store, earned by game play or earned by rewarded videos. It also allows to configure for non-linear pricing (decoy-effect). For example, you have a consumable, say 'bullets' and offer a product to buy them as in-app purchase. You have a product for 10 bullets at 0.99$, one product for 50 bullets at 2.99$ and 100 bullets for 5.99$. GameFrame can handle this situation.
+1. **Scores**: Integer numbers to count things like points, energy or whatever your game needs. Usually the player earns these things during game play. A score can be linked to a GameCenter Leaderboard by giving the **GameFrame**-Score the same ID as the Leaderboard in GameCenter has. In this case, if the player is logged in to GameCenter, scores are automatically reported when player leaves a level, the game or switches to another app. The score is locally saved in the same cases and synchronized with iCloud, if the player is logged in with an Apple-Id.
+2. **Achievements**: Float numbers to measure achievements like gold medals, levels etc. Usually the player earns these things during game play. An achievement can be linked to a GameCenter Achievements by giving the **GameFrame**-Achievement the same ID as the Achievement in GameCenter has. In this case, if the player is logged in to GameCenter, achievements are automatically reported when player leaves a level, the game or switches to another app. The achievement is locally saved in the same cases and synchronized with iCloud, if the player is logged in with an Apple-Id.
+3. **NonConsumables**: Products in the store for in-app purchases. Examples are unlocking a level, stop advertisements, etc. NonConsumables can be linked to the app store by giving the **GameFrame**-NonConsumable the same ID as the NonConsumable product in the Apple Store has. NonConsumables can be bought one time.
+4. **Consumables**: Products in the store for in-app purchases. Examples are collectable goods, bullets, a number of hints and anything that can be earned or bought and will be consumed during gameplay. **GameFrame** allows consumables to be purchased in store, earned by game play or earned by rewarded videos. It also allows to configure for non-linear pricing (decoy-effect). For example, you have a consumable, say 'bullets' and offer a product to buy them as in-app purchase. You have a product for 10 bullets at 0.99$, one product for 50 bullets at 2.99$ and 100 bullets for 5.99$. **GameFrame** can handle this situation.
 
 With this four objects, you get:
 - Automatic saving locally and synchronized with iCloud. Synchronized, means uploaded to iCloud and automatically downloaded and merged with current play, when changes happened on another device, which is logged in with the same Apple-Id
@@ -24,13 +24,26 @@ With this four objects, you get:
   - Any external links are possible, like calling Facebook, Instagram or the settings app on the iPhone/iPad. Allows to link to your community pages in social networks.
 - For in-app purchases:
   - The list for available consumables or non-consumables, depending on age of the player, country, network conditions and what you configured is given back
-  - Just call `buy` or `restore` in GameFrame and it handles all the rest for you until the purchase is done and reflected in one of th objects
-  - If the purchase is deferred, e.g. an authorized person has to approve the purchase and the spent money, GameFrame acts like the purchase was succesful and is able to rollback, if the purchase fails later. This works only for one active purchase at a time to minimize possible misuse.
+  - Just call `buy` or `restore` in **GameFrame** and it handles all the rest for you until the purchase is done and reflected in one of th objects
+  - If the purchase is deferred, e.g. an authorized person has to approve the purchase and the spent money, **GameFrame** acts like the purchase was succesful and is able to rollback, if the purchase fails later. This works only for one active purchase at a time to minimize possible misuse.
 - Everything, that can be shown in views or allow interaction to the player has observable variables for SwiftUI. This allows to hide or disable buttons, when the player disables for example GameCenter or there's no rewarded video loaded at the moment etc.
 
 ## How to use in your project
 
-## Checklist to setup a project with full featured GameFrame
+## Checklist to setup a project with full featured **GameFrame**
+- [ ] Clone the **GameFrame** project and build it
+- [ ] Create a new project for your App, give it a name and ensure the follwoign features:
+  - [ ] Check "Use CoreData" and "Use CloudKit"
+- [ ] Find a place in your folder structure, ensure that "Don't add to any project or workspace" is selected
+- In the project setting, "Signing&Capabilities" add:
+  - [ ] "iCloud", check "CloudKit" and create or check a container. This will also add the "Push Notifications" capability
+  - [ ] "In-App Purchase"
+  - [ ] "Game Center"
+  - [ ] "Background Modes", here check the "Remote Notifications" to get notified on changes in iCloud-Data, when changed on other devices
+- [ ] Now you have a Framework folder in your project. Drag and drop in XCode, from the window that has the **GameFrame** project open, the **GameFrame** product `GameFrame.framework` into the XCode window that has your project open, into the Framework-Folder. 
+  - [ ] Check "Copy items if needed"
+  
+Close the **GameFrame** project.
 
 ## Checklist to deploy ready implemented App
 You're ready to go? Did all the implementation? It's tested? It's profiled and performance tuned?
