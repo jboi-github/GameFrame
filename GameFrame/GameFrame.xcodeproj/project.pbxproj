@@ -414,10 +414,11 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = apps4live.GameFrame;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "x86_64 arm64 arm64e armv7 armv7s";
 			};
 			name = Debug;
 		};
@@ -443,10 +444,11 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = apps4live.GameFrame;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "x86_64 arm64 arm64e armv7 armv7s";
 			};
 			name = Release;
 		};
