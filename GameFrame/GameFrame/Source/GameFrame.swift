@@ -18,7 +18,7 @@ import StoreKit
 // TODO: Automated Test Cases - Unit tests -> 3 Tage
 // TODO: Automated Test Cases - UI Tests -> 3 Tage
 // DONE: Separate Game Template as Game Frame as Framework from Game itself. Create protocols to publish interface -> 1 Tag
-// TODO: Is their a lint for Swift? -> 1 Tag
+// DONE: Is their a lint for Swift? -> 1 Tag
 // -> End Nov done
 // TODO: Design Game -> LONG
 // TODO: define products, Ads, leaderboards, achievements -> 2 Tag
