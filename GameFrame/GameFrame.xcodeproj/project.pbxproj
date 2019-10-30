@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		156A9A432368C666002732FC /* GameFrame.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = 15DF93102368BC11008E8A56 /* GameFrame.xcdatamodeld */; };
 		156A9A482368C740002732FC /* GoogleMobileAds.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 156A9A442368C73F002732FC /* GoogleMobileAds.framework */; };
 		156A9A492368C740002732FC /* GoogleUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 156A9A452368C73F002732FC /* GoogleUtilities.framework */; };
 		156A9A4A2368C740002732FC /* GoogleAppMeasurement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 156A9A462368C740002732FC /* GoogleAppMeasurement.framework */; };
@@ -66,7 +65,6 @@
 		15DF92F02368B6A8008E8A56 /* GFCoreDataCloudKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GFCoreDataCloudKit.swift; sourceTree = "<group>"; };
 		15DF92F12368B6A8008E8A56 /* GFAdMob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GFAdMob.swift; sourceTree = "<group>"; };
 		15DF92F22368B6A8008E8A56 /* GFObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GFObjects.swift; sourceTree = "<group>"; };
-		15DF93112368BC11008E8A56 /* GameFrame.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = GameFrame.xcdatamodel; sourceTree = "<group>"; };
 		15DF931C2368BEEC008E8A56 /* GFEntityNonConsumable+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GFEntityNonConsumable+CoreDataClass.swift"; sourceTree = "<group>"; };
 		15DF931D2368BEEC008E8A56 /* GFEntityNonConsumable+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GFEntityNonConsumable+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		15DF931E2368BEEC008E8A56 /* GFEntityScore+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GFEntityScore+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -152,7 +150,6 @@
 		15DF932C2368BEF8008E8A56 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				15DF93102368BC11008E8A56 /* GameFrame.xcdatamodeld */,
 				15DF931C2368BEEC008E8A56 /* GFEntityNonConsumable+CoreDataClass.swift */,
 				15DF931D2368BEEC008E8A56 /* GFEntityNonConsumable+CoreDataProperties.swift */,
 				15DF931E2368BEEC008E8A56 /* GFEntityScore+CoreDataClass.swift */,
@@ -237,7 +234,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				156A9A432368C666002732FC /* GameFrame.xcdatamodeld in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -473,19 +469,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		15DF93102368BC11008E8A56 /* GameFrame.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				15DF93112368BC11008E8A56 /* GameFrame.xcdatamodel */,
-			);
-			currentVersion = 15DF93112368BC11008E8A56 /* GameFrame.xcdatamodel */;
-			path = GameFrame.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = 15DF92BF2368B5DA008E8A56 /* Project object */;
 }
