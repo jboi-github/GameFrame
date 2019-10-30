@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		15063C4523697D9B00C0A9B4 /* GameFrame.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 15063C4423697D9B00C0A9B4 /* GameFrame.xcdatamodel */; };
+		15063C4E23697DD600C0A9B4 /* GFEntityNonConsumable+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15063C4623697DD600C0A9B4 /* GFEntityNonConsumable+CoreDataClass.swift */; };
+		15063C4F23697DD600C0A9B4 /* GFEntityNonConsumable+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15063C4723697DD600C0A9B4 /* GFEntityNonConsumable+CoreDataProperties.swift */; };
+		15063C5023697DD600C0A9B4 /* GFEntityAchievement+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15063C4823697DD600C0A9B4 /* GFEntityAchievement+CoreDataClass.swift */; };
+		15063C5123697DD600C0A9B4 /* GFEntityAchievement+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15063C4923697DD600C0A9B4 /* GFEntityAchievement+CoreDataProperties.swift */; };
+		15063C5223697DD600C0A9B4 /* GFEntityConsumable+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15063C4A23697DD600C0A9B4 /* GFEntityConsumable+CoreDataClass.swift */; };
+		15063C5323697DD600C0A9B4 /* GFEntityConsumable+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15063C4B23697DD600C0A9B4 /* GFEntityConsumable+CoreDataProperties.swift */; };
+		15063C5423697DD600C0A9B4 /* GFEntityScore+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15063C4C23697DD600C0A9B4 /* GFEntityScore+CoreDataClass.swift */; };
+		15063C5523697DD600C0A9B4 /* GFEntityScore+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15063C4D23697DD600C0A9B4 /* GFEntityScore+CoreDataProperties.swift */; };
 		156A9A482368C740002732FC /* GoogleMobileAds.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 156A9A442368C73F002732FC /* GoogleMobileAds.framework */; };
 		156A9A492368C740002732FC /* GoogleUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 156A9A452368C73F002732FC /* GoogleUtilities.framework */; };
 		156A9A4A2368C740002732FC /* GoogleAppMeasurement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 156A9A462368C740002732FC /* GoogleAppMeasurement.framework */; };
@@ -23,14 +32,6 @@
 		15DF92FB2368B6A8008E8A56 /* GFNonConsumable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DF92EB2368B6A7008E8A56 /* GFNonConsumable.swift */; };
 		15DF92FC2368B6A8008E8A56 /* GFObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DF92F22368B6A8008E8A56 /* GFObjects.swift */; };
 		15DF92FD2368B6A8008E8A56 /* GFScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DF92E62368B6A7008E8A56 /* GFScore.swift */; };
-		15DF93242368BEEC008E8A56 /* GFEntityNonConsumable+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DF931C2368BEEC008E8A56 /* GFEntityNonConsumable+CoreDataClass.swift */; };
-		15DF93252368BEEC008E8A56 /* GFEntityNonConsumable+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DF931D2368BEEC008E8A56 /* GFEntityNonConsumable+CoreDataProperties.swift */; };
-		15DF93262368BEEC008E8A56 /* GFEntityScore+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DF931E2368BEEC008E8A56 /* GFEntityScore+CoreDataClass.swift */; };
-		15DF93272368BEEC008E8A56 /* GFEntityScore+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DF931F2368BEEC008E8A56 /* GFEntityScore+CoreDataProperties.swift */; };
-		15DF93282368BEEC008E8A56 /* GFEntityAchievement+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DF93202368BEEC008E8A56 /* GFEntityAchievement+CoreDataClass.swift */; };
-		15DF93292368BEEC008E8A56 /* GFEntityAchievement+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DF93212368BEEC008E8A56 /* GFEntityAchievement+CoreDataProperties.swift */; };
-		15DF932A2368BEEC008E8A56 /* GFEntityConsumable+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DF93222368BEEC008E8A56 /* GFEntityConsumable+CoreDataClass.swift */; };
-		15DF932B2368BEEC008E8A56 /* GFEntityConsumable+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15DF93232368BEEC008E8A56 /* GFEntityConsumable+CoreDataProperties.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -47,6 +48,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		15063C4423697D9B00C0A9B4 /* GameFrame.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = GameFrame.xcdatamodel; sourceTree = "<group>"; };
+		15063C4623697DD600C0A9B4 /* GFEntityNonConsumable+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GFEntityNonConsumable+CoreDataClass.swift"; sourceTree = "<group>"; };
+		15063C4723697DD600C0A9B4 /* GFEntityNonConsumable+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GFEntityNonConsumable+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		15063C4823697DD600C0A9B4 /* GFEntityAchievement+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GFEntityAchievement+CoreDataClass.swift"; sourceTree = "<group>"; };
+		15063C4923697DD600C0A9B4 /* GFEntityAchievement+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GFEntityAchievement+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		15063C4A23697DD600C0A9B4 /* GFEntityConsumable+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GFEntityConsumable+CoreDataClass.swift"; sourceTree = "<group>"; };
+		15063C4B23697DD600C0A9B4 /* GFEntityConsumable+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GFEntityConsumable+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		15063C4C23697DD600C0A9B4 /* GFEntityScore+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GFEntityScore+CoreDataClass.swift"; sourceTree = "<group>"; };
+		15063C4D23697DD600C0A9B4 /* GFEntityScore+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GFEntityScore+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		156A9A442368C73F002732FC /* GoogleMobileAds.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMobileAds.framework; path = "GoogleMobileAdsSdkiOS-7.51.0/GoogleMobileAds.framework"; sourceTree = "<group>"; };
 		156A9A452368C73F002732FC /* GoogleUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleUtilities.framework; path = "GoogleMobileAdsSdkiOS-7.51.0/GoogleUtilities.framework"; sourceTree = "<group>"; };
 		156A9A462368C740002732FC /* GoogleAppMeasurement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleAppMeasurement.framework; path = "GoogleMobileAdsSdkiOS-7.51.0/GoogleAppMeasurement.framework"; sourceTree = "<group>"; };
@@ -65,14 +75,6 @@
 		15DF92F02368B6A8008E8A56 /* GFCoreDataCloudKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GFCoreDataCloudKit.swift; sourceTree = "<group>"; };
 		15DF92F12368B6A8008E8A56 /* GFAdMob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GFAdMob.swift; sourceTree = "<group>"; };
 		15DF92F22368B6A8008E8A56 /* GFObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GFObjects.swift; sourceTree = "<group>"; };
-		15DF931C2368BEEC008E8A56 /* GFEntityNonConsumable+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GFEntityNonConsumable+CoreDataClass.swift"; sourceTree = "<group>"; };
-		15DF931D2368BEEC008E8A56 /* GFEntityNonConsumable+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GFEntityNonConsumable+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		15DF931E2368BEEC008E8A56 /* GFEntityScore+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GFEntityScore+CoreDataClass.swift"; sourceTree = "<group>"; };
-		15DF931F2368BEEC008E8A56 /* GFEntityScore+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GFEntityScore+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		15DF93202368BEEC008E8A56 /* GFEntityAchievement+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GFEntityAchievement+CoreDataClass.swift"; sourceTree = "<group>"; };
-		15DF93212368BEEC008E8A56 /* GFEntityAchievement+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GFEntityAchievement+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		15DF93222368BEEC008E8A56 /* GFEntityConsumable+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GFEntityConsumable+CoreDataClass.swift"; sourceTree = "<group>"; };
-		15DF93232368BEEC008E8A56 /* GFEntityConsumable+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GFEntityConsumable+CoreDataProperties.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +92,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		15063C4023697C7900C0A9B4 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				15063C4623697DD600C0A9B4 /* GFEntityNonConsumable+CoreDataClass.swift */,
+				15063C4723697DD600C0A9B4 /* GFEntityNonConsumable+CoreDataProperties.swift */,
+				15063C4823697DD600C0A9B4 /* GFEntityAchievement+CoreDataClass.swift */,
+				15063C4923697DD600C0A9B4 /* GFEntityAchievement+CoreDataProperties.swift */,
+				15063C4A23697DD600C0A9B4 /* GFEntityConsumable+CoreDataClass.swift */,
+				15063C4B23697DD600C0A9B4 /* GFEntityConsumable+CoreDataProperties.swift */,
+				15063C4C23697DD600C0A9B4 /* GFEntityScore+CoreDataClass.swift */,
+				15063C4D23697DD600C0A9B4 /* GFEntityScore+CoreDataProperties.swift */,
+				15063C4423697D9B00C0A9B4 /* GameFrame.xcdatamodel */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		15DF92BE2368B5DA008E8A56 = {
 			isa = PBXGroup;
 			children = (
@@ -110,7 +128,7 @@
 		15DF92CA2368B5DA008E8A56 /* GameFrame */ = {
 			isa = PBXGroup;
 			children = (
-				15DF932C2368BEF8008E8A56 /* Model */,
+				15063C4023697C7900C0A9B4 /* Model */,
 				15DF931B2368BEAE008E8A56 /* Source */,
 				15DF92CB2368B5DA008E8A56 /* GameFrame.h */,
 				15DF92CC2368B5DA008E8A56 /* Info.plist */,
@@ -145,22 +163,6 @@
 				15DF92EC2368B6A8008E8A56 /* GFTools.swift */,
 			);
 			path = Source;
-			sourceTree = "<group>";
-		};
-		15DF932C2368BEF8008E8A56 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-				15DF931C2368BEEC008E8A56 /* GFEntityNonConsumable+CoreDataClass.swift */,
-				15DF931D2368BEEC008E8A56 /* GFEntityNonConsumable+CoreDataProperties.swift */,
-				15DF931E2368BEEC008E8A56 /* GFEntityScore+CoreDataClass.swift */,
-				15DF931F2368BEEC008E8A56 /* GFEntityScore+CoreDataProperties.swift */,
-				15DF93202368BEEC008E8A56 /* GFEntityAchievement+CoreDataClass.swift */,
-				15DF93212368BEEC008E8A56 /* GFEntityAchievement+CoreDataProperties.swift */,
-				15DF93222368BEEC008E8A56 /* GFEntityConsumable+CoreDataClass.swift */,
-				15DF93232368BEEC008E8A56 /* GFEntityConsumable+CoreDataProperties.swift */,
-			);
-			name = Model;
-			path = ../Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -244,25 +246,26 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				15DF93252368BEEC008E8A56 /* GFEntityNonConsumable+CoreDataProperties.swift in Sources */,
+				15063C4F23697DD600C0A9B4 /* GFEntityNonConsumable+CoreDataProperties.swift in Sources */,
 				15DF92F92368B6A8008E8A56 /* GFCoreDataCloudKit.swift in Sources */,
-				15DF93272368BEEC008E8A56 /* GFEntityScore+CoreDataProperties.swift in Sources */,
-				15DF932A2368BEEC008E8A56 /* GFEntityConsumable+CoreDataClass.swift in Sources */,
 				15DF92F82368B6A8008E8A56 /* GFAdMob.swift in Sources */,
-				15DF93282368BEEC008E8A56 /* GFEntityAchievement+CoreDataClass.swift in Sources */,
 				15DF92FD2368B6A8008E8A56 /* GFScore.swift in Sources */,
-				15DF93262368BEEC008E8A56 /* GFEntityScore+CoreDataClass.swift in Sources */,
 				15DF92FB2368B6A8008E8A56 /* GFNonConsumable.swift in Sources */,
+				15063C5423697DD600C0A9B4 /* GFEntityScore+CoreDataClass.swift in Sources */,
+				15063C5123697DD600C0A9B4 /* GFEntityAchievement+CoreDataProperties.swift in Sources */,
 				15DF92F72368B6A8008E8A56 /* GFConsumable.swift in Sources */,
-				15DF93242368BEEC008E8A56 /* GFEntityNonConsumable+CoreDataClass.swift in Sources */,
+				15063C4E23697DD600C0A9B4 /* GFEntityNonConsumable+CoreDataClass.swift in Sources */,
 				15DF92F32368B6A8008E8A56 /* GFGameCenter.swift in Sources */,
+				15063C5523697DD600C0A9B4 /* GFEntityScore+CoreDataProperties.swift in Sources */,
 				15DF92FC2368B6A8008E8A56 /* GFObjects.swift in Sources */,
 				15DF92FA2368B6A8008E8A56 /* GFAchievement.swift in Sources */,
+				15063C5023697DD600C0A9B4 /* GFEntityAchievement+CoreDataClass.swift in Sources */,
+				15063C5323697DD600C0A9B4 /* GFEntityConsumable+CoreDataProperties.swift in Sources */,
 				15DF92F52368B6A8008E8A56 /* GFInApp.swift in Sources */,
 				15DF92F62368B6A8008E8A56 /* GFTools.swift in Sources */,
-				15DF932B2368BEEC008E8A56 /* GFEntityConsumable+CoreDataProperties.swift in Sources */,
+				15063C5223697DD600C0A9B4 /* GFEntityConsumable+CoreDataClass.swift in Sources */,
+				15063C4523697D9B00C0A9B4 /* GameFrame.xcdatamodel in Sources */,
 				15DF92F42368B6A8008E8A56 /* GameFrame.swift in Sources */,
-				15DF93292368BEEC008E8A56 /* GFEntityAchievement+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
