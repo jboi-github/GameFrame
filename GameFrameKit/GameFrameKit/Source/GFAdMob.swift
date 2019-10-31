@@ -24,6 +24,8 @@ public class GFAdMob: NSObject, ObservableObject {
         adUnitIdRewarded = _adUnitIdRewarded
         adUnitIdInterstitial = _adUnitIdInterstitial
         super.init()
+        guard window != nil else {return}
+
         delegater = Delegater(parent: self)
 
         GADMobileAds.sharedInstance().start(completionHandler: nil)

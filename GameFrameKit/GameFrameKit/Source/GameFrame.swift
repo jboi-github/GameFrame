@@ -84,7 +84,8 @@ public class GameFrame: NSObject {
         gameCenterImpl = GFGameCenter(window)
         inAppImpl = GFInApp(consumablesConfig)
         adMobImpl = GFAdMob(window, adUnitIdBanner: adUnitIdBanner, adUnitIdRewarded: adUnitIdRewarded, adUnitIdInterstitial: adUnitIdInterstitial)
-        
+        guard window != nil else {return}
+
         // Make sure, data is saved at the right moment
         NotificationCenter.default
             .addObserver(self, selector: #selector(onDidEnterBackgroundNotification(_ :)), name: UIScene.didEnterBackgroundNotification, object: nil)
