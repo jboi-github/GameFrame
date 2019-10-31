@@ -16,7 +16,6 @@
 		15198BE82369DDE400EA2B70 /* GFEntityConsumable+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15198BD32369DDE300EA2B70 /* GFEntityConsumable+CoreDataClass.swift */; };
 		15198BE92369DDE400EA2B70 /* GFEntityConsumable+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15198BD42369DDE300EA2B70 /* GFEntityConsumable+CoreDataProperties.swift */; };
 		15198BEA2369DDE400EA2B70 /* GFEntityScore+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15198BD52369DDE300EA2B70 /* GFEntityScore+CoreDataClass.swift */; };
-		15198BEB2369DDE400EA2B70 /* GameFrame.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 15198BD62369DDE300EA2B70 /* GameFrame.xcdatamodel */; };
 		15198BEC2369DDE400EA2B70 /* GFGameCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15198BD82369DDE300EA2B70 /* GFGameCenter.swift */; };
 		15198BED2369DDE400EA2B70 /* GFNonConsumable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15198BD92369DDE300EA2B70 /* GFNonConsumable.swift */; };
 		15198BEE2369DDE400EA2B70 /* GFCoreDataCloudKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15198BDA2369DDE300EA2B70 /* GFCoreDataCloudKit.swift */; };
@@ -36,6 +35,7 @@
 		15198C012369DE1800EA2B70 /* nanopb.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 15198BFA2369DE1800EA2B70 /* nanopb.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		15198C022369DE1800EA2B70 /* GoogleUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15198BFB2369DE1800EA2B70 /* GoogleUtilities.framework */; };
 		15198C032369DE1800EA2B70 /* GoogleUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 15198BFB2369DE1800EA2B70 /* GoogleUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		154EEA3E2369F2180052B734 /* GameFrame.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 15198BD62369DDE300EA2B70 /* GameFrame.xcdatamodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -264,7 +264,6 @@
 				15198BF42369DDE400EA2B70 /* GFConsumable.swift in Sources */,
 				15198BEA2369DDE400EA2B70 /* GFEntityScore+CoreDataClass.swift in Sources */,
 				15198BE32369DDE300EA2B70 /* GFEntityNonConsumable+CoreDataClass.swift in Sources */,
-				15198BEB2369DDE400EA2B70 /* GameFrame.xcdatamodel in Sources */,
 				15198BED2369DDE400EA2B70 /* GFNonConsumable.swift in Sources */,
 				15198BE82369DDE400EA2B70 /* GFEntityConsumable+CoreDataClass.swift in Sources */,
 				15198BE52369DDE400EA2B70 /* GFEntityAchievement+CoreDataClass.swift in Sources */,
@@ -273,6 +272,7 @@
 				15198BF52369DDE400EA2B70 /* GFAdMob.swift in Sources */,
 				15198BE62369DDE400EA2B70 /* GFEntityNonConsumable+CoreDataProperties.swift in Sources */,
 				15198BE42369DDE300EA2B70 /* GFEntityAchievement+CoreDataProperties.swift in Sources */,
+				154EEA3E2369F2180052B734 /* GameFrame.xcdatamodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -419,6 +419,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = apps4live.GameFrameKit;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -448,6 +449,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = apps4live.GameFrameKit;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;

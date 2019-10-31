@@ -31,19 +31,39 @@ With this four objects, you get:
 ## How to use in your project
 
 ## Checklist to setup a project with full featured **GameFrame**
-- [ ] Clone the **GameFrame** project and build it
-- [ ] Create a new project for your App, give it a name and ensure the follwoign features:
+- [ ] Clone the **GameFrame** repository.
+- [ ] Under "GameFrameKit" open the `GameFrameKit` project in XCode and build it (Cmd-B)
+- [ ] Create a new project for your App, give it a name and ensure the following features:
   - [ ] Check "Use CoreData" and "Use CloudKit"
-- [ ] Find a place in your folder structure, ensure that "Don't add to any project or workspace" is selected
-- In the project setting, "Signing&Capabilities" add:
-  - [ ] "iCloud", check "CloudKit" and create or check a container. This will also add the "Push Notifications" capability
-  - [ ] "In-App Purchase"
-  - [ ] "Game Center"
-  - [ ] "Background Modes", here check the "Remote Notifications" to get notified on changes in iCloud-Data, when changed on other devices
-- [ ] Now you have a Framework folder in your project. Drag and drop in XCode, from the window that has the **GameFrame** project open, the **GameFrame** product `GameFrame.framework` into the XCode window that has your project open, into the Framework-Folder. 
-  - [ ] Check "Copy items if needed"
+  - [ ] Find a place in your folder structure, ensure that "Don't add to any project or workspace" is selected
+  - [ ] In the project setting, "Signing&Capabilities" add:
+    - [ ] "iCloud", check "CloudKit" and create a new container or check an existing one. This will also add the "Push Notifications" capability
+    - [ ] "In-App Purchase"
+    - [ ] "Game Center"
+    - [ ] "Background Modes", here check the "Remote Notifications" to get notified on changes in iCloud-Data, when changed on other devices of your player.
+  - [ ] Drag and drop in XCode, from the window that has the **GameFrame** project open, the **GameFrame** product `GameFrameKit.framework` into the XCode window that has your project open, somewhere on top of your project-groups.
+  - [ ] In the Xcode Project Navigator, click on your project and then select the target. In the "General" tab scroll down to "Frameworks, Libraries and Embedded Content" and ensure, that `GameFrameKit.framework` is set to "Embed & Sign"
+- Make changes to `AppDelegate.swift` and `SceneDelegate.swift`. For all changes, check the same two files in "TheGame" folders to get an example.
+  - [ ] In `AppDelegate.swift` delete the function `saveContext()` and the variable `persistentContainer`
+  - [ ] In `SceneDelegate.swift`
+    1. Add the `import GameFrame` at the beginning.
+    2. In the function `scene( ... willConnectTo: ...)` delete the code in it and replace it with a simple first call to **GameFrame**: `GameFrame.createSharedInstance(scene, consumablesConfig: [:], adUnitIdBanner: nil, adUnitIdRewarded: nil, adUnitIdInterstitial: nil) {ContentView()}`
+    3. In the function `sceneDidEnterBackground` delete the call to `saveContext`
+    - [ ] In your `info.plist` add your AppID for Google AdMob as described in [Update Your `info.plist`](https://developers.google.com/admob/ios/quick-start#update_your_infoplist)
+- [ ] Build your App and run it. Nothing should happen other than, that it works.  
+- [ ] Close the XCode window, where you have built the `GameFrameKit.framework` project.
   
-Close the **GameFrame** project.
+  ### Congratulations! Your're done with the setup and start using **GameFrame**
+  What's next:
+  - [Work with Scores, Achievements, Consumables and NonConsumables](./documents/objects.md)
+  - [Link Scores and Achievements to GameCenter](./documents/gameCenter.md)
+  - [Link Consumables and NonConsumables for in-app purchases](./documents/inApps.md)
+  - [Get players reviews and feedback](./documents/reviews.md)
+  - [Connect to Social Media](./documents/externalLinks.md)
+  - [A Button to your App Settings](./documents/settings.md)
+  - [Add advertisement banners to your App](./documents/banners.md)
+  - [Add advertisement interstitials to your App](./documents/interstitials.md)
+  - [Add rewarded videos to your App](./documents/rewardedVideos.md)
 
 ## Checklist to deploy ready implemented App
 You're ready to go? Did all the implementation? It's tested? It's profiled and performance tuned?

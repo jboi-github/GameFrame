@@ -20,7 +20,17 @@ public class GFCoreDataCloudKit: NSObject {
         log()
 
         // Create instance
-        delegate = NSPersistentCloudKitContainer(name: "GameFrame")
+        let momdName = "GameFrame"
+        guard let modelURL = Bundle(for: type(of: self)).url(forResource: momdName, withExtension:"mom") else {
+            log(Bundle(for: type(of: self)).bundlePath, momdName, "mom")
+            fatalError()
+        }
+        guard let mom = NSManagedObjectModel(contentsOf: modelURL) else {
+            log(modelURL.absoluteString)
+            fatalError()
+        }
+        delegate = NSPersistentCloudKitContainer(name: momdName, managedObjectModel: mom)
+
         super.init()
 
         delegate.loadPersistentStores() {
