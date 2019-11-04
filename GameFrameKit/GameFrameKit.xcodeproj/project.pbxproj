@@ -147,17 +147,17 @@
 		15198BD72369DDE300EA2B70 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				15198BD82369DDE300EA2B70 /* GFGameCenter.swift */,
+				15198BDC2369DDE300EA2B70 /* GameFrame.swift */,
+				15198BDB2369DDE300EA2B70 /* GFScore.swift */,
+				15198BDE2369DDE300EA2B70 /* GFAchievement.swift */,
+				15198BE02369DDE300EA2B70 /* GFConsumable.swift */,
 				15198BD92369DDE300EA2B70 /* GFNonConsumable.swift */,
 				15198BDA2369DDE300EA2B70 /* GFCoreDataCloudKit.swift */,
-				15198BDB2369DDE300EA2B70 /* GFScore.swift */,
-				15198BDC2369DDE300EA2B70 /* GameFrame.swift */,
-				15198BDD2369DDE300EA2B70 /* GFObjects.swift */,
-				15198BDE2369DDE300EA2B70 /* GFAchievement.swift */,
+				15198BD82369DDE300EA2B70 /* GFGameCenter.swift */,
 				15198BDF2369DDE300EA2B70 /* GFInApp.swift */,
-				15198BE02369DDE300EA2B70 /* GFConsumable.swift */,
 				15198BE12369DDE300EA2B70 /* GFAdMob.swift */,
 				15198BE22369DDE300EA2B70 /* GFTools.swift */,
+				15198BDD2369DDE300EA2B70 /* GFObjects.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";

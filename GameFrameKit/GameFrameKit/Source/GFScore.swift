@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 import GameKit
 
-public class GFScore: ObservableObject {
+public class GFScore: ObservableObject, Identifiable {
     internal var delegate: GFEntityScore {
         didSet(prev) {
             guard prev != delegate else {return}
@@ -22,10 +22,10 @@ public class GFScore: ObservableObject {
     }
     
     /// Current score
-    @Published private(set) var current: Int
+    @Published public private(set) var current: Int
     
     /// Personal high score
-    @Published private(set) var highest: Int
+    @Published public private(set) var highest: Int
     
     internal init(delegate: GFEntityScore) {
         self.delegate = delegate
@@ -46,7 +46,7 @@ public class GFScore: ObservableObject {
     }
     
     /// Restart score at 0, e.g. when new level or new game starts
-    public func startOver() {current = 0}
+    internal func startOver() {current = 0}
     
     internal func prepareForSave() {
         delegate.current = Int64(current)

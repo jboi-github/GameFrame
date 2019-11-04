@@ -24,6 +24,8 @@ public class GFAdMob: NSObject, ObservableObject {
         adUnitIdRewarded = _adUnitIdRewarded
         adUnitIdInterstitial = _adUnitIdInterstitial
         super.init()
+        guard window != nil else {return}
+
         delegater = Delegater(parent: self)
 
         GADMobileAds.sharedInstance().start(completionHandler: nil)
@@ -33,13 +35,13 @@ public class GFAdMob: NSObject, ObservableObject {
     
     // MARK: - Public functions and properties
     // MARK: For banner
-    @Published public var bannerAvailable: Bool = false
-    @Published public var bannerWidth: CGFloat = 0.0
-    @Published public var bannerHeight: CGFloat = 0.0
+    @Published public internal(set) var bannerAvailable: Bool = false
+    @Published public internal(set) var bannerWidth: CGFloat = 0.0
+    @Published public internal(set) var bannerHeight: CGFloat = 0.0
 
     // MARK: For rewards
     /// True, if reward is loaded and available to be shown
-    @Published public var rewardAvailable: Bool = false
+    @Published internal(set) public var rewardAvailable: Bool = false
 
     /// Show the rewarded video. If succesfull, player earns quantity of consumable
     public func showReward(consumable: GFConsumable, quantity: Int) {
@@ -103,6 +105,8 @@ fileprivate var delegater: Delegater? = nil
 
 /// The banner advertisement has fixed width and height. Should be positioned.
 public struct GFBannerView: UIViewControllerRepresentable {
+    public init() {}
+    
     public func makeUIViewController(context: Context) -> UIViewController {
         log()
         let view = GADBannerView(adSize: kGADAdSizeBanner)

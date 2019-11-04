@@ -36,20 +36,23 @@ With this four objects, you get:
 - [ ] Create a new project for your App, give it a name and ensure the following features:
   - [ ] Check "Use CoreData" and "Use CloudKit"
   - [ ] Find a place in your folder structure, ensure that "Don't add to any project or workspace" is selected
-  - [ ] In the project setting, "Signing&Capabilities" add:
+  - [ ] In the project setting, "Signing&Capabilities" add:
     - [ ] "iCloud", check "CloudKit" and create a new container or check an existing one. This will also add the "Push Notifications" capability
     - [ ] "In-App Purchase"
     - [ ] "Game Center"
     - [ ] "Background Modes", here check the "Remote Notifications" to get notified on changes in iCloud-Data, when changed on other devices of your player.
   - [ ] Drag and drop in XCode, from the window that has the **GameFrame** project open, the **GameFrame** product `GameFrameKit.framework` into the XCode window that has your project open, somewhere on top of your project-groups.
   - [ ] In the Xcode Project Navigator, click on your project and then select the target. In the "General" tab scroll down to "Frameworks, Libraries and Embedded Content" and ensure, that `GameFrameKit.framework` is set to "Embed & Sign"
-- Make changes to `AppDelegate.swift` and `SceneDelegate.swift`. For all changes, check the same two files in "TheGame" folders to get an example.
+- [ ] Make changes to `AppDelegate.swift` and `SceneDelegate.swift`. For all changes, check the same two files in "TheGame" folders to get an example.
   - [ ] In `AppDelegate.swift` delete the function `saveContext()` and the variable `persistentContainer`
   - [ ] In `SceneDelegate.swift`
     1. Add the `import GameFrame` at the beginning.
     2. In the function `scene( ... willConnectTo: ...)` delete the code in it and replace it with a simple first call to **GameFrame**: `GameFrame.createSharedInstance(scene, consumablesConfig: [:], adUnitIdBanner: nil, adUnitIdRewarded: nil, adUnitIdInterstitial: nil) {ContentView()}`
     3. In the function `sceneDidEnterBackground` delete the call to `saveContext`
     - [ ] In your `info.plist` add your AppID for Google AdMob as described in [Update Your `info.plist`](https://developers.google.com/admob/ios/quick-start#update_your_infoplist)
+- [ ] To use **GameFrame** in Previews add a line in the view file (e.g. `ContentView.swift`). In the file scroll down to the Preview Provider `<View-Name>_Previews` and add the call to **GameFrame** ricgt before the view is created. Use the `createSharedInstanceForPreview` which has less attributes and is lacks all the external windows features like GameCenter and AdMob.
+  - Check TheGame implementation to see how it works, e.g. here in [`ContenView.swift`](./TheGame/TheGame/ContentView.swift)
+  - Remark: SwiftUI PreView is still buggy. So please don't blame me, if it shows it's famous "try again"/"Diagnostics" buttons.
 - [ ] Build your App and run it. Nothing should happen other than, that it works.  
 - [ ] Close the XCode window, where you have built the `GameFrameKit.framework` project.
   

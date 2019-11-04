@@ -34,11 +34,19 @@ public extension Dictionary {
 }
 
 /// Allows formatting a Double in String-interpolation, e.g. \(<#some double var#>.format(".2")
-public extension Double {
-    func format(_ format: String) -> String {
-        return String(format: "%\(format)f", self)
+public protocol Formattable {
+    func format(_ pattern: String) -> String
+}
+
+public extension Formattable where Self: CVarArg {
+    func format(_ pattern: String) -> String {
+        return String(format: pattern, arguments: [self])
     }
 }
+
+extension Int: Formattable { }
+extension Double: Formattable { }
+extension Float: Formattable { }
 
 /// Handle errors.
 /// Returns true, if check was succesful, false if error occured
@@ -63,12 +71,12 @@ public func getUrlAction(_ url: String) -> () -> Void {
 }
 
 /// - returns: The cost of the product formatted in the local currency.
-extension SKProduct {
-    var localizedPrice: String {
+public extension SKProduct {
+    func localizedPrice(quantity: Int) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.locale = priceLocale
-        return formatter.string(from: price)!
+        return formatter.string(from: NSDecimalNumber(value: Double(truncating: price) * Double(quantity)))!
     }
 }
 

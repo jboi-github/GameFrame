@@ -21,6 +21,7 @@ public class GFGameCenter: NSObject, ObservableObject {
         self.window = window
         super.init()
         
+        guard window != nil else {return}
         GKLocalPlayer.local.authenticateHandler = {
             (viewController, error) in
             

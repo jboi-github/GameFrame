@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 import GameKit
 
-public class GFAchievement: ObservableObject {
+public class GFAchievement: ObservableObject, Identifiable {
     internal var delegate: GFEntityAchievement {
            didSet(prev) {
                guard prev != delegate else {return}
@@ -22,13 +22,13 @@ public class GFAchievement: ObservableObject {
        }
     
     /// Current achievement up to 100%
-    @Published private(set) var current: Double
+    @Published public private(set) var current: Double
     
     /// Personal highest achievement
-    @Published private(set) var highest: Double
+    @Published public private(set) var highest: Double
     
     /// Times, the achievement was reached
-    @Published private(set) var timesAchieved: Int
+    @Published public private(set) var timesAchieved: Int
     
     // init from load
     internal init(delegate: GFEntityAchievement) {

@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 import StoreKit
 
-public class GFNonConsumable: ObservableObject {
+public class GFNonConsumable: ObservableObject, Identifiable {
     internal var delegate: GFEntityNonConsumable {
            didSet(prev) {
                guard prev != delegate else {return}
@@ -22,11 +22,11 @@ public class GFNonConsumable: ObservableObject {
        }
     
     /// Current score
-    @Published private(set) var isOpened: Bool
+    @Published public private(set) var isOpened: Bool
     private var prebooked: Bool // if true, the unlock is only prebooked and needs confirmation
     
     // The corresponding product to buy from, if available
-    internal var product: SKProduct?
+    public internal(set) var product: SKProduct?
 
     internal init(delegate: GFEntityNonConsumable) {
         self.delegate = delegate
@@ -47,13 +47,13 @@ public class GFNonConsumable: ObservableObject {
     }
      
     /// Prebook, if purchase is deferred.
-    public func prebook() {
+    internal func prebook() {
         isOpened = true
         prebooked = true
     }
      
     /// Rollback any prebooking if exists
-    public func rollback() {
+    internal func rollback() {
         guard prebooked else {return}
         isOpened = false
         prebooked = false // Open for another try

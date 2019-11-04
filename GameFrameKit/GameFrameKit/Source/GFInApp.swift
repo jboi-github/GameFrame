@@ -13,7 +13,7 @@ import StoreKit
  - For NonConsumables the productId in store must match exactly the id of the consumable
  - For Cosnumables, you can have one or more products per consumable, with different base quantities. To configure this, see the `init()` function and the corresponding parameter.
  */
-public class GFInApp: NSObject {
+public class GFInApp: NSObject, ObservableObject {
     // MARK: - Initializaton
     
     /**
@@ -39,22 +39,51 @@ public class GFInApp: NSObject {
     }
     
     // MARK: - Public functions
+    /// GUI should indicate to wait while purchase is ongoing and not deferred
+    @Published public fileprivate(set) var purchasing: Bool = false
+
+    /// Contains the latest error, if a purchase failed. Cleared, if a transaction finished succesfully.
+    @Published public fileprivate(set) var error: Error?
+    
     /**
      Return consumables with one of the given `ids` and at least one available product in store and loaded.
      `Consumable.products` contains the store products and is garuanteed to have at least one entry.
      - Parameter ids: An array of all id's of the consumables to consider.
-     - returns: An Array of NonConsumables where the products are available. The array is sorted in the same order, as `ids` were given.
+     - returns: An Array of products, base quantity and Consumables where the products are available.
+     The array is sorted in the same order, as `ids` were given and then by quantity.
      */
-    public func getConsumables(ids: [String]) -> [GFConsumable] {
+    public func getConsumables(ids: [String]) -> [ConsumableProduct] {
         log()
-        var cs = [GFConsumable]()
-        for id in ids {
-            guard let consumable = consumables[id] else {continue}
-            guard !consumable.products.isEmpty else {continue}
+        
+        // Get all Consumables with available products
+        return ids.compactMap({
+            (id) -> GFConsumable? in
+            guard let consumable = consumables[id] else {return nil}
+            guard !consumable.products.isEmpty else {return nil}
             
-            cs.append(consumable)
+            return consumable
+        })
+        .flatMap {
+            (consumable) -> [ConsumableProduct] in
+            consumable.products.map {
+                (key: Int, value: SKProduct) -> ConsumableProduct in
+                ConsumableProduct(product: value, quantity: key, consumable: consumable)
+            }
+            // Sort by consumable-Id and quantity
+            .sorted {
+                (lhs, rhs) -> Bool in
+                lhs.quantity <= rhs.quantity
+            }
         }
-        return cs
+    }
+    
+    /// Struct, returned by getConsumables() is identifiable for use in List{} and ForEach{}
+    public struct ConsumableProduct: Identifiable {
+        public var id: String {product.productIdentifier}
+        
+        public var product: SKProduct
+        public var quantity: Int
+        public var consumable: GFConsumable
     }
     
     /**
@@ -96,6 +125,11 @@ public class GFInApp: NSObject {
         log()
         SKPaymentQueue.default().restoreCompletedTransactions()
     }
+    
+    /**
+     Clear error. This should be done, when shown to the player.
+     */
+    public func clearError() {error = nil}
     
     // MARK: - Internal handling
 
@@ -154,6 +188,7 @@ private class Delegater: NSObject, SKPaymentTransactionObserver, SKProductsReque
             case .purchasing:
                 log("purchasing")
                 // Keep paused and fingers crossed
+                parent.purchasing = true
                 break
             case .deferred:
                 log("deferred")
@@ -165,9 +200,10 @@ private class Delegater: NSObject, SKPaymentTransactionObserver, SKProductsReque
                 } else {
                     log("Unknown product! \(transaction.payment)")
                 }
+                parent.purchasing = false
                 break
             case .failed:
-                log("failed")
+                log("failed", transaction.error)
                 // Rollback if necessary
                 if let (consumable, _) = readConfigFor(transaction.payment.productIdentifier) {
                     consumable.rollback()
@@ -177,6 +213,8 @@ private class Delegater: NSObject, SKPaymentTransactionObserver, SKProductsReque
                     log("Unknown product! \(transaction.payment)")
                 }
                 SKPaymentQueue.default().finishTransaction(transaction)
+                parent.error = transaction.error
+                parent.purchasing = false
                 break
             case .purchased:
                 log("purchased")
@@ -189,14 +227,20 @@ private class Delegater: NSObject, SKPaymentTransactionObserver, SKProductsReque
                     log("Unknown product! \(transaction.payment)")
                 }
                 SKPaymentQueue.default().finishTransaction(transaction)
+                parent.error = nil
+                parent.purchasing = false
                 break
             case .restored:
                 log("restored")
                 SKPaymentQueue.default().finishTransaction(transaction)
+                parent.error = nil
+                parent.purchasing = false
                 break
             // For debugging purposes.
             @unknown default:
                 log("Unexpected transaction state \(transaction.transactionState)")
+                parent.error = nil
+                parent.purchasing = false
             }
         }
     }
