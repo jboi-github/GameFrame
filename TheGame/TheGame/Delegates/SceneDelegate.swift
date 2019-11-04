@@ -11,24 +11,28 @@ import SwiftUI
 import GameFrameKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-
     var window: UIWindow?
-
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
-        // adUnitIdBanner: "ca-app-pub-3940256099942544/2934735716",
-        // adUnitIdRewarded: "ca-app-pub-3940256099942544/1712485313",
-        // adUnitIdInterstitial: "ca-app-pub-3940256099942544/4411468910"
+        
+        activeSheet.segue(from: [.OffLevel], to: [.InLevel]) {enterLevel()}
+        activeSheet.segue(from: [.InLevel, .Offer], to: [.OffLevel]) {leaveLevel()}
+
         GameFrame.createSharedInstance(
-            scene, consumablesConfig: [:],
-            adUnitIdBanner: nil,
-            adUnitIdRewarded: nil,
-            adUnitIdInterstitial: nil) {
+            scene, consumablesConfig: [
+                "bulletsS": ("Bullets", 200),
+                "bulletsM": ("Bullets", 1000),
+                "bulletsL": ("Bullets", 2000),
+                "Lives": ("Lives", 1),
+            ],
+            adUnitIdBanner: "ca-app-pub-3940256099942544/2934735716",
+            adUnitIdRewarded: "ca-app-pub-3940256099942544/1712485313",
+            adUnitIdInterstitial: "ca-app-pub-3940256099942544/4411468910") {
             
-            ContentView()
+                MainView()
         }
     }
 

@@ -22,7 +22,7 @@ public class GFConsumable: ObservableObject {
        }
      
     /// Currently available goods from bought, earned and consumed
-    @Published private(set) var available: Int
+    @Published public private(set) var available: Int
     
     // Published var cannot be a calculated property, so need to trigger here
     private var earned: Int {didSet {available = earned + bought + prebooked - consumed}}
@@ -31,7 +31,7 @@ public class GFConsumable: ObservableObject {
     private var consumed: Int {didSet {available = earned + bought + prebooked - consumed}}
 
     // The corresponding product to buy from, if available
-    internal var products = [Int:SKProduct]() // Products available in store for this consumable, player, country, ...
+    public internal(set) var products = [Int:SKProduct]() // Products available in store for this consumable, player, country, ...
  
     internal init(delegate: GFEntityConsumable) {
         self.delegate = delegate
@@ -52,19 +52,19 @@ public class GFConsumable: ObservableObject {
     public func earn(_ earned: Int) {self.earned += earned}
       
      /// Buy (increment) consumable
-     public func buy(_ bought: Int) {
+     internal func buy(_ bought: Int) {
         self.bought += bought
         if self.prebooked > 0 {self.prebooked -= bought}
     }
       
      /// Prebook, if purchase is deferred. Allow only once. (increment) consumable
-     public func prebook(_ prebooked: Int) {
+     internal func prebook(_ prebooked: Int) {
          guard self.prebooked == 0 else {return}
          self.prebooked += prebooked
      }
      
     /// Rollback any prebooking, if exists
-    public func rollback() {self.prebooked = 0}
+    internal func rollback() {self.prebooked = 0}
 
     /// Consume (decrement) consumable
     public func consume(_ consumed: Int) {self.consumed += consumed}

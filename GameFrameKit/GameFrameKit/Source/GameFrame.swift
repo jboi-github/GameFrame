@@ -104,9 +104,9 @@ public class GameFrame: NSObject {
     }
 
     /**
-     Starts all tasks when leaving a level. Call this when level or game has ended.
-     - Parameter requestReview: Set to true to indicate, that the player should be asked for a review by apples system view. Should be set, if the player has somewhat experience with the game and just had a good, suceesful level played, e.g. reached a new high score. If set to true, it is up to apple's logic to actually show the dialog. During development, that dialog is always shown. In production, Apple ensures, that the dialog is shown at max 3-4 times in 12 months. If both parameters are set to `true`, it is only tried to show the interstitial.
-     - Parameter showInterstitial: If set to true and an Interstial is available from Googles admob, it is shown to the user. Interstials are percieved as annoying by the community, but are still a way to earn money. Use this flag wisely. If both parameters are set to `true`, it is only tried to show the interstitial.
+     Saves current status and reports to GameCenter. Call this when level or game has ended.
+     - Parameter requestReview: Set to true to indicate, that the player should be asked for a review by Apples system view. Should be set, if the player has somewhat experience with the game and just had a good, sucessful level played, e.g. reached a new high score. If set to true, it is up to apple's logic to actually show the dialog. During development, that dialog is always shown. In production, Apple ensures, that the dialog is shown at max 3-4 times in 12 months. If both parameters are set to `true` and an interstitial is available, it is only tried to show the interstitial.
+     - Parameter showInterstitial: If set to true and an Interstial is available from Googles admob, it is shown to the user. Interstials are percieved as annoying by the community, but are still a way to earn money. Use this flag wisely. If both parameters are set to `true`and an interstitial is available, it is only tried to show the interstitial.
      */
     public func leaveLevel(requestReview: Bool, showInterstitial: Bool) {
         log()
