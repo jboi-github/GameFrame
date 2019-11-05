@@ -54,6 +54,7 @@ struct OffLevel: View {
         @ObservedObject var sheets = activeSheet
         @ObservedObject private var bullets = GameFrame.coreData.getConsumable("Bullets")
         @ObservedObject private var adMob = GameFrame.adMob
+        @ObservedObject private var inApp = GameFrame.inApp
         @ObservedObject private var gameCenter = GameFrame.gameCenter
 
         var body: some View {
@@ -63,12 +64,14 @@ struct OffLevel: View {
                     Button(action: {self.sheets.next(.Store)}) {
                         Image(systemName: "cart")
                     }
+                    .disabled(!inApp.available)
                     Spacer()
                 }
                 Group {
-                    Button(action: getUrlAction(UIApplication.openSettingsURLString)) {
-                        Image(systemName: "gear")
+                    Button(action: {GameFrame.adMob.showReward(consumable: self.bullets, quantity: 100)}) {
+                        Image(systemName: "film")
                     }
+                    .disabled(!adMob.rewardAvailable)
                     Spacer()
                 }
                 Group {
@@ -76,6 +79,14 @@ struct OffLevel: View {
                         Image(systemName: "rosette")
                     }
                     .disabled(!gameCenter.enabled)
+                    Spacer()
+                }
+                Group {
+                    Button(action: {
+                        GameFrame.instance!.showShare(greeting: "Hi! Here's The Game", format: "%.1f")
+                    }) {
+                        Image(systemName: "square.and.arrow.up")
+                    }
                     Spacer()
                 }
                 Group {
@@ -91,10 +102,9 @@ struct OffLevel: View {
                     Spacer()
                 }
                 Group {
-                    Button(action: {GameFrame.adMob.showReward(consumable: self.bullets, quantity: 100)}) {
-                        Image(systemName: "film")
+                    Button(action: getUrlAction(UIApplication.openSettingsURLString)) {
+                        Image(systemName: "gear")
                     }
-                    .disabled(!adMob.rewardAvailable)
                     Spacer()
                 }
             }

@@ -27,28 +27,28 @@
 		15198BF42369DDE400EA2B70 /* GFConsumable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15198BE02369DDE300EA2B70 /* GFConsumable.swift */; };
 		15198BF52369DDE400EA2B70 /* GFAdMob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15198BE12369DDE300EA2B70 /* GFAdMob.swift */; };
 		15198BF62369DDE400EA2B70 /* GFTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15198BE22369DDE300EA2B70 /* GFTools.swift */; };
-		15198BFC2369DE1800EA2B70 /* GoogleAppMeasurement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15198BF82369DE1800EA2B70 /* GoogleAppMeasurement.framework */; };
-		15198BFD2369DE1800EA2B70 /* GoogleAppMeasurement.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 15198BF82369DE1800EA2B70 /* GoogleAppMeasurement.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		15198BFE2369DE1800EA2B70 /* GoogleMobileAds.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15198BF92369DE1800EA2B70 /* GoogleMobileAds.framework */; };
-		15198BFF2369DE1800EA2B70 /* GoogleMobileAds.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 15198BF92369DE1800EA2B70 /* GoogleMobileAds.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		15198C002369DE1800EA2B70 /* nanopb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15198BFA2369DE1800EA2B70 /* nanopb.framework */; };
-		15198C012369DE1800EA2B70 /* nanopb.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 15198BFA2369DE1800EA2B70 /* nanopb.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		15198C022369DE1800EA2B70 /* GoogleUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15198BFB2369DE1800EA2B70 /* GoogleUtilities.framework */; };
-		15198C032369DE1800EA2B70 /* GoogleUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 15198BFB2369DE1800EA2B70 /* GoogleUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		154EEA3E2369F2180052B734 /* GameFrame.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 15198BD62369DDE300EA2B70 /* GameFrame.xcdatamodel */; };
+		158D35082371C42E00DF6895 /* GoogleAppMeasurement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15198BF82369DE1800EA2B70 /* GoogleAppMeasurement.framework */; };
+		158D35092371C42E00DF6895 /* GoogleAppMeasurement.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 15198BF82369DE1800EA2B70 /* GoogleAppMeasurement.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		158D350B2371C42F00DF6895 /* GoogleMobileAds.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15198BF92369DE1800EA2B70 /* GoogleMobileAds.framework */; };
+		158D350C2371C43000DF6895 /* GoogleMobileAds.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 15198BF92369DE1800EA2B70 /* GoogleMobileAds.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		158D350D2371C43100DF6895 /* GoogleUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15198BFB2369DE1800EA2B70 /* GoogleUtilities.framework */; };
+		158D350E2371C43100DF6895 /* GoogleUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 15198BFB2369DE1800EA2B70 /* GoogleUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		158D350F2371C43300DF6895 /* nanopb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 15198BFA2369DE1800EA2B70 /* nanopb.framework */; };
+		158D35102371C43300DF6895 /* nanopb.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 15198BFA2369DE1800EA2B70 /* nanopb.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		15198C042369DE1800EA2B70 /* Embed Frameworks */ = {
+		158D350A2371C42E00DF6895 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				15198BFF2369DE1800EA2B70 /* GoogleMobileAds.framework in Embed Frameworks */,
-				15198C012369DE1800EA2B70 /* nanopb.framework in Embed Frameworks */,
-				15198C032369DE1800EA2B70 /* GoogleUtilities.framework in Embed Frameworks */,
-				15198BFD2369DE1800EA2B70 /* GoogleAppMeasurement.framework in Embed Frameworks */,
+				158D350E2371C43100DF6895 /* GoogleUtilities.framework in Embed Frameworks */,
+				158D350C2371C43000DF6895 /* GoogleMobileAds.framework in Embed Frameworks */,
+				158D35102371C43300DF6895 /* nanopb.framework in Embed Frameworks */,
+				158D35092371C42E00DF6895 /* GoogleAppMeasurement.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -90,10 +90,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				15198BFE2369DE1800EA2B70 /* GoogleMobileAds.framework in Frameworks */,
-				15198C002369DE1800EA2B70 /* nanopb.framework in Frameworks */,
-				15198C022369DE1800EA2B70 /* GoogleUtilities.framework in Frameworks */,
-				15198BFC2369DE1800EA2B70 /* GoogleAppMeasurement.framework in Frameworks */,
+				158D35082371C42E00DF6895 /* GoogleAppMeasurement.framework in Frameworks */,
+				158D350D2371C43100DF6895 /* GoogleUtilities.framework in Frameworks */,
+				158D350F2371C43300DF6895 /* nanopb.framework in Frameworks */,
+				158D350B2371C42F00DF6895 /* GoogleMobileAds.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -195,7 +195,7 @@
 				15198B942369DCDB00EA2B70 /* Sources */,
 				15198B952369DCDB00EA2B70 /* Frameworks */,
 				15198B962369DCDB00EA2B70 /* Resources */,
-				15198C042369DE1800EA2B70 /* Embed Frameworks */,
+				158D350A2371C42E00DF6895 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -402,6 +402,7 @@
 		15198BA12369DCDB00EA2B70 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = YW52XX5QKJ;
@@ -419,6 +420,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = apps4live.GameFrameKit;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -426,12 +428,14 @@
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "arm64 arm64e armv7 armv7s";
 			};
 			name = Debug;
 		};
 		15198BA22369DCDB00EA2B70 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = YW52XX5QKJ;
@@ -456,6 +460,7 @@
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "arm64 arm64e armv7 armv7s";
 			};
 			name = Release;
 		};

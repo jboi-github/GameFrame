@@ -39,6 +39,9 @@ public class GFInApp: NSObject, ObservableObject {
     }
     
     // MARK: - Public functions
+    /// Did the store react and send some products back, yet?
+    @Published public fileprivate(set) var available: Bool = false
+
     /// GUI should indicate to wait while purchase is ongoing and not deferred
     @Published public fileprivate(set) var purchasing: Bool = false
 
@@ -167,8 +170,10 @@ private class Delegater: NSObject, SKPaymentTransactionObserver, SKProductsReque
         for product in response.products {
             if let (consumable, baseQuantity) = readConfigFor(product.productIdentifier) {
                 consumable.products[baseQuantity] = product
+                DispatchQueue.main.async {self.parent.available = true}
             } else if let nonConsumable = nonConsumables[product.productIdentifier] {
                 nonConsumable.product = product
+                DispatchQueue.main.async {self.parent.available = true}
             }
         }
         

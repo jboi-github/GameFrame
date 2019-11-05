@@ -6,7 +6,8 @@
 //  Copyright © 2019 Juergen Boiselle. All rights reserved.
 //
 
-import UIKit
+import Foundation
+import SwiftUI
 
 // Singleton instance
 var activeSheet = AcitveSheetLogic()

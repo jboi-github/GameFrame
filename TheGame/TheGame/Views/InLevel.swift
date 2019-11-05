@@ -37,6 +37,7 @@ struct InLevel: View {
     private struct Navigation: View {
         @ObservedObject var sheets = activeSheet
         @ObservedObject private var adMob = GameFrame.adMob
+        @ObservedObject private var inApp = GameFrame.inApp
         @ObservedObject private var bullets = GameFrame.coreData.getConsumable("Bullets")
 
         var body: some View {
@@ -51,6 +52,7 @@ struct InLevel: View {
                 Button(action: {self.sheets.next(.Store)}) {
                     Image(systemName: "cart")
                 }
+                .disabled(!inApp.available)
                 Spacer()
                 Button(action: {GameFrame.adMob.showReward(consumable: self.bullets, quantity: 100)}) {
                     Image(systemName: "film")
