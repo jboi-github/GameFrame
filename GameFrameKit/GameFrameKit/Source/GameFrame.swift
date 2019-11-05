@@ -79,6 +79,7 @@ public class GameFrame: NSObject {
     /// Singelton init
     private init(window: UIWindow?, consumablesConfig: [String : (String, Int)], adUnitIdBanner: String?, adUnitIdRewarded: String?, adUnitIdInterstitial: String?) {
         log()
+        self.window = window
         super.init()
         coreDataImpl = GFCoreDataCloudKit()
         gameCenterImpl = GFGameCenter(window)
@@ -119,12 +120,61 @@ public class GameFrame: NSObject {
         if showInterstitial {adMobImpl.showInterstitial()}
     }
     
+    public func showShare(greeting: String? = nil, url urlString: String? = nil, format: String) {
+        // Put items in the list
+        var items = [Any]()
+        if let urlString = urlString, let url = URL(string: urlString) {items.append(url)}
+        items.append(contentsOf: scores.map({"\($0.key): \($0.value.current) / \($0.value.highest)"}))
+        items.append(contentsOf:
+            achievements.map({"\($0.key): \($0.value.current.format(format)) / \($0.value.highest.format(format))"}))
+        items.append(contentsOf: consumables.map({"\($0.key): \($0.value.available)"}))
+        items.append(contentsOf: nonConsumables.map({"\($0.key): \($0.value.isOpened ? "✅" : "❌")"}))
+        if let greeting = greeting {items.append(ShareSubject(greeting: greeting))}
+
+        // Create and show view
+        let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        window?.rootViewController?.present(ac, animated: true)
+    }
+    
+    public func getScreenhot() -> UIImage? {
+        guard let layer = window?.layer else {return nil}
+        
+        UIGraphicsBeginImageContextWithOptions(layer.frame.size, false, UIScreen.main.scale)
+        
+        defer { UIGraphicsEndImageContext() }
+        guard let context = UIGraphicsGetCurrentContext() else { return nil }
+        
+        layer.render(in: context)
+        return UIGraphicsGetImageFromCurrentImageContext()
+    }
+    
     // MARK: - Internal handling
+    private let window: UIWindow?
     
     /// Get notified, when it's time to save
     @objc func onDidEnterBackgroundNotification(_ notification:Notification) {
         log()
         coreDataImpl.save()
         gameCenterImpl.report()
+    }
+}
+
+private class ShareSubject: NSObject, UIActivityItemSource {
+    private let greeting: String
+    
+    fileprivate init(greeting: String) {
+        self.greeting = greeting
+    }
+    
+    func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any {
+        return greeting
+    }
+    
+    func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivity.ActivityType?) -> Any? {
+        return greeting
+    }
+    
+    func activityViewController(_ activityViewController: UIActivityViewController, subjectForActivityType activityType: UIActivity.ActivityType?) -> String {
+        return greeting
     }
 }

@@ -71,15 +71,21 @@ struct StoreView: View {
 
     var body: some View {
         VStack {
-            List {
-                Section() {
-                    ForEach(consumables) {
-                        ConsumableProductRow(consumableProduct: $0)
+            if consumables.isEmpty && nonConsumables.isEmpty {
+                Spacer()
+                Text("No products available or store not available")
+                
+            } else {
+                List {
+                    Section() {
+                        ForEach(consumables) {
+                            ConsumableProductRow(consumableProduct: $0)
+                        }
                     }
-                }
-                Section() {
-                     ForEach(nonConsumables) {
-                        NonConsumableProductRow(nonConsumable: $0)
+                    Section() {
+                         ForEach(nonConsumables) {
+                            NonConsumableProductRow(nonConsumable: $0)
+                        }
                     }
                 }
             }
@@ -91,7 +97,7 @@ struct StoreView: View {
                 }) {
                     Image(systemName: "arrow.uturn.right")
                 }
-                .accessibility(hint: Text("Restore"))
+                .accessibility(label: Text("Restore"))
                 Spacer()
                 Button(action: {
                     self.sheets.back()

@@ -69,6 +69,6 @@ func makeOffer() -> (reward: (consumable: GFConsumable, quantity: Int)?, purchas
     // Offer if product available in store
     let purchase = GameFrame.inApp.getConsumables(ids: [emptyConsumableId])
     
-    return (reward: reward, purchase: purchase)
+    return (reward: reward, purchase: purchase.isEmpty ? nil : purchase)
 }
 
