@@ -11,9 +11,7 @@ import GameFrameKit
 import StoreKit
 
 struct StoreView: View {
-    @ObservedObject var sheets = activeSheet
-    private var consumables = GameFrame.inApp.getConsumables(ids: ["Lives", "Bullets"])
-    private var nonConsumables = GameFrame.inApp.getNonConsumables(ids: ["weaponB", "weaponC"])
+    @Environment(\.presentationMode) private var presentationMode
     
     private struct ConsumableProductRow: View {
         var consumableProduct: GFInApp.ConsumableProduct
@@ -70,7 +68,10 @@ struct StoreView: View {
     }
 
     var body: some View {
-        VStack {
+        let consumables = GameFrame.inApp.getConsumables(ids: ["Lives", "Bullets"])
+        let nonConsumables = GameFrame.inApp.getNonConsumables(ids: ["weaponB", "weaponC"])
+
+        return VStack {
             if consumables.isEmpty && nonConsumables.isEmpty {
                 Spacer()
                 Text("No products available or store not available")
@@ -96,17 +97,21 @@ struct StoreView: View {
                     GameFrame.inApp.restore()
                 }) {
                     Image(systemName: "arrow.uturn.right")
+                    Text("restore")
                 }
-                .accessibility(label: Text("Restore"))
                 Spacer()
                 Button(action: {
-                    self.sheets.back()
+                    self.presentationMode.wrappedValue.dismiss()
                 }) {
                     Image(systemName: "xmark")
                 }
                 Spacer()
             }
         }
+        .modifier(StoreViewModifier())
+        .navigationBarHidden(true)
+        .navigationBarTitle(Text("Title"))
+        .navigationBarBackButtonHidden(true)
     }
 }
 

@@ -19,7 +19,7 @@ struct ErrorView: View {
             Button(action: {
                 GameFrame.inApp.clearError()
             }) {
-                Image(systemName: "checkmark")
+                Image(systemName: "xmark")
             }
             Spacer()
         }

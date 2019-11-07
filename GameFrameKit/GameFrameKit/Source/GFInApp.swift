@@ -56,7 +56,7 @@ public class GFInApp: NSObject, ObservableObject {
      The array is sorted in the same order, as `ids` were given and then by quantity.
      */
     public func getConsumables(ids: [String]) -> [ConsumableProduct] {
-        log()
+        log(ids)
         
         // Get all Consumables with available products
         return ids.compactMap({
@@ -96,7 +96,7 @@ public class GFInApp: NSObject, ObservableObject {
      - returns: An Array of NonConsumables where the product is available. The array is sorted in the same order, as `ids` were given.
      */
     public func getNonConsumables(ids: [String]) -> [GFNonConsumable] {
-        log()
+        log(ids)
         var cs = [GFNonConsumable]()
         for id in ids {
             guard let nonConsumable = nonConsumables[id] else {continue}
@@ -113,7 +113,7 @@ public class GFInApp: NSObject, ObservableObject {
      - Parameter quantity: Is the quantity, that the player given to buy. For non-consumables, this number is ignored. For consumables the quantity here is multiplied by the quantity, given in the consumable for the product. Eaxample: You offer a product, that for 10 Lasershots for only 0.99$. The player buys 2 of the. Then he pays 2x0.99$ and gets 10x2=20 Lasershots on the `Consumable.available`. This helps to create products for non-linear pricing, e.g. you can discount like: 1 piece costs 0.99$ and 5 pieces only 2.99$.
      */
     public func buy(product: SKProduct, quantity: Int) {
-        log()
+        log(product.productIdentifier, quantity)
         let payment = SKMutablePayment(product: product)
         payment.quantity = quantity
         
@@ -166,14 +166,15 @@ private class Delegater: NSObject, SKPaymentTransactionObserver, SKProductsReque
     }
     
     internal func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
-        log()
+        log(response.products.map({$0.productIdentifier}), response.invalidProductIdentifiers)
+        
         for product in response.products {
             if let (consumable, baseQuantity) = readConfigFor(product.productIdentifier) {
                 consumable.products[baseQuantity] = product
-                DispatchQueue.main.async {self.parent.available = true}
+                DispatchQueue.main.async {self.parent.available.set()}
             } else if let nonConsumable = nonConsumables[product.productIdentifier] {
                 nonConsumable.product = product
-                DispatchQueue.main.async {self.parent.available = true}
+                DispatchQueue.main.async {self.parent.available.set()}
             }
         }
         
@@ -193,7 +194,7 @@ private class Delegater: NSObject, SKPaymentTransactionObserver, SKProductsReque
             case .purchasing:
                 log("purchasing")
                 // Keep paused and fingers crossed
-                parent.purchasing = true
+                parent.purchasing.set()
                 break
             case .deferred:
                 log("deferred")
@@ -205,7 +206,7 @@ private class Delegater: NSObject, SKPaymentTransactionObserver, SKProductsReque
                 } else {
                     log("Unknown product! \(transaction.payment)")
                 }
-                parent.purchasing = false
+                parent.purchasing.unset()
                 break
             case .failed:
                 log("failed", transaction.error)
@@ -219,7 +220,7 @@ private class Delegater: NSObject, SKPaymentTransactionObserver, SKProductsReque
                 }
                 SKPaymentQueue.default().finishTransaction(transaction)
                 parent.error = transaction.error
-                parent.purchasing = false
+                parent.purchasing.unset()
                 break
             case .purchased:
                 log("purchased")
@@ -233,19 +234,19 @@ private class Delegater: NSObject, SKPaymentTransactionObserver, SKProductsReque
                 }
                 SKPaymentQueue.default().finishTransaction(transaction)
                 parent.error = nil
-                parent.purchasing = false
+                parent.purchasing.unset()
                 break
             case .restored:
                 log("restored")
                 SKPaymentQueue.default().finishTransaction(transaction)
                 parent.error = nil
-                parent.purchasing = false
+                parent.purchasing.unset()
                 break
             // For debugging purposes.
             @unknown default:
                 log("Unexpected transaction state \(transaction.transactionState)")
                 parent.error = nil
-                parent.purchasing = false
+                parent.purchasing.unset()
             }
         }
     }

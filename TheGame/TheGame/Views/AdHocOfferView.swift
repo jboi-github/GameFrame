@@ -10,29 +10,28 @@ import SwiftUI
 import GameFrameKit
 
 struct AdHocOfferView: View {
-    var body: some View {
-        let offer = makeOffer() //
+    @Binding var showOffer: Bool
+    var reward: (consumable: GFConsumable, quantity: Int)?
+    var purchases: [GFInApp.ConsumableProduct]
 
-        return VStack {
+    var body: some View {
+        VStack {
             Spacer()
-            if offer.purchase != nil && offer.purchase?.count ?? 0 > 0 {
-                ForEach(offer.purchase!) {
-                    p in
-                    
-                    Button(action: {
-                        GameFrame.inApp.buy(product: p.product, quantity: 1)
-                        activeSheet.next(.InLevel)
-                    }) {
-                        HStack {
-                            VStack {
-                                Text("\(p.product.localizedTitle)")
-                                Text("\(p.product.localizedDescription)")
-                            }
-                            Spacer()
-                            VStack {
-                                Image(systemName: "cart")
-                                Text("\(p.product.localizedPrice(quantity: 1))")
-                            }
+            ForEach(purchases) {
+                purchase in
+                
+                Button(action: {
+                    GameFrame.inApp.buy(product: purchase.product, quantity: 1)
+                }) {
+                    HStack {
+                        VStack {
+                            Text("\(purchase.product.localizedTitle)")
+                            Text("\(purchase.product.localizedDescription)")
+                        }
+                        Spacer()
+                        VStack {
+                            Image(systemName: "cart")
+                            Text("\(purchase.product.localizedPrice(quantity: 1))")
                         }
                     }
                 }
@@ -41,28 +40,29 @@ struct AdHocOfferView: View {
             HStack {
                 Spacer()
                 Button(action: {
-                    GameFrame.adMob.showReward(consumable: offer.reward!.consumable, quantity: offer.reward!.quantity)
-                    activeSheet.next(.InLevel)
+                    GameFrame.adMob.showReward(consumable: self.reward!.consumable, quantity: self.reward!.quantity)
+                    self.showOffer.unset()
                 }) {
                     Image(systemName: "film")
                 }
-                .disabled(offer.reward == nil)
+                .disabled(reward == nil)
                 Spacer()
 
-                // When "no, thanks" -> Goto .OffLevel
+                // When "no, thanks" -> Go back
                 Button(action: {
-                    activeSheet.next(.OffLevel)
+                    self.showOffer.unset()
                 }) {
                     Image(systemName: "xmark")
                 }
                 Spacer()
             }
         }
+        .modifier(StoreViewModifier())
     }
 }
 
 struct AdHocOfferView_Previews: PreviewProvider {
     static var previews: some View {
-        AdHocOfferView()
+        AdHocOfferView(showOffer: .constant(true), reward: nil, purchases: [GFInApp.ConsumableProduct]())
     }
 }

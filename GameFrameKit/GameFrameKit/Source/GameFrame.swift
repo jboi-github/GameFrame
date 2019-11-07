@@ -110,7 +110,7 @@ public class GameFrame: NSObject {
      - Parameter showInterstitial: If set to true and an Interstial is available from Googles admob, it is shown to the user. Interstials are percieved as annoying by the community, but are still a way to earn money. Use this flag wisely. If both parameters are set to `true`and an interstitial is available, it is only tried to show the interstitial.
      */
     public func leaveLevel(requestReview: Bool, showInterstitial: Bool) {
-        log()
+        log(requestReview, showInterstitial)
         coreDataImpl.save()
         gameCenterImpl.report()
         

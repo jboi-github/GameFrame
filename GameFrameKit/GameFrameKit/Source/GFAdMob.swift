@@ -45,14 +45,14 @@ public class GFAdMob: NSObject, ObservableObject {
 
     /// Show the rewarded video. If succesfull, player earns quantity of consumable
     public func showReward(consumable: GFConsumable, quantity: Int) {
-        log()
+        log(consumable, quantity)
         guard rewardAvailable else {return}
         guard rewardedAd?.isReady ?? false else {return}
         
         rewardedAction = {consumable.earn(quantity)}
         if let window = window {
             rewardedAd?.present(fromRootViewController: window.rootViewController!, delegate:delegater!)
-            rewardAvailable = false
+            rewardAvailable.unset()
         }
     }
 
@@ -105,7 +105,7 @@ fileprivate var delegater: Delegater? = nil
 
 /// The banner advertisement has fixed width and height. Should be positioned.
 public struct GFBannerView: UIViewControllerRepresentable {
-    public init() {}
+    public init() {log()}
     
     public func makeUIViewController(context: Context) -> UIViewController {
         log()
@@ -141,11 +141,11 @@ private class Delegater: NSObject, GADBannerViewDelegate, GADRewardedAdDelegate,
     // Banner events
     func adViewDidReceiveAd(_ bannerView: GADBannerView) {
         log()
-        parent.bannerAvailable = true
+        parent.bannerAvailable.set()
     }
     func adView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: GADRequestError) {
         log()
-        parent.bannerAvailable = false
+        parent.bannerAvailable.unset()
         guard check(error) else {return}
     }
     func adViewWillPresentScreen(_ bannerView: GADBannerView) {log()}
@@ -155,7 +155,7 @@ private class Delegater: NSObject, GADBannerViewDelegate, GADRewardedAdDelegate,
 
     // Rewarded events
     internal func rewardedAd(_ rewardedAd: GADRewardedAd, userDidEarn reward: GADAdReward) {
-        log()
+        log(reward.amount)
         if let rewardedAction = parent.rewardedAction {rewardedAction()}
     }
 
@@ -166,7 +166,7 @@ private class Delegater: NSObject, GADBannerViewDelegate, GADRewardedAdDelegate,
     
     internal func rewardedAd(_ rewardedAd: GADRewardedAd, didFailToPresentWithError error: Error) {
         log()
-        parent.rewardAvailable = false
+        parent.rewardAvailable.unset()
         guard check(error) else {return}
     }
 

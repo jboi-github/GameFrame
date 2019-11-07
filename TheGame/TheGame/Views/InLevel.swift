@@ -10,10 +10,6 @@ import SwiftUI
 import GameFrameKit
 
 struct InLevel: View {
-    @ObservedObject var sheets = activeSheet
-    @ObservedObject private var points = GameFrame.coreData.getScore("Points")
-    @ObservedObject private var bullets = GameFrame.coreData.getConsumable("Bullets")
-
     private struct Information: View {
         @ObservedObject private var points = GameFrame.coreData.getScore("Points")
         @ObservedObject private var medals = GameFrame.coreData.getAchievement("Medals")
@@ -35,26 +31,24 @@ struct InLevel: View {
     }
     
     private struct Navigation: View {
-        @ObservedObject var sheets = activeSheet
         @ObservedObject private var adMob = GameFrame.adMob
         @ObservedObject private var inApp = GameFrame.inApp
-        @ObservedObject private var bullets = GameFrame.coreData.getConsumable("Bullets")
 
         var body: some View {
             HStack {
                 Spacer()
-                Button(action: {
-                    self.sheets.next(.OffLevel)
-                }) {
+                NavigationLink(destination: OffLevel()) {
                     Image(systemName: "xmark")
                 }
                 Spacer()
-                Button(action: {self.sheets.next(.Store)}) {
+                NavigationLink(destination: StoreView()) {
                     Image(systemName: "cart")
                 }
                 .disabled(!inApp.available)
                 Spacer()
-                Button(action: {GameFrame.adMob.showReward(consumable: self.bullets, quantity: 100)}) {
+                Button(action: {
+                    GameFrame.adMob.showReward(consumable: GameFrame.coreData.getConsumable("Bullets"), quantity: 100)
+                }) {
                     Image(systemName: "film")
                 }
                 .disabled(!adMob.rewardAvailable)
@@ -65,19 +59,24 @@ struct InLevel: View {
     }
     
     private struct GameZone: View {
-        @ObservedObject var sheets = activeSheet
         @ObservedObject private var points = GameFrame.coreData.getScore("Points")
         @ObservedObject private var medals = GameFrame.coreData.getAchievement("Medals")
         @ObservedObject private var bullets = GameFrame.coreData.getConsumable("Bullets")
         @ObservedObject private var lives = GameFrame.coreData.getConsumable("Lives")
+        @State private var showOffer = false
+        @State private var reward: (consumable: GFConsumable, quantity: Int)? = nil
+        @State private var purchases = [GFInApp.ConsumableProduct]()
+        @Environment(\.presentationMode) private var presentationMode
 
         var body: some View {
             VStack {
+                HStack{Spacer()}
                 Group {
                     Spacer()
                     Button(action: {
                         self.bullets.consume(1)
-                        checkDeath()
+                        self.deathOrOffer(showOffer: self.$showOffer, reward: self.$reward, purchase: self.$purchases)
+                        if !self.showOffer {self.presentationMode.wrappedValue.dismiss()}
                     }) {
                         Text("Shot")
                     }
@@ -98,13 +97,42 @@ struct InLevel: View {
                     Spacer()
                     Button(action: {
                         self.lives.consume(1)
-                        checkDeath()
+                        self.deathOrOffer(showOffer: self.$showOffer, reward: self.$reward, purchase: self.$purchases)
+                        log(self.showOffer)
+                        if !self.showOffer {self.presentationMode.wrappedValue.dismiss()}
                     }) {
                         Text("Killed")
                     }
                     Spacer()
                 }
             }
+            .overlay(VStack {
+                if showOffer {
+                    AdHocOfferView(showOffer: $showOffer, reward: reward, purchases: purchases)
+                } else {
+                    EmptyView()
+                }
+            })
+        }
+        
+        // Resort from result oriented Swift to inout-parameter driven SwiftUI
+        private func deathOrOffer(showOffer: Binding<Bool>, reward: Binding<(consumable: GFConsumable, quantity: Int)?>, purchase: Binding<[GFInApp.ConsumableProduct]>) {
+            log()
+            guard gameLogic.isDead() else {
+                showOffer.wrappedValue.unset()
+                return
+            }
+            
+            if let offer = gameLogic.makeOffer() {
+                reward.wrappedValue = offer.reward
+                purchase.wrappedValue = offer.purchase
+                showOffer.wrappedValue = (offer.reward != nil) || (!offer.purchase.isEmpty)
+            } else {
+                showOffer.wrappedValue.unset()
+            }
+            
+            if !showOffer.wrappedValue {gameLogic.afterLeavingLevel()}
+            return
         }
     }
 
@@ -117,6 +145,9 @@ struct InLevel: View {
                 Navigation()
             }
         }
+        .navigationBarHidden(true)
+        .navigationBarTitle(Text("Title"))
+        .navigationBarBackButtonHidden(true)
     }
 }
 

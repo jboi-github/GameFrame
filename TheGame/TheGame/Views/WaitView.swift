@@ -17,7 +17,7 @@ struct WaitView: View {
             Image(systemName: "arrow.2.circlepath")
                 .resizable()
                 .scaledToFit()
-                .rotationEffect(.degrees(spin ? 0 : 360))
+                .rotationEffect(.degrees(spin ? 360 : 0))
                 .animation(Animation.linear(duration: 1.0).repeatForever(autoreverses: false))
                 .onAppear() {self.spin.toggle()}
             Spacer()

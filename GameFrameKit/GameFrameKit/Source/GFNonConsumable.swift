@@ -42,20 +42,20 @@ public class GFNonConsumable: ObservableObject, Identifiable {
 
     /// Earn (increment) some score
     public func unlock() {
-        isOpened = true
+        isOpened.set()
         prebooked = false
     }
      
     /// Prebook, if purchase is deferred.
     internal func prebook() {
-        isOpened = true
+        isOpened.set()
         prebooked = true
     }
      
     /// Rollback any prebooking if exists
     internal func rollback() {
         guard prebooked else {return}
-        isOpened = false
+        isOpened.unset()
         prebooked = false // Open for another try
     }
 

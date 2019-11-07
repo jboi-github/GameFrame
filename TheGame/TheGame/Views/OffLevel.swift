@@ -10,8 +10,8 @@ import SwiftUI
 import GameFrameKit
 
 struct OffLevel: View {
-    @ObservedObject var sheets = activeSheet
-
+    @State private var showInLevel = false
+    
     private struct Information: View {
         @ObservedObject private var points = GameFrame.coreData.getScore("Points")
         @ObservedObject private var medals = GameFrame.coreData.getAchievement("Medals")
@@ -51,7 +51,6 @@ struct OffLevel: View {
     }
     
     private struct Navigation: View {
-        @ObservedObject var sheets = activeSheet
         @ObservedObject private var bullets = GameFrame.coreData.getConsumable("Bullets")
         @ObservedObject private var adMob = GameFrame.adMob
         @ObservedObject private var inApp = GameFrame.inApp
@@ -61,7 +60,7 @@ struct OffLevel: View {
             HStack {
                 Spacer()
                 Group {
-                    Button(action: {self.sheets.next(.Store)}) {
+                    NavigationLink(destination: StoreView()) {
                         Image(systemName: "cart")
                     }
                     .disabled(!inApp.available)
@@ -115,14 +114,21 @@ struct OffLevel: View {
         VStack {
             Information()
             Spacer()
+            NavigationLink(destination: InLevel(), isActive: $showInLevel) {EmptyView()}
             Button(action: {
-                self.sheets.next(.InLevel)
+                self.showInLevel.set()
+                gameLogic.beforeEnteringLevel()
             }) {
-                Image(systemName: "play.circle").resizable().scaledToFit()
+                Image(systemName: "play.circle")
+                    .resizable()
+                    .scaledToFit()
             }
             Spacer()
             Navigation()
         }
+        .navigationBarHidden(true)
+        .navigationBarTitle(Text("Title"))
+        .navigationBarBackButtonHidden(true)
     }
 }
 
