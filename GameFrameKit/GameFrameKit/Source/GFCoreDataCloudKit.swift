@@ -52,7 +52,6 @@ public class GFCoreDataCloudKit: NSObject {
      - returns: The achievement as it was found in data or a newly created Default-Achievement
      */
     public func getAchievement(_ id: String) -> GFAchievement {
-        log(id)
         return achievements.getAndAddIfNotExisting(key: id) {
             (id) -> GFAchievement in
             GFAchievement(id, context: delegate.viewContext)
@@ -66,7 +65,6 @@ public class GFCoreDataCloudKit: NSObject {
      - returns: The score as it was found in data or a newly created Default-Score
      */
     public func getScore(_ id: String) -> GFScore {
-        log(id)
         return scores.getAndAddIfNotExisting(key: id) {
             (id) -> GFScore in
             return GFScore(id, context: delegate.viewContext)
@@ -80,7 +78,6 @@ public class GFCoreDataCloudKit: NSObject {
      - returns: The score as it was found in data or a newly created Default-Score
      */
     public func getNonConsumable(_ id: String) -> GFNonConsumable {
-        log(id)
         return nonConsumables.getAndAddIfNotExisting(key: id) {
             (id) -> GFNonConsumable in
             GFNonConsumable(id, context: delegate.viewContext)
@@ -94,7 +91,6 @@ public class GFCoreDataCloudKit: NSObject {
      - returns: The score as it was found in data or a newly created Default-Score
      */
     public func getConsumable(_ id: String) -> GFConsumable {
-        log(id)
         return consumables.getAndAddIfNotExisting(key: id) {
             (id) -> GFConsumable in
             GFConsumable(id, context: delegate.viewContext)

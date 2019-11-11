@@ -9,14 +9,26 @@
 import SwiftUI
 import GameFrameKit
 
-struct MainView: View {
-    private struct Banner: View {
+struct MainView<V>: View where V: View {
+    var bannerAlternative: V
+    var startsOffLevel: Bool
+    
+    init(gameZoneDelegate: GameZoneDelegate, bannerAlternative: V, startsOffLevel: Bool) {
+        log()
+        self.bannerAlternative = bannerAlternative
+        self.startsOffLevel = startsOffLevel
+        
+        gameZoneController.setDelegate(delegate: gameZoneDelegate)
+    }
+    
+    private struct Banner<V>: View where V: View {
+        var bannerAlternative: V
         @ObservedObject private var adMob = GameFrame.adMob
         
         var body: some View {
             ZStack {
                 GFBannerView() // Must be called to get initial height & width
-                if !adMob.bannerAvailable {Text("Thank you for playing The Game")}
+                if !adMob.bannerAvailable {bannerAlternative}
             }
             .frame(width: adMob.bannerWidth, height: adMob.bannerHeight)
         }
@@ -25,10 +37,15 @@ struct MainView: View {
     var body: some View {
         VStack {
             NavigationView {
-                OffLevel()
+                if startsOffLevel {
+                    OffLevel()
+                } else {
+                    InLevel()
+                }
             }
-            Banner()
+            Banner(bannerAlternative: bannerAlternative)
         }
+        .modifier(BaseViewModifier())
     }
 }
 
@@ -40,6 +57,9 @@ struct MainView_Previews: PreviewProvider {
             adUnitIdRewarded: nil,
             adUnitIdInterstitial: nil)
         
-        return MainView()
+        return MainView(
+            gameZoneDelegate: TheGameDelegate(),
+            bannerAlternative: Text("Thank you for playing The Game"),
+            startsOffLevel: true)
     }
 }

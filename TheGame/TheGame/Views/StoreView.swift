@@ -11,7 +11,11 @@ import GameFrameKit
 import StoreKit
 
 struct StoreView: View {
-    @Environment(\.presentationMode) private var presentationMode
+    var consumableIds: [String]
+    var nonConsumableIds: [String]
+    
+    @Environment(\.presentationMode) var presentationMode
+    @ObservedObject private var inApp = GameFrame.inApp
     
     private struct ConsumableProductRow: View {
         var consumableProduct: GFInApp.ConsumableProduct
@@ -68,55 +72,45 @@ struct StoreView: View {
     }
 
     var body: some View {
-        let consumables = GameFrame.inApp.getConsumables(ids: ["Lives", "Bullets"])
-        let nonConsumables = GameFrame.inApp.getNonConsumables(ids: ["weaponB", "weaponC"])
+        let consumables = GameFrame.inApp.getConsumables(ids: consumableIds)
+        let nonConsumables = GameFrame.inApp.getNonConsumables(ids: nonConsumableIds)
 
         return VStack {
-            if consumables.isEmpty && nonConsumables.isEmpty {
+            Group {
                 Spacer()
-                Text("No products available or store not available")
-                
-            } else {
-                List {
-                    Section() {
-                        ForEach(consumables) {
-                            ConsumableProductRow(consumableProduct: $0)
+                if consumables.isEmpty && nonConsumables.isEmpty {
+                    Text("No products available or store not available")
+                } else {
+                    List {
+                        Section() {
+                            ForEach(consumables) {
+                                ConsumableProductRow(consumableProduct: $0)
+                            }
+                        }
+                        Section() {
+                             ForEach(nonConsumables) {
+                                NonConsumableProductRow(nonConsumable: $0)
+                            }
                         }
                     }
-                    Section() {
-                         ForEach(nonConsumables) {
-                            NonConsumableProductRow(nonConsumable: $0)
-                        }
-                    }
-                }
-            }
-            Spacer()
-            HStack {
-                Spacer()
-                Button(action: {
-                    GameFrame.inApp.restore()
-                }) {
-                    Image(systemName: "arrow.uturn.right")
-                    Text("restore")
-                }
-                Spacer()
-                Button(action: {
-                    self.presentationMode.wrappedValue.dismiss()
-                }) {
-                    Image(systemName: "xmark")
                 }
                 Spacer()
             }
+            NavigationArea(navigatables: [
+                (action: {GameFrame.inApp.restore()},
+                 image: Image(systemName: "arrow.uturn.right"),
+                 disabled: nil),
+                (action: {self.presentationMode.wrappedValue.dismiss()},
+                 image: Image(systemName: "xmark"),
+                 disabled: nil)])
         }
-        .modifier(StoreViewModifier())
-        .navigationBarHidden(true)
-        .navigationBarTitle(Text("Title"))
-        .navigationBarBackButtonHidden(true)
+        .overlay(WaitWithErrorOverlay())
+        .modifier(NavigatableViewModifier())
     }
 }
 
 struct StoreView_Previews: PreviewProvider {
     static var previews: some View {
-        StoreView()
+        StoreView(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])
     }
 }

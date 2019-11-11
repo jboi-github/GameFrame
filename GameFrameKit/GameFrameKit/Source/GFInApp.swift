@@ -56,8 +56,6 @@ public class GFInApp: NSObject, ObservableObject {
      The array is sorted in the same order, as `ids` were given and then by quantity.
      */
     public func getConsumables(ids: [String]) -> [ConsumableProduct] {
-        log(ids)
-        
         // Get all Consumables with available products
         return ids.compactMap({
             (id) -> GFConsumable? in
@@ -96,7 +94,6 @@ public class GFInApp: NSObject, ObservableObject {
      - returns: An Array of NonConsumables where the product is available. The array is sorted in the same order, as `ids` were given.
      */
     public func getNonConsumables(ids: [String]) -> [GFNonConsumable] {
-        log(ids)
         var cs = [GFNonConsumable]()
         for id in ids {
             guard let nonConsumable = nonConsumables[id] else {continue}
@@ -185,7 +182,7 @@ private class Delegater: NSObject, SKPaymentTransactionObserver, SKProductsReque
 
     // MARK: Handle payment events
     internal func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
-        log()
+        log(transactions.count)
         for transaction in transactions {
             log("\(transaction.payment.quantity) x \(transaction.payment.productIdentifier) -> \(transaction.transactionState)")
             switch transaction.transactionState {
@@ -194,7 +191,7 @@ private class Delegater: NSObject, SKPaymentTransactionObserver, SKProductsReque
             case .purchasing:
                 log("purchasing")
                 // Keep paused and fingers crossed
-                parent.purchasing.set()
+                self.parent.purchasing.set()
                 break
             case .deferred:
                 log("deferred")
@@ -206,7 +203,7 @@ private class Delegater: NSObject, SKPaymentTransactionObserver, SKProductsReque
                 } else {
                     log("Unknown product! \(transaction.payment)")
                 }
-                parent.purchasing.unset()
+                self.parent.purchasing.unset()
                 break
             case .failed:
                 log("failed", transaction.error)
@@ -219,8 +216,8 @@ private class Delegater: NSObject, SKPaymentTransactionObserver, SKProductsReque
                     log("Unknown product! \(transaction.payment)")
                 }
                 SKPaymentQueue.default().finishTransaction(transaction)
-                parent.error = transaction.error
-                parent.purchasing.unset()
+                self.parent.error = transaction.error
+                self.parent.purchasing.unset()
                 break
             case .purchased:
                 log("purchased")
@@ -233,20 +230,20 @@ private class Delegater: NSObject, SKPaymentTransactionObserver, SKProductsReque
                     log("Unknown product! \(transaction.payment)")
                 }
                 SKPaymentQueue.default().finishTransaction(transaction)
-                parent.error = nil
-                parent.purchasing.unset()
+                self.parent.error = nil
+                self.parent.purchasing.unset()
                 break
             case .restored:
                 log("restored")
                 SKPaymentQueue.default().finishTransaction(transaction)
-                parent.error = nil
-                parent.purchasing.unset()
+                self.parent.error = nil
+                self.parent.purchasing.unset()
                 break
             // For debugging purposes.
             @unknown default:
                 log("Unexpected transaction state \(transaction.transactionState)")
-                parent.error = nil
-                parent.purchasing.unset()
+                self.parent.error = nil
+                self.parent.purchasing.unset()
             }
         }
     }

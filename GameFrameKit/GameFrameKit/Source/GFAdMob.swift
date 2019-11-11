@@ -44,12 +44,16 @@ public class GFAdMob: NSObject, ObservableObject {
     @Published internal(set) public var rewardAvailable: Bool = false
 
     /// Show the rewarded video. If succesfull, player earns quantity of consumable
-    public func showReward(consumable: GFConsumable, quantity: Int) {
+    public func showReward(consumable: GFConsumable, quantity: Int, completionHandler: @escaping () -> Void = {}) {
         log(consumable, quantity)
         guard rewardAvailable else {return}
         guard rewardedAd?.isReady ?? false else {return}
         
-        rewardedAction = {consumable.earn(quantity)}
+        rewardedAction = {
+            log(quantity)
+            consumable.earn(quantity)
+        }
+        rewardedCompletion = completionHandler
         if let window = window {
             rewardedAd?.present(fromRootViewController: window.rootViewController!, delegate:delegater!)
             rewardAvailable.unset()
@@ -63,7 +67,8 @@ public class GFAdMob: NSObject, ObservableObject {
     private let adUnitIdRewarded: String?
     private var rewardedAd: GADRewardedAd?
     fileprivate var rewardedAction: (() -> Void)?
-    
+    fileprivate var rewardedCompletion: (() -> Void)?
+
     /// Load first reward. Is automatically called, when one reward was shown
     fileprivate func prepareReward() {
         guard let adUnitIdRewarded = adUnitIdRewarded else {return}
@@ -156,11 +161,12 @@ private class Delegater: NSObject, GADBannerViewDelegate, GADRewardedAdDelegate,
     // Rewarded events
     internal func rewardedAd(_ rewardedAd: GADRewardedAd, userDidEarn reward: GADAdReward) {
         log(reward.amount)
-        if let rewardedAction = parent.rewardedAction {rewardedAction()}
+        parent.rewardedAction?()
     }
 
     internal func rewardedAdDidDismiss(_ rewardedAd: GADRewardedAd) {
         log()
+        parent.rewardedCompletion?()
         parent.prepareReward()
     }
     

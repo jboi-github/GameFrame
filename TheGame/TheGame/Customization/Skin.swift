@@ -13,45 +13,41 @@ import GameFrameKit
  Define the skin of an app by setting all parameters for all modifiers
  */
 class Skin: NSObject {
-    // MARK: Opaque View
-    public let viewOpaqueBackground = Color.black
+    // MARK: First base view
+    public let viewBaseBackground = Color.gray
+
+    // MARK: Views to be navigated to
+    public let viewNavigatableBackground = Color.gray
+    public let navigationBarHidden = true
+    public let navigationBarTitle = Text("Some Title")
+    public let navigationBarBackButtonHidden = true
     
-    // MARK: Popup View
-    public let viewPopupBackground = Color.clear
-    public let viewPopupOpacity = 0.5
-    public let viewPopupPadding: Double? = nil
-    public let viewPopupBlur = 5.0
+    // MARK: Overlayed View
+    public let viewOverlayedBlur = 5.0
+    public let viewOverlayedBackground = Color.black.opacity(0.25)
     
+    // MARK: Overlay View
+    public let viewOverlayBackground = Color.gray.opacity(0.9)
+    public let viewOverlayPadding: CGFloat? = nil // nil = standard padding. 0.0 means "no padding"
+
 }
 
-let skin = Skin()
+fileprivate let skin = Skin()
 
-struct OpaqueView: ViewModifier {
-    var skin: Skin
-    @State private var appeared = false
-    
+struct BaseViewModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .background(skin.viewOpaqueBackground)
-            .padding()
-            .onAppear {self.appeared = true}
-            .onDisappear {self.appeared = false}
-            .blur(radius: appeared ? 0.0 : CGFloat(skin.viewPopupBlur), opaque: false)
+            .background(skin.viewBaseBackground)
     }
 }
 
-struct PopupView: ViewModifier {
-    var skin: Skin
-    @State private var appeared = false
-
+struct NavigatableViewModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .background(skin.viewPopupBackground)
-            .opacity(skin.viewPopupOpacity)
-            .onAppear {self.appeared = true}
-            .onDisappear {self.appeared = false}
-            .blur(radius: appeared ? 0.0 : CGFloat(skin.viewPopupBlur), opaque: false)
-            .padding(.all, skin.viewPopupPadding == nil ? nil : CGFloat(skin.viewPopupPadding!))
+            .background(skin.viewNavigatableBackground)
+            .navigationBarHidden(skin.navigationBarHidden)
+            .navigationBarTitle(skin.navigationBarTitle)
+            .navigationBarBackButtonHidden(skin.navigationBarBackButtonHidden)
     }
 }
 

@@ -10,125 +10,63 @@ import SwiftUI
 import GameFrameKit
 
 struct OffLevel: View {
+    @ObservedObject private var adMob = GameFrame.adMob
+    @ObservedObject private var gameCenter = GameFrame.gameCenter
+    @ObservedObject private var inApp = GameFrame.inApp
+    @State private var showStore = false
     @State private var showInLevel = false
-    
-    private struct Information: View {
-        @ObservedObject private var points = GameFrame.coreData.getScore("Points")
-        @ObservedObject private var medals = GameFrame.coreData.getAchievement("Medals")
-        @ObservedObject private var bullets = GameFrame.coreData.getConsumable("Bullets")
-        @ObservedObject private var weaponB = GameFrame.coreData.getNonConsumable("weaponB")
-        @ObservedObject private var weaponC = GameFrame.coreData.getNonConsumable("weaponC")
-
-        var body: some View {
-            HStack {
-                Spacer()
-                Group {
-                    Text("\(medals.current.format("%.2f"))")
-                    Image(systemName: "star.circle.fill")
-                    Spacer()
-                }
-                Group {
-                    Text("\(points.current) / \(points.highest)")
-                    Spacer()
-                }
-                Group {
-                    Text("\(bullets.available)")
-                    Image(systemName: "bolt.fill")
-                    Spacer()
-                }
-                Group {
-                    if weaponC.isOpened {
-                        Image(systemName: "location.fill")
-                    } else if weaponB.isOpened {
-                        Image(systemName: "location")
-                    } else {
-                        Image(systemName: "location.slash")
-                    }
-                    Spacer()
-                }
-            }
-        }
-    }
-    
-    private struct Navigation: View {
-        @ObservedObject private var bullets = GameFrame.coreData.getConsumable("Bullets")
-        @ObservedObject private var adMob = GameFrame.adMob
-        @ObservedObject private var inApp = GameFrame.inApp
-        @ObservedObject private var gameCenter = GameFrame.gameCenter
-
-        var body: some View {
-            HStack {
-                Spacer()
-                Group {
-                    NavigationLink(destination: StoreView()) {
-                        Image(systemName: "cart")
-                    }
-                    .disabled(!inApp.available)
-                    Spacer()
-                }
-                Group {
-                    Button(action: {GameFrame.adMob.showReward(consumable: self.bullets, quantity: 100)}) {
-                        Image(systemName: "film")
-                    }
-                    .disabled(!adMob.rewardAvailable)
-                    Spacer()
-                }
-                Group {
-                    Button(action: {GameFrame.gameCenter.show()}) {
-                        Image(systemName: "rosette")
-                    }
-                    .disabled(!gameCenter.enabled)
-                    Spacer()
-                }
-                Group {
-                    Button(action: {
-                        GameFrame.instance!.showShare(greeting: "Hi! Here's The Game", format: "%.1f")
-                    }) {
-                        Image(systemName: "square.and.arrow.up")
-                    }
-                    Spacer()
-                }
-                Group {
-                    Button(action: getUrlAction("https://itunes.apple.com/app/idX?action=write-review")) {
-                        Image(systemName: "hand.thumbsup")
-                    }
-                    Spacer()
-                }
-                Group {
-                    Button(action: getUrlAction("https://www.apple.com")) {
-                        Image(systemName: "link")
-                    }
-                    Spacer()
-                }
-                Group {
-                    Button(action: getUrlAction(UIApplication.openSettingsURLString)) {
-                        Image(systemName: "gear")
-                    }
-                    Spacer()
-                }
-            }
-        }
-    }
     
     var body: some View {
         VStack {
-            Information()
-            Spacer()
+            // Remote controlled navigation as logic to enter level must be called
+            NavigationLink(destination: StoreView(
+                    consumableIds: ["Bullets"],
+                    nonConsumableIds: ["weaponB", "weaponC"]),
+                isActive: $showStore) {EmptyView()}
             NavigationLink(destination: InLevel(), isActive: $showInLevel) {EmptyView()}
+
+            InformationArea(
+                scoreIds: ["Points"],
+                achievements: [(id:"Medals", format: "%.1f")],
+                consumableIds: ["Bullets"],
+                nonConsumables: [
+                    (id: "weaponB", opened: Image(systemName: "location"), closed: Image(systemName: "location.slash")),
+                    (id: "weaponC", opened: Image(systemName: "location.fill"), closed: nil)])
+            Spacer()
             Button(action: {
+                gameZoneController.enterLevel()
                 self.showInLevel.set()
-                gameLogic.beforeEnteringLevel()
             }) {
                 Image(systemName: "play.circle")
                     .resizable()
                     .scaledToFit()
+                    .scaleEffect(0.5)
             }
             Spacer()
-            Navigation()
+            NavigationArea(navigatables: [
+                (action: {self.showStore.set()},
+                 image: Image(systemName: "cart"),
+                 disabled: !inApp.available),
+                (action: {GameFrame.adMob.showReward(consumable: GameFrame.coreData.getConsumable("Bullets"), quantity: 100)},
+                 image: Image(systemName: "film"),
+                 disabled: !adMob.rewardAvailable),
+                (action: {GameFrame.gameCenter.show()},
+                 image: Image(systemName: "rosette"),
+                 disabled: !gameCenter.enabled),
+                (action: {GameFrame.instance!.showShare(greeting: "Hi! I'm playing The Game", format: "%.1f")},
+                 image: Image(systemName: "square.and.arrow.up"),
+                 disabled: nil),
+                (action: getUrlAction("https://itunes.apple.com/app/idX?action=write-review"),
+                 image: Image(systemName: "hand.thumbsup"),
+                 disabled: nil),
+                (action: getUrlAction("https://www.apple.com"),
+                 image: Image(systemName: "link"),
+                 disabled: nil),
+                (action: getUrlAction(UIApplication.openSettingsURLString),
+                 image: Image(systemName: "gear"),
+                 disabled: nil)])
         }
-        .navigationBarHidden(true)
-        .navigationBarTitle(Text("Title"))
-        .navigationBarBackButtonHidden(true)
+        .modifier(NavigatableViewModifier())
     }
 }
 
