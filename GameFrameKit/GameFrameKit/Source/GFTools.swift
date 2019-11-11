@@ -94,6 +94,15 @@ public func log(
 {
     guard level <= maxLogLevel else {return}
     
-    print("* GF: \(URL(fileURLWithPath: file).lastPathComponent): \(function)(\(line), \(col)): ", msg,
-          separator: separator, terminator: terminator)
+    print("* GF: \(URL(fileURLWithPath: file).lastPathComponent): \(function)(\(line), \(col)): ",
+        msg.compactMap({ (msg) -> Any? in msg}), // Filter optional values
+        separator: separator, terminator: terminator)
+}
+
+/**
+ set or unset boolean variable. Can be used insted of toggle, which depends on current status
+ */
+public extension Bool {
+    mutating func set() {self = true}
+    mutating func unset() {self = false}
 }

@@ -18,10 +18,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         
-        activeSheet.segue(from: [.OffLevel], to: [.InLevel]) {enterLevel()}
-        activeSheet.segue(from: [.InLevel, .Offer], to: [.OffLevel]) {leaveLevel()}
-
-        GameFrame.createSharedInstance(
+         GameFrame.createSharedInstance(
             scene, consumablesConfig: [
                 "bulletsS": ("Bullets", 200),
                 "bulletsM": ("Bullets", 1000),
@@ -32,7 +29,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             adUnitIdRewarded: "ca-app-pub-3940256099942544/1712485313",
             adUnitIdInterstitial: "ca-app-pub-3940256099942544/4411468910") {
             
-                MainView()
+                return MainView(
+                    gameZoneDelegate: TheGameDelegate(),
+                    bannerAlternative: Text("Thank you for playing The Game"),
+                    startsOffLevel: true)
         }
     }
 
