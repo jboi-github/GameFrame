@@ -75,8 +75,9 @@ struct InLevelView<S>: View where S: Skin {
                     completionHandler: {self.controller.clearOffer()})
             }
         })
-            // TODO: Add isOverlayed
-        .modifier(skin.getInLevelModifier(geometryProxy: self.geometryProxy))
+        .modifier(skin.getInLevelModifier(
+            geometryProxy: self.geometryProxy,
+            isOverlayed: inApp.purchasing || inApp.error != nil))
         .overlay(WaitWithErrorOverlay(
             skin: skin, geometryProxy: geometryProxy,
             completionHandler: {self.controller.clearOffer()}))

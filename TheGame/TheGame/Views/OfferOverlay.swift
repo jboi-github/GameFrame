@@ -44,7 +44,10 @@ struct OfferOverlay<S>: View where S: Skin {
                         }
                     }
                 }
-                .buttonStyle(self.skin.getOfferProductModifier(geometryProxy: self.geometryProxy, isDisabled: false))
+                .buttonStyle(self.skin.getOfferProductModifier(
+                    geometryProxy: self.geometryProxy,
+                    isDisabled: false,
+                    id: purchase.product.productIdentifier))
             }
             .modifier(skin.getOfferProductsModifier(geometryProxy: self.geometryProxy))
             NavigationArea<S>(skin:skin, geometryProxy: geometryProxy, parent: "Offer",

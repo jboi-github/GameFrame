@@ -27,7 +27,7 @@ struct InformationArea<S>: View where S: Skin {
         
         var body: some View {
             Text("\(score.current) / \(score.highest)")
-                .modifier(skin.getInformationScoreModifier(geometryProxy: self.geometryProxy))
+                .modifier(skin.getInformationScoreModifier(geometryProxy: self.geometryProxy, id: id))
         }
     }
     
@@ -41,7 +41,7 @@ struct InformationArea<S>: View where S: Skin {
         
         var body: some View {
             Text("\(achievement.current.format(format))")
-                .modifier(skin.getInformationAchievementModifier(geometryProxy: self.geometryProxy))
+                .modifier(skin.getInformationAchievementModifier(geometryProxy: self.geometryProxy, id: id))
         }
     }
     
@@ -54,7 +54,7 @@ struct InformationArea<S>: View where S: Skin {
         
         var body: some View {
             Text("\(consumable.available)")
-                .modifier(skin.getInformationConsumableModifier(geometryProxy: self.geometryProxy))
+                .modifier(skin.getInformationConsumableModifier(geometryProxy: self.geometryProxy, id: id))
         }
     }
     
@@ -75,7 +75,7 @@ struct InformationArea<S>: View where S: Skin {
                     closed!
                 }
             }
-            .modifier(skin.getInformationNonConsumableModifier(geometryProxy: self.geometryProxy))
+            .modifier(skin.getInformationNonConsumableModifier(geometryProxy: self.geometryProxy, id: id))
         }
     }
 

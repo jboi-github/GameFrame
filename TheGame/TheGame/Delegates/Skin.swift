@@ -77,12 +77,13 @@ struct OffLevelPlayButtonModifier: ButtonStyle {
     var isDisabled: Bool
 
    func makeBody(configuration: Self.Configuration) -> some View {
-        configuration.label
+        configuration.label.foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
     }
 }
 
 struct InLevelModifier: ViewModifier {
     var geometryProxy: GeometryProxy
+    var isOverlayed: Bool
 
     func body(content: Content) -> some View {content}
 }
@@ -107,6 +108,7 @@ struct InLevelGameZoneModifier: ViewModifier {
 
 struct StoreModifier: ViewModifier {
     var geometryProxy: GeometryProxy
+    var isOverlayed: Bool
 
     func body(content: Content) -> some View {content}
 }
@@ -132,9 +134,10 @@ struct StoreConsumblesModifier: ViewModifier {
 struct StoreConsumableModifier: ButtonStyle {
     var geometryProxy: GeometryProxy
     var isDisabled: Bool
+    var id: String
 
    func makeBody(configuration: Self.Configuration) -> some View {
-        configuration.label
+        configuration.label.foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
     }
 }
 
@@ -161,7 +164,7 @@ struct StoreConsumableStepperModifier: ButtonStyle {
     var isDisabled: Bool
 
    func makeBody(configuration: Self.Configuration) -> some View {
-        configuration.label
+        configuration.label.foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
     }
 }
 
@@ -186,9 +189,10 @@ struct StoreNonConsumblesModifier: ViewModifier {
 struct StoreNonConsumableModifier: ButtonStyle {
     var geometryProxy: GeometryProxy
     var isDisabled: Bool
+    var id: String
 
    func makeBody(configuration: Self.Configuration) -> some View {
-        configuration.label
+        configuration.label.foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
     }
 }
 
@@ -237,9 +241,10 @@ struct OfferProductsModifier: ViewModifier {
 struct OfferProductModifier: ButtonStyle {
     var geometryProxy: GeometryProxy
     var isDisabled: Bool
+    var id: String
 
    func makeBody(configuration: Self.Configuration) -> some View {
-        configuration.label
+        configuration.label.foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
     }
 }
 
@@ -275,6 +280,7 @@ struct InformationAchievementsModifier: ViewModifier {
 
 struct InformationAchievementModifier: TextModifier {
     var geometryProxy: GeometryProxy
+    var id: String
 
     func body(text: Text) -> some View {text}
 }
@@ -287,6 +293,7 @@ struct InformationScoresModifier: ViewModifier {
 
 struct InformationScoreModifier: TextModifier {
     var geometryProxy: GeometryProxy
+    var id: String
 
     func body(text: Text) -> some View {text}
 }
@@ -299,6 +306,7 @@ struct InformationConsumablesModifier: ViewModifier {
 
 struct InformationConsumableModifier: TextModifier {
     var geometryProxy: GeometryProxy
+    var id: String
 
     func body(text: Text) -> some View {text}
 }
@@ -311,6 +319,7 @@ struct InformationNonConsumablesModifier: ViewModifier {
 
 struct InformationNonConsumableModifier: ViewModifier {
     var geometryProxy: GeometryProxy
+    var id: String
 
     func body(content: Content) -> some View {content}
 }
@@ -318,9 +327,10 @@ struct InformationNonConsumableModifier: ViewModifier {
 struct NavigatableModifier: ButtonStyle {
     var geometryProxy: GeometryProxy
     var isDisabled: Bool
+    var id: Int
 
    func makeBody(configuration: Self.Configuration) -> some View {
-        configuration.label
+        configuration.label.foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
     }
 }
 
@@ -330,10 +340,10 @@ struct WaitWithErrorModifier: ViewModifier {
     func body(content: Content) -> some View {content}
 }
 
-struct WaitModifier: ImageModifier {
+struct WaitModifier: ViewModifier {
     var geometryProxy: GeometryProxy
 
-   func body(image: Image) -> some View {image}
+   func body(content: Content) -> some View {content}
 }
 
 struct ErrorMessageModifier: TextModifier {
@@ -346,8 +356,8 @@ struct ErrorButtonModifier: ButtonStyle {
     var geometryProxy: GeometryProxy
     var isDisabled: Bool
 
-   func makeBody(configuration: Self.Configuration) -> some View {
-        configuration.label
+    func makeBody(configuration: Self.Configuration) -> some View {
+        configuration.label.foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
     }
 }
 
@@ -399,7 +409,7 @@ protocol Skin {
     associatedtype InformationNonConsumableModifierType: ViewModifier
     associatedtype NavigatableModifierType: ButtonStyle
     associatedtype WaitWithErrorModifierType: ViewModifier
-    associatedtype WaitModifierType: ImageModifier
+    associatedtype WaitModifierType: ViewModifier
     associatedtype ErrorMessageModifierType: TextModifier
     associatedtype ErrorButtonModifierType: ButtonStyle
     
@@ -410,15 +420,15 @@ protocol Skin {
     func getOffLevelNavigationModifier(geometryProxy: GeometryProxy) -> OffLevelNavigationModifierType
     func getOffLevelInformationModifier(geometryProxy: GeometryProxy) -> OffLevelInformationModifierType
     func getOffLevelPlayButtonModifier(geometryProxy: GeometryProxy, isDisabled: Bool) -> OffLevelPlayButtonModifierType
-    func getInLevelModifier(geometryProxy: GeometryProxy) -> InLevelModifierType
+    func getInLevelModifier(geometryProxy: GeometryProxy, isOverlayed: Bool) -> InLevelModifierType
     func getInLevelNavigationModifier(geometryProxy: GeometryProxy) -> InLevelNavigationModifierType
     func getInLevelInformationModifier(geometryProxy: GeometryProxy) -> InLevelInformationModifierType
     func getInLevelGameZoneModifier(geometryProxy: GeometryProxy) -> InLevelGameZoneModifierType
-    func getStoreModifier(geometryProxy: GeometryProxy) -> StoreModifierType
+    func getStoreModifier(geometryProxy: GeometryProxy, isOverlayed: Bool) -> StoreModifierType
     func getStoreEmptyModifier(geometryProxy: GeometryProxy) -> StoreEmptyModifierType
     func getStoreNavigationModifier(geometryProxy: GeometryProxy) -> StoreNavigationModifierType
     func getStoreConsumblesModifier(geometryProxy: GeometryProxy) -> StoreConsumblesModifierType
-    func getStoreConsumableModifier(geometryProxy: GeometryProxy, isDisabled: Bool) -> StoreConsumableModifierType
+    func getStoreConsumableModifier(geometryProxy: GeometryProxy, isDisabled: Bool, id: String) -> StoreConsumableModifierType
     func getStoreConsumableTitleModifier(geometryProxy: GeometryProxy) -> StoreConsumableTitleModifierType
     func getStoreConsumableDescriptionModifier(geometryProxy: GeometryProxy) -> StoreConsumableDescriptionModifierType
     func getStoreConsumableQuantityModifier(geometryProxy: GeometryProxy) -> StoreConsumableQuantityModifierType
@@ -426,7 +436,7 @@ protocol Skin {
     func getStoreConsumableCartModifier(geometryProxy: GeometryProxy) -> StoreConsumableCartModifierType
     func getStoreConsumablePriceModifier(geometryProxy: GeometryProxy) -> StoreConsumablePriceModifierType
     func getStoreNonConsumblesModifier(geometryProxy: GeometryProxy) -> StoreNonConsumblesModifierType
-    func getStoreNonConsumableModifier(geometryProxy: GeometryProxy, isDisabled: Bool) -> StoreNonConsumableModifierType
+    func getStoreNonConsumableModifier(geometryProxy: GeometryProxy, isDisabled: Bool, id: String) -> StoreNonConsumableModifierType
     func getStoreNonConsumableTitleModifier(geometryProxy: GeometryProxy) -> StoreNonConsumableTitleModifierType
     func getStoreNonConsumableDescriptionModifier(geometryProxy: GeometryProxy) -> StoreNonConsumableDescriptionModifierType
     func getStoreNonConsumableCartModifier(geometryProxy: GeometryProxy) -> StoreNonConsumableCartModifierType
@@ -434,20 +444,20 @@ protocol Skin {
     func getOfferModifier(geometryProxy: GeometryProxy) -> OfferModifierType
     func getOfferNavigationModifier(geometryProxy: GeometryProxy) -> OfferNavigationModifierType
     func getOfferProductsModifier(geometryProxy: GeometryProxy) -> OfferProductsModifierType
-    func getOfferProductModifier(geometryProxy: GeometryProxy, isDisabled: Bool) -> OfferProductModifierType
+    func getOfferProductModifier(geometryProxy: GeometryProxy, isDisabled: Bool, id: String) -> OfferProductModifierType
     func getOfferProductTitleModifier(geometryProxy: GeometryProxy) -> OfferProductTitleModifierType
     func getOfferProductDescriptionModifier(geometryProxy: GeometryProxy) -> OfferProductDescriptionModifierType
     func getOfferProductCartModifier(geometryProxy: GeometryProxy) -> OfferProductCartModifierType
     func getOfferProductPriceModifier(geometryProxy: GeometryProxy) -> OfferProductPriceModifierType
     func getInformationAchievementsModifier(geometryProxy: GeometryProxy) -> InformationAchievementsModifierType
-    func getInformationAchievementModifier(geometryProxy: GeometryProxy) -> InformationAchievementModifierType
+    func getInformationAchievementModifier(geometryProxy: GeometryProxy, id: String) -> InformationAchievementModifierType
     func getInformationScoresModifier(geometryProxy: GeometryProxy) -> InformationScoresModifierType
-    func getInformationScoreModifier(geometryProxy: GeometryProxy) -> InformationScoreModifierType
+    func getInformationScoreModifier(geometryProxy: GeometryProxy, id: String) -> InformationScoreModifierType
     func getInformationConsumablesModifier(geometryProxy: GeometryProxy) -> InformationConsumablesModifierType
-    func getInformationConsumableModifier(geometryProxy: GeometryProxy) -> InformationConsumableModifierType
+    func getInformationConsumableModifier(geometryProxy: GeometryProxy, id: String) -> InformationConsumableModifierType
     func getInformationNonConsumablesModifier(geometryProxy: GeometryProxy) -> InformationNonConsumablesModifierType
-    func getInformationNonConsumableModifier(geometryProxy: GeometryProxy) -> InformationNonConsumableModifierType
-    func getNavigatableModifier(geometryProxy: GeometryProxy, isDisabled: Bool) -> NavigatableModifierType
+    func getInformationNonConsumableModifier(geometryProxy: GeometryProxy, id: String) -> InformationNonConsumableModifierType
+    func getNavigatableModifier(geometryProxy: GeometryProxy, isDisabled: Bool, id: Int) -> NavigatableModifierType
     func getWaitWithErrorModifier(geometryProxy: GeometryProxy) -> WaitWithErrorModifierType
     func getWaitModifier(geometryProxy: GeometryProxy) -> WaitModifierType
     func getErrorMessageModifier(geometryProxy: GeometryProxy) -> ErrorMessageModifierType
@@ -476,8 +486,8 @@ class SkinImpl: Skin {
     func getOffLevelPlayButtonModifier(geometryProxy: GeometryProxy, isDisabled: Bool) -> some ButtonStyle {
         OffLevelPlayButtonModifier(geometryProxy: geometryProxy, isDisabled: isDisabled)
    }
-    func getInLevelModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
-        InLevelModifier(geometryProxy: geometryProxy)
+    func getInLevelModifier(geometryProxy: GeometryProxy, isOverlayed: Bool) -> some ViewModifier {
+        InLevelModifier(geometryProxy: geometryProxy, isOverlayed: isOverlayed)
    }
     func getInLevelNavigationModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
         InLevelNavigationModifier(geometryProxy: geometryProxy)
@@ -488,8 +498,8 @@ class SkinImpl: Skin {
     func getInLevelGameZoneModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
         InLevelGameZoneModifier(geometryProxy: geometryProxy)
    }
-    func getStoreModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
-        StoreModifier(geometryProxy: geometryProxy)
+    func getStoreModifier(geometryProxy: GeometryProxy, isOverlayed: Bool) -> some ViewModifier {
+        StoreModifier(geometryProxy: geometryProxy, isOverlayed: isOverlayed)
    }
     func getStoreEmptyModifier(geometryProxy: GeometryProxy) -> some TextModifier {
         StoreEmptyModifier(geometryProxy: geometryProxy)
@@ -500,8 +510,8 @@ class SkinImpl: Skin {
     func getStoreConsumblesModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
         StoreConsumblesModifier(geometryProxy: geometryProxy)
    }
-    func getStoreConsumableModifier(geometryProxy: GeometryProxy, isDisabled: Bool) -> some ButtonStyle {
-        StoreConsumableModifier(geometryProxy: geometryProxy, isDisabled: isDisabled)
+    func getStoreConsumableModifier(geometryProxy: GeometryProxy, isDisabled: Bool, id: String) -> some ButtonStyle {
+        StoreConsumableModifier(geometryProxy: geometryProxy, isDisabled: isDisabled, id: id)
    }
     func getStoreConsumableTitleModifier(geometryProxy: GeometryProxy) -> some TextModifier {
         StoreConsumableTitleModifier(geometryProxy: geometryProxy)
@@ -524,8 +534,8 @@ class SkinImpl: Skin {
     func getStoreNonConsumblesModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
         StoreNonConsumblesModifier(geometryProxy: geometryProxy)
    }
-    func getStoreNonConsumableModifier(geometryProxy: GeometryProxy, isDisabled: Bool) -> some ButtonStyle {
-        StoreNonConsumableModifier(geometryProxy: geometryProxy, isDisabled: isDisabled)
+    func getStoreNonConsumableModifier(geometryProxy: GeometryProxy, isDisabled: Bool, id: String) -> some ButtonStyle {
+        StoreNonConsumableModifier(geometryProxy: geometryProxy, isDisabled: isDisabled, id: id)
    }
     func getStoreNonConsumableTitleModifier(geometryProxy: GeometryProxy) -> some TextModifier {
         StoreNonConsumableTitleModifier(geometryProxy: geometryProxy)
@@ -548,8 +558,8 @@ class SkinImpl: Skin {
     func getOfferProductsModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
         OfferProductsModifier(geometryProxy: geometryProxy)
    }
-    func getOfferProductModifier(geometryProxy: GeometryProxy, isDisabled: Bool) -> some ButtonStyle {
-        OfferProductModifier(geometryProxy: geometryProxy, isDisabled: isDisabled)
+    func getOfferProductModifier(geometryProxy: GeometryProxy, isDisabled: Bool, id: String) -> some ButtonStyle {
+        OfferProductModifier(geometryProxy: geometryProxy, isDisabled: isDisabled, id: id)
    }
     func getOfferProductTitleModifier(geometryProxy: GeometryProxy) -> some TextModifier {
         OfferProductTitleModifier(geometryProxy: geometryProxy)
@@ -566,34 +576,34 @@ class SkinImpl: Skin {
     func getInformationAchievementsModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
         InformationAchievementsModifier(geometryProxy: geometryProxy)
    }
-    func getInformationAchievementModifier(geometryProxy: GeometryProxy) -> some TextModifier {
-        InformationAchievementModifier(geometryProxy: geometryProxy)
+    func getInformationAchievementModifier(geometryProxy: GeometryProxy, id: String) -> some TextModifier {
+        InformationAchievementModifier(geometryProxy: geometryProxy, id: id)
    }
     func getInformationScoresModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
         InformationScoresModifier(geometryProxy: geometryProxy)
    }
-    func getInformationScoreModifier(geometryProxy: GeometryProxy) -> some TextModifier {
-        InformationScoreModifier(geometryProxy: geometryProxy)
+    func getInformationScoreModifier(geometryProxy: GeometryProxy, id: String) -> some TextModifier {
+        InformationScoreModifier(geometryProxy: geometryProxy, id: id)
    }
     func getInformationConsumablesModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
         InformationConsumablesModifier(geometryProxy: geometryProxy)
    }
-    func getInformationConsumableModifier(geometryProxy: GeometryProxy) -> some TextModifier {
-        InformationConsumableModifier(geometryProxy: geometryProxy)
+    func getInformationConsumableModifier(geometryProxy: GeometryProxy, id: String) -> some TextModifier {
+        InformationConsumableModifier(geometryProxy: geometryProxy, id: id)
    }
     func getInformationNonConsumablesModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
         InformationNonConsumablesModifier(geometryProxy: geometryProxy)
    }
-    func getInformationNonConsumableModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
-        InformationNonConsumableModifier(geometryProxy: geometryProxy)
+    func getInformationNonConsumableModifier(geometryProxy: GeometryProxy, id: String) -> some ViewModifier {
+        InformationNonConsumableModifier(geometryProxy: geometryProxy, id: id)
    }
-    func getNavigatableModifier(geometryProxy: GeometryProxy, isDisabled: Bool) -> some ButtonStyle {
-        NavigatableModifier(geometryProxy: geometryProxy, isDisabled: isDisabled)
+    func getNavigatableModifier(geometryProxy: GeometryProxy, isDisabled: Bool, id: Int) -> some ButtonStyle {
+        NavigatableModifier(geometryProxy: geometryProxy, isDisabled: isDisabled, id: id)
    }
     func getWaitWithErrorModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
         WaitWithErrorModifier(geometryProxy: geometryProxy)
    }
-    func getWaitModifier(geometryProxy: GeometryProxy) -> some ImageModifier {
+    func getWaitModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
         WaitModifier(geometryProxy: geometryProxy)
    }
     func getErrorMessageModifier(geometryProxy: GeometryProxy) -> some TextModifier {
@@ -629,8 +639,8 @@ class SkinOverrideImpl: Skin {
     func getOffLevelPlayButtonModifier(geometryProxy: GeometryProxy, isDisabled: Bool) -> some ButtonStyle {
         delegate.getOffLevelPlayButtonModifier(geometryProxy: geometryProxy, isDisabled: isDisabled)
    }
-    func getInLevelModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
-        delegate.getInLevelModifier(geometryProxy: geometryProxy)
+    func getInLevelModifier(geometryProxy: GeometryProxy, isOverlayed: Bool) -> some ViewModifier {
+        delegate.getInLevelModifier(geometryProxy: geometryProxy, isOverlayed: isOverlayed)
    }
     func getInLevelNavigationModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
         delegate.getInLevelNavigationModifier(geometryProxy: geometryProxy)
@@ -641,8 +651,8 @@ class SkinOverrideImpl: Skin {
     func getInLevelGameZoneModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
         delegate.getInLevelGameZoneModifier(geometryProxy: geometryProxy)
    }
-    func getStoreModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
-        delegate.getStoreModifier(geometryProxy: geometryProxy)
+    func getStoreModifier(geometryProxy: GeometryProxy, isOverlayed: Bool) -> some ViewModifier {
+        delegate.getStoreModifier(geometryProxy: geometryProxy, isOverlayed: isOverlayed)
    }
     func getStoreEmptyModifier(geometryProxy: GeometryProxy) -> some TextModifier {
         delegate.getStoreEmptyModifier(geometryProxy: geometryProxy)
@@ -653,8 +663,8 @@ class SkinOverrideImpl: Skin {
     func getStoreConsumblesModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
         delegate.getStoreConsumblesModifier(geometryProxy: geometryProxy)
    }
-    func getStoreConsumableModifier(geometryProxy: GeometryProxy, isDisabled: Bool) -> some ButtonStyle {
-        delegate.getStoreConsumableModifier(geometryProxy: geometryProxy, isDisabled: isDisabled)
+    func getStoreConsumableModifier(geometryProxy: GeometryProxy, isDisabled: Bool, id: String) -> some ButtonStyle {
+        delegate.getStoreConsumableModifier(geometryProxy: geometryProxy, isDisabled: isDisabled, id: id)
    }
     func getStoreConsumableTitleModifier(geometryProxy: GeometryProxy) -> some TextModifier {
         delegate.getStoreConsumableTitleModifier(geometryProxy: geometryProxy)
@@ -677,8 +687,8 @@ class SkinOverrideImpl: Skin {
     func getStoreNonConsumblesModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
         delegate.getStoreNonConsumblesModifier(geometryProxy: geometryProxy)
    }
-    func getStoreNonConsumableModifier(geometryProxy: GeometryProxy, isDisabled: Bool) -> some ButtonStyle {
-        delegate.getStoreNonConsumableModifier(geometryProxy: geometryProxy, isDisabled: isDisabled)
+    func getStoreNonConsumableModifier(geometryProxy: GeometryProxy, isDisabled: Bool, id: String) -> some ButtonStyle {
+        delegate.getStoreNonConsumableModifier(geometryProxy: geometryProxy, isDisabled: isDisabled, id: id)
    }
     func getStoreNonConsumableTitleModifier(geometryProxy: GeometryProxy) -> some TextModifier {
         delegate.getStoreNonConsumableTitleModifier(geometryProxy: geometryProxy)
@@ -701,8 +711,8 @@ class SkinOverrideImpl: Skin {
     func getOfferProductsModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
         delegate.getOfferProductsModifier(geometryProxy: geometryProxy)
    }
-    func getOfferProductModifier(geometryProxy: GeometryProxy, isDisabled: Bool) -> some ButtonStyle {
-        delegate.getOfferProductModifier(geometryProxy: geometryProxy, isDisabled: isDisabled)
+    func getOfferProductModifier(geometryProxy: GeometryProxy, isDisabled: Bool, id: String) -> some ButtonStyle {
+        delegate.getOfferProductModifier(geometryProxy: geometryProxy, isDisabled: isDisabled, id: id)
    }
     func getOfferProductTitleModifier(geometryProxy: GeometryProxy) -> some TextModifier {
         delegate.getOfferProductTitleModifier(geometryProxy: geometryProxy)
@@ -719,34 +729,34 @@ class SkinOverrideImpl: Skin {
     func getInformationAchievementsModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
         delegate.getInformationAchievementsModifier(geometryProxy: geometryProxy)
    }
-    func getInformationAchievementModifier(geometryProxy: GeometryProxy) -> some TextModifier {
-        delegate.getInformationAchievementModifier(geometryProxy: geometryProxy)
+    func getInformationAchievementModifier(geometryProxy: GeometryProxy, id: String) -> some TextModifier {
+        delegate.getInformationAchievementModifier(geometryProxy: geometryProxy, id: id)
    }
     func getInformationScoresModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
         delegate.getInformationScoresModifier(geometryProxy: geometryProxy)
    }
-    func getInformationScoreModifier(geometryProxy: GeometryProxy) -> some TextModifier {
-        delegate.getInformationScoreModifier(geometryProxy: geometryProxy)
+    func getInformationScoreModifier(geometryProxy: GeometryProxy, id: String) -> some TextModifier {
+        delegate.getInformationScoreModifier(geometryProxy: geometryProxy, id: id)
    }
     func getInformationConsumablesModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
         delegate.getInformationConsumablesModifier(geometryProxy: geometryProxy)
    }
-    func getInformationConsumableModifier(geometryProxy: GeometryProxy) -> some TextModifier {
-        delegate.getInformationConsumableModifier(geometryProxy: geometryProxy)
+    func getInformationConsumableModifier(geometryProxy: GeometryProxy, id: String) -> some TextModifier {
+        delegate.getInformationConsumableModifier(geometryProxy: geometryProxy, id: id)
    }
     func getInformationNonConsumablesModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
         delegate.getInformationNonConsumablesModifier(geometryProxy: geometryProxy)
    }
-    func getInformationNonConsumableModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
-        delegate.getInformationNonConsumableModifier(geometryProxy: geometryProxy)
+    func getInformationNonConsumableModifier(geometryProxy: GeometryProxy, id: String) -> some ViewModifier {
+        delegate.getInformationNonConsumableModifier(geometryProxy: geometryProxy, id: id)
    }
-    func getNavigatableModifier(geometryProxy: GeometryProxy, isDisabled: Bool) -> some ButtonStyle {
-        delegate.getNavigatableModifier(geometryProxy: geometryProxy, isDisabled: isDisabled)
+    func getNavigatableModifier(geometryProxy: GeometryProxy, isDisabled: Bool, id: Int) -> some ButtonStyle {
+        delegate.getNavigatableModifier(geometryProxy: geometryProxy, isDisabled: isDisabled, id: id)
    }
     func getWaitWithErrorModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
         delegate.getWaitWithErrorModifier(geometryProxy: geometryProxy)
    }
-    func getWaitModifier(geometryProxy: GeometryProxy) -> some ImageModifier {
+    func getWaitModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
         delegate.getWaitModifier(geometryProxy: geometryProxy)
    }
     func getErrorMessageModifier(geometryProxy: GeometryProxy) -> some TextModifier {

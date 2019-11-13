@@ -28,7 +28,8 @@ struct NavigationArea<S>: View where S: Skin {
                 .disabled(self.navigatables[id].disabled ?? false)
                 .buttonStyle(self.skin.getNavigatableModifier(
                     geometryProxy: self.geometryProxy,
-                    isDisabled: self.navigatables[id].disabled ?? false))
+                    isDisabled: self.navigatables[id].disabled ?? false,
+                    id: id))
             }
         }
     }

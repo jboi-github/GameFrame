@@ -18,6 +18,20 @@ struct WaitWithErrorOverlay<S>: View where S: Skin {
     var completionHandler: (() -> Void)? = nil
     @ObservedObject private var inApp = GameFrame.inApp
     
+    /// Copied from stackoverflow.com: https://stackoverflow.com/questions/56496638/activity-indicator-in-swiftui?noredirect=1
+    private struct ActivityIndicator: UIViewRepresentable {
+        var isAnimating: Bool
+        let style: UIActivityIndicatorView.Style
+
+        func makeUIView(context: UIViewRepresentableContext<ActivityIndicator>) -> UIActivityIndicatorView {
+            return UIActivityIndicatorView(style: style)
+        }
+
+        func updateUIView(_ uiView: UIActivityIndicatorView, context: UIViewRepresentableContext<ActivityIndicator>) {
+            isAnimating ? uiView.startAnimating() : uiView.stopAnimating()
+        }
+    }
+    
     private struct WaitOverlay<S>: View where S: Skin {
         var skin: S
         var geometryProxy: GeometryProxy
@@ -27,11 +41,8 @@ struct WaitWithErrorOverlay<S>: View where S: Skin {
         @ObservedObject private var inApp = GameFrame.inApp
         
         var body: some View {
-            Image(systemName: "arrow.2.circlepath")
+            ActivityIndicator(isAnimating: inApp.purchasing, style: .large)
                 .modifier(skin.getWaitModifier(geometryProxy: self.geometryProxy))
-                .rotationEffect(.degrees(spin ? 360 : 0)) // TODO: Make Standard View and move to Modifier
-                .animation(Animation.linear(duration: 1.0).repeatForever(autoreverses: true))
-                .onAppear() {self.spin.set()}
                 .onDisappear(perform: {
                     log(self.inApp.purchasing, self.inApp.error)
                     if self.inApp.error == nil {self.completionHandler?()}

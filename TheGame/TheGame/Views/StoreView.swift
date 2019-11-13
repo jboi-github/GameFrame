@@ -55,7 +55,10 @@ struct StoreView<S>: View where S: Skin {
                         .frame(width: geometry.size.width * 1.0/4.0) // TODO: Put into Modifier
                     }
                 }
-                .buttonStyle(self.skin.getStoreConsumableModifier(geometryProxy: self.geometryProxy, isDisabled: false))
+                .buttonStyle(self.skin.getStoreConsumableModifier(
+                    geometryProxy: self.geometryProxy,
+                    isDisabled: false,
+                    id: self.consumableProduct.product.productIdentifier))
             }
         }
     }
@@ -84,7 +87,10 @@ struct StoreView<S>: View where S: Skin {
                 }
             }
             .disabled(nonConsumable.isOpened)
-            .buttonStyle(skin.getStoreNonConsumableModifier(geometryProxy: self.geometryProxy, isDisabled: nonConsumable.isOpened))
+            .buttonStyle(skin.getStoreNonConsumableModifier(
+                geometryProxy: self.geometryProxy,
+                isDisabled: nonConsumable.isOpened,
+                id: self.nonConsumable.product!.productIdentifier))
         }
     }
 
@@ -122,7 +128,7 @@ struct StoreView<S>: View where S: Skin {
                 }
                 Spacer()
             }
-            // Put in some Game Configuration
+            // TODO: Put in some Game Configuration
             NavigationArea<S>(skin: skin, geometryProxy: geometryProxy, parent: "Store",
                 navigatables: [
                 (action: {GameFrame.inApp.restore()},
@@ -133,8 +139,9 @@ struct StoreView<S>: View where S: Skin {
                  disabled: nil)])
             .modifier(skin.getStoreNavigationModifier(geometryProxy: self.geometryProxy))
         }
-            // TODO: Add isOverlayed
-        .modifier(skin.getStoreModifier(geometryProxy: self.geometryProxy))
+        .modifier(skin.getStoreModifier(
+            geometryProxy: self.geometryProxy,
+            isOverlayed: inApp.purchasing || inApp.error != nil))
         .overlay(WaitWithErrorOverlay(skin: skin, geometryProxy: geometryProxy))
     }
 }
