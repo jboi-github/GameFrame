@@ -10,7 +10,9 @@ import SwiftUI
 import GameFrameKit
 import StoreKit
 
-struct OfferOverlay: View {
+struct OfferOverlay<S>: View where S: Skin {
+    var skin: S
+    var geometryProxy: GeometryProxy
     var consumableId: String
     var rewardQuantity: Int
     var completionHandler: () -> Void
@@ -29,17 +31,24 @@ struct OfferOverlay: View {
                     HStack {
                         VStack {
                             Text("\(purchase.product.localizedTitle)")
+                                .modifier(self.skin.getOfferProductTitleModifier(geometryProxy: self.geometryProxy))
                             Text("\(purchase.product.localizedDescription)")
+                                .modifier(self.skin.getOfferProductDescriptionModifier(geometryProxy: self.geometryProxy))
                         }
                         Spacer()
                         VStack {
                             Image(systemName: "cart")
+                                .modifier(self.skin.getOfferProductCartModifier(geometryProxy: self.geometryProxy))
                             Text("\(purchase.product.localizedPrice(quantity: 1))")
+                                .modifier(self.skin.getOfferProductPriceModifier(geometryProxy: self.geometryProxy))
                         }
                     }
                 }
+                .buttonStyle(self.skin.getOfferProductModifier(geometryProxy: self.geometryProxy, isDisabled: false))
             }
-            NavigationArea(navigatables: [
+            .modifier(skin.getOfferProductsModifier(geometryProxy: self.geometryProxy))
+            NavigationArea<S>(skin:skin, geometryProxy: geometryProxy, parent: "Offer",
+                navigatables: [
                 (action: {
                     GameFrame.adMob.showReward(
                         consumable: GameFrame.coreData.getConsumable(self.consumableId),
@@ -51,12 +60,16 @@ struct OfferOverlay: View {
                 (action: self.completionHandler,
                  image: Image(systemName: "xmark"),
                  disabled: nil)])
+            .modifier(skin.getOfferNavigationModifier(geometryProxy: self.geometryProxy))
         }
+        .modifier(skin.getOfferModifier(geometryProxy: self.geometryProxy))
     }
 }
 
 struct OfferOverlay_Previews: PreviewProvider {
     static var previews: some View {
-        OfferOverlay(consumableId: "Lives", rewardQuantity: 1, completionHandler: {log()})
+        GeometryReader {
+            OfferOverlay(skin: SkinImpl(), geometryProxy: $0, consumableId: "Lives", rewardQuantity: 1, completionHandler: {log()})
+        }
     }
 }

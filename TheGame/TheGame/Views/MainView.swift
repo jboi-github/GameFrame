@@ -9,43 +9,50 @@
 import SwiftUI
 import GameFrameKit
 
-struct MainView<V>: View where V: View {
-    var bannerAlternative: V
+struct MainView<S>: View where S: Skin {
     var startsOffLevel: Bool
+    var skin: S
     
-    init(gameZoneDelegate: GameZoneDelegate, bannerAlternative: V, startsOffLevel: Bool) {
+    init(gameZoneDelegate: GameZoneDelegate, skin: S, startsOffLevel: Bool) {
         log()
-        self.bannerAlternative = bannerAlternative
         self.startsOffLevel = startsOffLevel
-        
+        self.skin = skin
         gameZoneController.setDelegate(delegate: gameZoneDelegate)
     }
     
-    private struct Banner<V>: View where V: View {
-        var bannerAlternative: V
+    private struct Banner<S>: View where S: Skin {
+        var skin: S
         @ObservedObject private var adMob = GameFrame.adMob
         
         var body: some View {
             ZStack {
                 GFBannerView() // Must be called to get initial height & width
-                if !adMob.bannerAvailable {bannerAlternative}
+                if !adMob.bannerAvailable {
+                    EmptyView()
+                        .modifier(skin.getMainBannerEmptyModifier())
+                }
             }
             .frame(width: adMob.bannerWidth, height: adMob.bannerHeight)
+            .modifier(skin.getMainBannerModifier(width: adMob.bannerWidth, height: adMob.bannerHeight))
         }
     }
     
     var body: some View {
         VStack {
-            NavigationView {
-                if startsOffLevel {
-                    OffLevel()
-                } else {
-                    InLevel()
+            GeometryReader {
+                geometryProxy in
+                
+                NavigationView {
+                    if self.startsOffLevel {
+                        OffLevelView(skin: self.skin, geometryProxy: geometryProxy)
+                    } else {
+                        InLevelView(skin: self.skin, geometryProxy: geometryProxy)
+                    }
                 }
+                .modifier(self.skin.getMainModifier(geometryProxy: geometryProxy))
             }
-            Banner(bannerAlternative: bannerAlternative)
+            Banner(skin: skin)
         }
-        .modifier(BaseViewModifier())
     }
 }
 
@@ -57,9 +64,6 @@ struct MainView_Previews: PreviewProvider {
             adUnitIdRewarded: nil,
             adUnitIdInterstitial: nil)
         
-        return MainView(
-            gameZoneDelegate: TheGameDelegate(),
-            bannerAlternative: Text("Thank you for playing The Game"),
-            startsOffLevel: true)
+        return MainView(gameZoneDelegate: TheGameDelegate(), skin: SkinImpl(), startsOffLevel: true)
     }
 }

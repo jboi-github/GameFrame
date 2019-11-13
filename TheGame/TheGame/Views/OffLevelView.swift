@@ -9,7 +9,9 @@
 import SwiftUI
 import GameFrameKit
 
-struct OffLevel: View {
+struct OffLevelView<S>: View where S: Skin {
+    var skin: S
+    var geometryProxy: GeometryProxy
     @ObservedObject private var adMob = GameFrame.adMob
     @ObservedObject private var gameCenter = GameFrame.gameCenter
     @ObservedObject private var inApp = GameFrame.inApp
@@ -20,30 +22,40 @@ struct OffLevel: View {
         VStack {
             // Remote controlled navigation as logic to enter level must be called
             NavigationLink(destination: StoreView(
+                    skin: skin, geometryProxy: geometryProxy,
                     consumableIds: ["Bullets"],
                     nonConsumableIds: ["weaponB", "weaponC"]),
                 isActive: $showStore) {EmptyView()}
-            NavigationLink(destination: InLevel(), isActive: $showInLevel) {EmptyView()}
+            NavigationLink(
+                destination: InLevelView(skin: skin, geometryProxy: geometryProxy),
+                isActive: $showInLevel) {EmptyView()}
 
-            InformationArea(
-                scoreIds: ["Points"],
+            InformationArea<S>(
+                skin: skin, geometryProxy: geometryProxy,
+                parent: "OffLevel",
+                scoreIds: ["Points"], // TODO: Bring to some Game Configuration
                 achievements: [(id:"Medals", format: "%.1f")],
                 consumableIds: ["Bullets"],
                 nonConsumables: [
                     (id: "weaponB", opened: Image(systemName: "location"), closed: Image(systemName: "location.slash")),
-                    (id: "weaponC", opened: Image(systemName: "location.fill"), closed: nil)])
+                    (id: "weaponC", opened: Image(systemName: "location.fill"), closed: nil)]
+                    as [(id: String, opened: Image?, closed: Image?)])
+                .modifier(skin.getOffLevelInformationModifier(geometryProxy: self.geometryProxy))
             Spacer()
+            
             Button(action: {
                 gameZoneController.enterLevel()
                 self.showInLevel.set()
             }) {
-                Image(systemName: "play.circle")
-                    .resizable()
-                    .scaledToFit()
-                    .scaleEffect(0.5)
+                Image(systemName: "play")
             }
+            .buttonStyle(skin.getOffLevelPlayButtonModifier(geometryProxy: self.geometryProxy, isDisabled: false))
+            
             Spacer()
-            NavigationArea(navigatables: [
+            // TODO: Bring to some Game Configuration
+            NavigationArea<S>(
+                skin: skin, geometryProxy: geometryProxy, parent: "OffLevel",
+                navigatables: [
                 (action: {self.showStore.set()},
                  image: Image(systemName: "cart"),
                  disabled: !inApp.available),
@@ -65,13 +77,16 @@ struct OffLevel: View {
                 (action: getUrlAction(UIApplication.openSettingsURLString),
                  image: Image(systemName: "gear"),
                  disabled: nil)])
+            .modifier(skin.getOffLevelNavigationModifier(geometryProxy: self.geometryProxy))
         }
-        .modifier(NavigatableViewModifier())
+        .modifier(skin.getOffLevelModifier(geometryProxy: self.geometryProxy))
     }
 }
 
 struct OffLevel_Previews: PreviewProvider {
     static var previews: some View {
-        OffLevel()
+        GeometryReader {
+            OffLevelView(skin: SkinImpl(), geometryProxy: $0)
+        }
     }
 }

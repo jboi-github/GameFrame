@@ -10,7 +10,9 @@ import SwiftUI
 import GameFrameKit
 import Combine
 
-struct InLevel: View {
+struct InLevelView<S>: View where S: Skin {
+    var skin: S
+    var geometryProxy: GeometryProxy
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject private var inApp = GameFrame.inApp
     @ObservedObject private var adMob = GameFrame.adMob
@@ -20,22 +22,32 @@ struct InLevel: View {
 
     var body: some View {
         ZStack {
-            GameZone()
+            GameZone() // TODO: Make GameZone an EmptyView and put GameZone Logic into Modifier
+                // TODO: Add GeometryReader and sizes for Navigation- and Information-Area
+            .modifier(skin.getInLevelGameZoneModifier(geometryProxy: self.geometryProxy))
             VStack {
+                // TODO: Bring to some Game Configuration
                 NavigationLink(destination: StoreView(
+                        skin: skin, geometryProxy: geometryProxy,
                         consumableIds: ["Bullets"],
                         nonConsumableIds: ["weaponB", "weaponC"]),
                     isActive: $showStore) {EmptyView()}
 
-                InformationArea(
+                // TODO: Bring to some Game Configuration
+                InformationArea<S>(
+                    skin: skin, geometryProxy: geometryProxy,
+                    parent: "InLevel",
                     scoreIds: ["Points"],
                     achievements: [(id:"Medals", format: "%.1f")],
                     consumableIds: ["Bullets"],
                     nonConsumables: [])
+                    .modifier(skin.getInLevelInformationModifier(geometryProxy: self.geometryProxy))
                 
                 Spacer()
                 
-                NavigationArea(navigatables: [
+                // TODO: Bring to some Game Configuration
+                NavigationArea<S>(skin: skin, geometryProxy: geometryProxy, parent: "InLevel",
+                    navigatables: [
                     (action: {self.showStore.set()},
                      image: Image(systemName: "cart"),
                      disabled: !inApp.available),
@@ -51,19 +63,23 @@ struct InLevel: View {
                     (action: {gameZoneController.leaveLevel()},
                      image: Image(systemName: "xmark"),
                      disabled: nil)])
+                     .modifier(skin.getInLevelNavigationModifier(geometryProxy: self.geometryProxy))
             }
         }
         .overlay(VStack {
             if controller.offer != nil {
                 OfferOverlay(
+                    skin: skin, geometryProxy: geometryProxy,
                     consumableId: controller.offer!.consumableId,
                     rewardQuantity: controller.offer!.quantity,
                     completionHandler: {self.controller.clearOffer()})
-            } else {
-                EmptyView()
             }
         })
-        .overlay(WaitWithErrorOverlay(completionHandler: {self.controller.clearOffer()}))
+            // TODO: Add isOverlayed
+        .modifier(skin.getInLevelModifier(geometryProxy: self.geometryProxy))
+        .overlay(WaitWithErrorOverlay(
+            skin: skin, geometryProxy: geometryProxy,
+            completionHandler: {self.controller.clearOffer()}))
         .onReceive(self.controller.objectWillChange, perform: {
             _ in
             log(self.controller.isInLevel, self.controller.offer, self.controller.isResumed)
@@ -71,24 +87,18 @@ struct InLevel: View {
         })
         .onAppear(perform: {self.controller.resume()})
         .onDisappear(perform: {self.controller.pause()})
-        .modifier(NavigatableViewModifier())
     }
 }
 
 struct InLevel_Previews: PreviewProvider {
     static var previews: some View {
-        InLevel()
+        GeometryReader {
+            InLevelView(skin: SkinImpl(), geometryProxy: $0)
+        }
     }
 }
 
 let gameZoneController = GameZoneController()
-
-protocol GameZoneDelegate {
-    func pause()
-    func resume()
-    func enterLevel()
-    func leaveLevel() -> (requestReview: Bool, showInterstitial: Bool)
-}
 
 class GameZoneController: NSObject, ObservableObject {
     fileprivate override init(){}

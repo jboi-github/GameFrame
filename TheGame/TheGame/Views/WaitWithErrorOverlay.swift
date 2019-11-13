@@ -12,11 +12,15 @@ import GameFrameKit
 /**
  Show Activity-Spinner while waiting and Error-Popup, when error occured.
  */
-struct WaitWithErrorOverlay: View {
+struct WaitWithErrorOverlay<S>: View where S: Skin {
+    var skin: S
+    var geometryProxy: GeometryProxy
     var completionHandler: (() -> Void)? = nil
     @ObservedObject private var inApp = GameFrame.inApp
     
-    private struct WaitOverlay: View {
+    private struct WaitOverlay<S>: View where S: Skin {
+        var skin: S
+        var geometryProxy: GeometryProxy
         var completionHandler: (() -> Void)?
         
         @State private var spin = false
@@ -24,7 +28,8 @@ struct WaitWithErrorOverlay: View {
         
         var body: some View {
             Image(systemName: "arrow.2.circlepath")
-                .rotationEffect(.degrees(spin ? 360 : 0))
+                .modifier(skin.getWaitModifier(geometryProxy: self.geometryProxy))
+                .rotationEffect(.degrees(spin ? 360 : 0)) // TODO: Make Standard View and move to Modifier
                 .animation(Animation.linear(duration: 1.0).repeatForever(autoreverses: true))
                 .onAppear() {self.spin.set()}
                 .onDisappear(perform: {
@@ -34,13 +39,16 @@ struct WaitWithErrorOverlay: View {
         }
     }
 
-    private struct ErrorOverlay: View {
+    private struct ErrorOverlay<S>: View where S: Skin {
+        var skin: S
+        var geometryProxy: GeometryProxy
         var completionHandler: (() -> Void)?
         @State private var inApp = GameFrame.inApp
         
         var body: some View {
             VStack {
                 Text("\(inApp.error?.localizedDescription ?? "OK")")
+                    .modifier(skin.getErrorMessageModifier(geometryProxy: self.geometryProxy))
                 Button(action: {
                     defer {
                         log(self.completionHandler)
@@ -50,6 +58,7 @@ struct WaitWithErrorOverlay: View {
                 }) {
                     Image(systemName: "xmark")
                 }
+                .buttonStyle(skin.getErrorButtonModifier(geometryProxy: self.geometryProxy, isDisabled: false))
             }
         }
     }
@@ -57,16 +66,19 @@ struct WaitWithErrorOverlay: View {
     var body: some View {
         VStack {
             if inApp.error != nil {
-                ErrorOverlay(completionHandler: completionHandler)
+                ErrorOverlay(skin: skin, geometryProxy: geometryProxy, completionHandler: completionHandler)
             } else if inApp.purchasing {
-                WaitOverlay(completionHandler: completionHandler)
+                WaitOverlay(skin: skin, geometryProxy: geometryProxy, completionHandler: completionHandler)
             }
         }
+        .modifier(skin.getWaitWithErrorModifier(geometryProxy: self.geometryProxy))
     }
 }
 
 struct WaitWithErrorOverlay_Previews: PreviewProvider {
     static var previews: some View {
-        WaitWithErrorOverlay()
+        GeometryReader {
+            WaitWithErrorOverlay(skin: SkinImpl(), geometryProxy: $0)
+        }
     }
 }

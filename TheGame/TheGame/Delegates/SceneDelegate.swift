@@ -29,10 +29,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             adUnitIdRewarded: "ca-app-pub-3940256099942544/1712485313",
             adUnitIdInterstitial: "ca-app-pub-3940256099942544/4411468910") {
             
-                return MainView(
-                    gameZoneDelegate: TheGameDelegate(),
-                    bannerAlternative: Text("Thank you for playing The Game"),
-                    startsOffLevel: true)
+                return MainView(gameZoneDelegate: TheGameDelegate(), skin: SkinImpl(), startsOffLevel: true)
         }
     }
 
