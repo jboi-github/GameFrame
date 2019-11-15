@@ -9,16 +9,18 @@
 import GameFrameKit
 
 /// Created and initialized in `SceneDelegate`
-class TheGameDelegate: GameZoneDelegate {
+class TheGameDelegate: GameDelegate {
     func pause() {log()}
     
-    func resume() {
+    func resume() {log()}
+    
+    func stayInLevel() -> Bool {
         log()
         
         // Is dead? Then end the level
         let bullets = GameFrame.coreData.getConsumable("Bullets")
         let lives = GameFrame.coreData.getConsumable("Lives")
-        if bullets.available <= 0 || lives.available <= 0 {gameZoneController.leaveLevel()}
+        return bullets.available > 0 && lives.available > 0
     }
     
     func enterLevel() {

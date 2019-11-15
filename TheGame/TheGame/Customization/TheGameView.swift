@@ -9,7 +9,8 @@
 import SwiftUI
 import GameFrameKit
 
-struct GameZone: View {
+struct TheGameView: View {
+    @Environment(\.presentationMode) var presentationMode
     @ObservedObject private var points = GameFrame.coreData.getScore("Points")
     @ObservedObject private var medals = GameFrame.coreData.getAchievement("Medals")
     @ObservedObject private var bullets = GameFrame.coreData.getConsumable("Bullets")
@@ -24,7 +25,7 @@ struct GameZone: View {
                     self.bullets.consume(1)
                     if self.bullets.available <= 0 {
                         if !self.makeOffer(consumableId: "Bullets", quantity: 100) {
-                            gameZoneController.leaveLevel()
+                            self.presentationMode.wrappedValue.dismiss()
                         }
                     }
                 }) {
@@ -49,7 +50,7 @@ struct GameZone: View {
                     self.lives.consume(1)
                     if self.lives.available <= 0 {
                         if !self.makeOffer(consumableId: "Lives", quantity: 1) {
-                            gameZoneController.leaveLevel()
+                            self.presentationMode.wrappedValue.dismiss()
                         }
                     }
                 }) {
@@ -64,7 +65,7 @@ struct GameZone: View {
     private func makeOffer(consumableId: String, quantity: Int) -> Bool {
         let range = 0.8*Double(points.highest)..<Double(points.highest)
         if range.contains(Double(points.current)) {
-            gameZoneController.makeOffer(consumableId: consumableId, quantity: quantity)
+            gameController.makeOffer(consumableId: consumableId, quantity: quantity)
             return true
         } else {
             return false
@@ -72,8 +73,8 @@ struct GameZone: View {
     }
 }
 
-struct GameZone_Previews: PreviewProvider {
+struct TheGameView_Previews: PreviewProvider {
     static var previews: some View {
-        GameZone()
+        TheGameView()
     }
 }

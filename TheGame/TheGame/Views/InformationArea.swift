@@ -27,7 +27,7 @@ struct InformationArea<S>: View where S: Skin {
         
         var body: some View {
             Text("\(score.current) / \(score.highest)")
-                .modifier(skin.getInformationScoreModifier(geometryProxy: self.geometryProxy, id: id))
+                .modifier(skin.getInformationScoreModifier(geometryProxy: self.geometryProxy, parent: self.parent, id: id))
         }
     }
     
@@ -41,7 +41,7 @@ struct InformationArea<S>: View where S: Skin {
         
         var body: some View {
             Text("\(achievement.current.format(format))")
-                .modifier(skin.getInformationAchievementModifier(geometryProxy: self.geometryProxy, id: id))
+                .modifier(skin.getInformationAchievementModifier(geometryProxy: self.geometryProxy, parent: self.parent, id: id))
         }
     }
     
@@ -54,7 +54,7 @@ struct InformationArea<S>: View where S: Skin {
         
         var body: some View {
             Text("\(consumable.available)")
-                .modifier(skin.getInformationConsumableModifier(geometryProxy: self.geometryProxy, id: id))
+                .modifier(skin.getInformationConsumableModifier(geometryProxy: self.geometryProxy, parent: self.parent, id: id))
         }
     }
     
@@ -75,7 +75,7 @@ struct InformationArea<S>: View where S: Skin {
                     closed!
                 }
             }
-            .modifier(skin.getInformationNonConsumableModifier(geometryProxy: self.geometryProxy, id: id))
+            .modifier(skin.getInformationNonConsumableModifier(geometryProxy: self.geometryProxy, parent: self.parent, id: id))
         }
     }
 
@@ -94,7 +94,7 @@ struct InformationArea<S>: View where S: Skin {
                     Spacer()
                 }
             }
-            .modifier(skin.getInformationAchievementsModifier(geometryProxy: self.geometryProxy))
+            .modifier(skin.getInformationAchievementsModifier(geometryProxy: self.geometryProxy, parent: self.parent))
             
             ForEach(scoreIds, id: \.self) {
                 id in
@@ -104,7 +104,7 @@ struct InformationArea<S>: View where S: Skin {
                     Spacer()
                 }
             }
-            .modifier(skin.getInformationScoresModifier(geometryProxy: self.geometryProxy))
+            .modifier(skin.getInformationScoresModifier(geometryProxy: self.geometryProxy, parent: self.parent))
 
             ForEach(consumableIds, id: \.self) {
                 id in
@@ -114,7 +114,7 @@ struct InformationArea<S>: View where S: Skin {
                     Spacer()
                 }
             }
-            .modifier(skin.getInformationConsumablesModifier(geometryProxy: self.geometryProxy))
+            .modifier(skin.getInformationConsumablesModifier(geometryProxy: self.geometryProxy, parent: self.parent))
             
             if !nonConsumables.isEmpty {
                 HStack {
@@ -129,7 +129,7 @@ struct InformationArea<S>: View where S: Skin {
                             closed: self.nonConsumables[id].closed,
                             opened: self.nonConsumables[id].opened)
                     }
-                    .modifier(skin.getInformationNonConsumablesModifier(geometryProxy: self.geometryProxy))
+                    .modifier(skin.getInformationNonConsumablesModifier(geometryProxy: self.geometryProxy, parent: self.parent))
                     Spacer()
                 }
             }
@@ -141,7 +141,7 @@ struct InformationArea_Previews: PreviewProvider {
     static var previews: some View {
         GeometryReader {
             InformationArea(
-                skin: SkinImpl(),
+                skin: TheGameSkin(),
                 geometryProxy: $0,
                 parent: "Preview",
                 scoreIds: ["Points"],

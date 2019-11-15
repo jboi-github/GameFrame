@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import UIKit
 import GameFrameKit
 
 /**
@@ -18,7 +19,7 @@ struct WaitWithErrorOverlay<S>: View where S: Skin {
     var completionHandler: (() -> Void)? = nil
     @ObservedObject private var inApp = GameFrame.inApp
     
-    /// Copied from stackoverflow.com: https://stackoverflow.com/questions/56496638/activity-indicator-in-swiftui?noredirect=1
+    /// Copied from stackoverflow.com: https://stackoverflow.com/questions/56496638/activity-indicator-in-swiftui
     private struct ActivityIndicator: UIViewRepresentable {
         var isAnimating: Bool
         let style: UIActivityIndicatorView.Style
@@ -89,7 +90,7 @@ struct WaitWithErrorOverlay<S>: View where S: Skin {
 struct WaitWithErrorOverlay_Previews: PreviewProvider {
     static var previews: some View {
         GeometryReader {
-            WaitWithErrorOverlay(skin: SkinImpl(), geometryProxy: $0)
+            WaitWithErrorOverlay(skin: TheGameSkin(), geometryProxy: $0)
         }
     }
 }
