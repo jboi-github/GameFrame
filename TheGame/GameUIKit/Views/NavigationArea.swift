@@ -128,7 +128,7 @@ struct NavigationArea_Previews: PreviewProvider {
     static var previews: some View {
         GeometryReader {
             NavigationArea(
-                skin: TheGameSkin(),
+                skin: PreviewSkin(),
                 geometryProxy: $0,
                 parent: "Preview",
                 navigatables: [

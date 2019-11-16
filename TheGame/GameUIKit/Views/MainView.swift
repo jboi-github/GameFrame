@@ -13,11 +13,10 @@ struct MainView<S>: View where S: Skin {
     var startsOffLevel: Bool
     var skin: S
     
-    init(gameDelegate: GameDelegate, skin: S, startsOffLevel: Bool) {
+    init(skin: S, startsOffLevel: Bool) {
         log()
         self.startsOffLevel = startsOffLevel
         self.skin = skin
-        gameController.setDelegate(delegate: gameDelegate)
     }
     
     private struct Banner<S>: View where S: Skin {
@@ -64,6 +63,6 @@ struct MainView_Previews: PreviewProvider {
             adUnitIdRewarded: nil,
             adUnitIdInterstitial: nil)
         
-        return MainView(gameDelegate: TheGameDelegate(), skin: TheGameSkin(), startsOffLevel: true)
+        return MainView(skin: PreviewSkin(), startsOffLevel: true)
     }
 }

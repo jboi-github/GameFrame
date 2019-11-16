@@ -90,7 +90,7 @@ struct WaitWithErrorOverlay<S>: View where S: Skin {
 struct WaitWithErrorOverlay_Previews: PreviewProvider {
     static var previews: some View {
         GeometryReader {
-            WaitWithErrorOverlay(skin: TheGameSkin(), geometryProxy: $0)
+            WaitWithErrorOverlay(skin: PreviewSkin(), geometryProxy: $0)
         }
     }
 }

@@ -9,6 +9,7 @@
 import UIKit
 import SwiftUI
 import GameFrameKit
+import GameUIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
@@ -18,19 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         
-         GameFrame.createSharedInstance(
-            scene, consumablesConfig: [
-                "bulletsS": ("Bullets", 200),
-                "bulletsM": ("Bullets", 1000),
-                "bulletsL": ("Bullets", 2000),
-                "Lives": ("Lives", 1),
-            ],
-            adUnitIdBanner: "ca-app-pub-3940256099942544/2934735716",
-            adUnitIdRewarded: "ca-app-pub-3940256099942544/1712485313",
-            adUnitIdInterstitial: "ca-app-pub-3940256099942544/4411468910") {
-            
-                return MainView(gameDelegate: TheGameDelegate(), skin: TheGameSkin(), startsOffLevel: true)
-        }
+        GameUI.createSharedInstance(scene: scene, gameDelegate: TheGameDelegate(), skin: TheGameSkin()) 
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

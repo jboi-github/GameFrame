@@ -16,7 +16,7 @@ struct InLevelView<S>: View where S: Skin {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject private var inApp = GameFrame.inApp
     @ObservedObject private var adMob = GameFrame.adMob
-    @ObservedObject private var controller = gameControllerImpl
+    @ObservedObject private var controller = GameUI.instance!
 
     private struct OfferOverlay<S>: View where S: Skin {
         var skin: S
@@ -25,7 +25,7 @@ struct InLevelView<S>: View where S: Skin {
         var rewardQuantity: Int
         var completionHandler: () -> Void
         @Environment(\.presentationMode) var presentationMode
-        @ObservedObject private var controller = gameControllerImpl
+        @ObservedObject private var controller = GameUI.instance!
         @State private var showingReward: Bool = false
         
         var body: some View {
@@ -160,87 +160,7 @@ struct InLevelView<S>: View where S: Skin {
 struct InLevel_Previews: PreviewProvider {
     static var previews: some View {
         GeometryReader {
-            InLevelView(skin: TheGameSkin(), geometryProxy: $0)
+            InLevelView(skin: PreviewSkin(), geometryProxy: $0)
         }
-    }
-}
-
-/// Make parts of the controller available to rest of The Game
-private let gameControllerImpl = GameControllerImpl()
-let gameController: GameController = gameControllerImpl
-
-private class GameControllerImpl: NSObject, GameController, ObservableObject {
-    fileprivate override init(){}
-    
-    private var delegate: GameDelegate? = nil
-    func setDelegate(delegate: GameDelegate) {self.delegate = delegate}
-    
-    @Published fileprivate private(set) var offer: (consumableId: String, quantity: Int)? = nil
-    @Published fileprivate private(set) var isInLevel: Bool = false
-    @Published fileprivate private(set) var isResumed: Bool = false
-    
-    /// reading a published variable triggers changes!
-    var isInLevelShadow: Bool = false {
-        didSet(prev) {
-            guard prev != isInLevelShadow else {return}
-            isInLevel = isInLevelShadow
-        }
-    }
-    var isResumedShadow: Bool = false {
-        didSet(prev) {
-            guard prev != isResumedShadow else {return}
-            isResumed = isResumedShadow
-        }
-    }
-
-    /**
-     Called by your game to let `InLevel`show an offer to the player. This will first pause the game by calling `pause()` in the `TheGameDelegate`, then show the offering. When offering dissappears, `resume()` is called and the consumables might reflect the new values - if the player decided to take the offer. If player decided to not
-     take the offer, the consumables and therefore conditions to show the offer, might still be in place.
-     */
-    func makeOffer(consumableId: String, quantity: Int) {
-        log(delegate != nil, consumableId, quantity)
-        offer = (consumableId: consumableId, quantity: quantity)
-    }
-            
-    /**
-     Called internally to clear offer and let it dissappear.
-     */
-    fileprivate func clearOffer() {
-        log(offer)
-        offer = nil
-    }
-    
-    fileprivate func pause() {
-        log(isResumedShadow, isInLevelShadow)
-        if isResumedShadow {
-            isResumedShadow = false
-            delegate?.pause()
-            
-            isInLevelShadow = (delegate?.stayInLevel() ?? isInLevelShadow) || offer != nil
-            if !isInLevelShadow {
-                if let leave = delegate?.leaveLevel() {
-                    GameFrame.instance.leaveLevel(requestReview: leave.requestReview, showInterstitial: leave.showInterstitial)
-                } else {
-                    GameFrame.instance.leaveLevel(requestReview: false, showInterstitial: false)
-                }
-            }
-        }
-    }
-    
-    fileprivate func resume() -> Bool {
-        log(isResumedShadow, isInLevelShadow)
-        if !isResumedShadow {
-            if !isInLevelShadow {
-                isInLevelShadow = true
-                GameFrame.instance.enterLevel()
-                delegate?.enterLevel()
-            }
-            isResumedShadow = true
-            delegate?.resume()
-            
-        }
-        // Came back from offer, but did not take it
-        isInLevelShadow = delegate?.stayInLevel() ?? isInLevelShadow
-        return isInLevelShadow
     }
 }

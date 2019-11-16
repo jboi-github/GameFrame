@@ -17,7 +17,7 @@ struct StoreView<S>: View where S: Skin {
     var nonConsumableIds: [String]
     
     @Environment(\.presentationMode) var presentationMode
-    @ObservedObject private var inApp = GameFrame.inApp
+    var inApp = GameFrame.inApp
     
     private struct ConsumableProductRow<S>: View where S: Skin {
         var skin: S
@@ -159,7 +159,7 @@ struct StoreView<S>: View where S: Skin {
 struct StoreView_Previews: PreviewProvider {
     static var previews: some View {
         GeometryReader {
-            StoreView(skin: TheGameSkin(), geometryProxy: $0, consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])
+            StoreView(skin: PreviewSkin(), geometryProxy: $0, consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])
         }
     }
 }

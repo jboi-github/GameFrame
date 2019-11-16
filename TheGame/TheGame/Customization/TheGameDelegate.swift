@@ -7,6 +7,7 @@
 //
 
 import GameFrameKit
+import GameUIKit
 
 /// Created and initialized in `SceneDelegate`
 class TheGameDelegate: GameDelegate {

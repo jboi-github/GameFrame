@@ -8,24 +8,11 @@
 
 import Foundation
 
-/**
- Use the variable `gameController` to call the funcitons in here, mainly `makeOffer` anywhere in your game to offer the player some consumables
- as in-app purchase and the possibility to earn the specific consumable via rewarded videos.
- */
-protocol GameController {
-    func setDelegate(delegate: GameDelegate)
-    
-    /**
-     Called by your game to let `InLevel`show an offer to the player. This will first pause the game by calling `pause()` in the `TheGameDelegate`, then show the offering. When offering dissappears, `resume()` is called and the consumables might reflect the new values - if the player decided to take the offer. If player decided to not
-     take the offer, the consumables and therefore conditions to show the offer, might still be in place.
-     */
-    func makeOffer(consumableId: String, quantity: Int)
-}
-
+// MARK: - GameDelegate to implement individual game logic
 /**
  Game logic around external events to the game. All functions are called by The Game implementation.
  */
-protocol GameDelegate {
+public protocol GameDelegate {
     /**
      Called when the game goes off screen and player has no longer attention to it.
      */
@@ -53,4 +40,26 @@ protocol GameDelegate {
      - returns: if a review micht be requested and/or an interstitial should be shown.
      */
     func leaveLevel() -> (requestReview: Bool, showInterstitial: Bool)
+}
+
+// MARK: - GameDelegate implementation for PreView
+
+import GameFrameKit
+
+class PreViewDelegate: GameDelegate {
+    func pause() {log()}
+    
+    func resume() {log()}
+    
+    func enterLevel() {log()}
+    
+    func stayInLevel() -> Bool {
+        log()
+        return true
+    }
+    
+    func leaveLevel() -> (requestReview: Bool, showInterstitial: Bool) {
+        log()
+        return (requestReview: false, showInterstitial: false)
+    }
 }

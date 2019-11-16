@@ -75,7 +75,7 @@ struct OffLevelView<S>: View where S: Skin {
 struct OffLevel_Previews: PreviewProvider {
     static var previews: some View {
         GeometryReader {
-            OffLevelView(skin: TheGameSkin(), geometryProxy: $0)
+            OffLevelView(skin: PreviewSkin(), geometryProxy: $0)
         }
     }
 }

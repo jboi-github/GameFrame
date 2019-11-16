@@ -8,6 +8,7 @@
 
 import SwiftUI
 import GameFrameKit
+import GameUIKit
 
 struct TheGameView: View {
     @Environment(\.presentationMode) var presentationMode
@@ -65,7 +66,7 @@ struct TheGameView: View {
     private func makeOffer(consumableId: String, quantity: Int) -> Bool {
         let range = 0.8*Double(points.highest)..<Double(points.highest)
         if range.contains(Double(points.current)) {
-            gameController.makeOffer(consumableId: consumableId, quantity: quantity)
+            GameUI.instance!.makeOffer(consumableId: consumableId, quantity: quantity)
             return true
         } else {
             return false

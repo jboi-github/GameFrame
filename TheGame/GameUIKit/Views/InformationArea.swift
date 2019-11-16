@@ -141,7 +141,7 @@ struct InformationArea_Previews: PreviewProvider {
     static var previews: some View {
         GeometryReader {
             InformationArea(
-                skin: TheGameSkin(),
+                skin: PreviewSkin(),
                 geometryProxy: $0,
                 parent: "Preview",
                 scoreIds: ["Points"],
