@@ -191,7 +191,7 @@ private class Delegater: NSObject, SKPaymentTransactionObserver, SKProductsReque
             case .purchasing:
                 log("purchasing")
                 // Keep paused and fingers crossed
-                self.parent.purchasing.set()
+                DispatchQueue.main.async {self.parent.purchasing.set()}
                 break
             case .deferred:
                 log("deferred")

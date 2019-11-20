@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 import StoreKit
 
-public class GFNonConsumable: ObservableObject, Identifiable {
+public class GFNonConsumable: ObservableObject {
     internal var delegate: GFEntityNonConsumable {
            didSet(prev) {
                guard prev != delegate else {return}
