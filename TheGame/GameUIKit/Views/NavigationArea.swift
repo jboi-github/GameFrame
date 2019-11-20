@@ -9,116 +9,130 @@
 import SwiftUI
 import GameFrameKit
 
-enum Navigatable {
-    case Action(action: () -> Void, image: Image, disabled: Bool?)
-    case ToInLevel(image: Image)
-    case ToStore(image: Image, consumableIds: [String], nonConsumableIds: [String], disabled: Bool?)
+public enum NavigationItem {
+    case PlayLink(image: Image = Image(systemName: "play"))
+    case StoreLink(image: Image = Image(systemName: "cart"), consumableIds: [String], nonConsumableIds: [String])
+    case BackLink(image: Image = Image(systemName: "xmark"))
+
+    case GameCenterLink(image: Image = Image(systemName: "rosette"))
+    case ShareLink(image: Image = Image(systemName: "square.and.arrow.up"), greeting: String, format: String)
+    case RewardLink(image: Image = Image(systemName: "film"), consumableId: String, quantity: Int)
+    case RestoreLink(image: Image = Image(systemName: "arrow.uturn.right"))
+
+    case LikeLink(image: Image = Image(systemName: "hand.thumbsup"), appId: String)
+    case SettingsLink(image: Image = Image(systemName: "gear"))
+
+    case OfferBackLink(image: Image = Image(systemName: "xmark"))
+    case ErrorBackLink(image: Image = Image(systemName: "xmark"))
+
+    case UrlLink(image: Image = Image(systemName: "link"), urlString: String)
+    
+    private typealias Unpacked = (action: () -> Void, image: Image)
+    
+    private func unpack(navigator: Navigator) -> Unpacked {
+        switch self {
+        case let .UrlLink(image: image, urlString: urlString):
+            return (action: getUrlAction(urlString), image: image)
+            
+        case let .GameCenterLink(image: image):
+            return (action: {GameFrame.gameCenter.show()}, image: image)
+        case let .ShareLink(image: image, greeting: greeting, format: format):
+            return (action: {GameFrame.instance!.showShare(greeting: greeting, format: format)}, image: image)
+        case let .RewardLink(image: image, consumableId: consumableId, quantity: quantity):
+            return (action: {
+                GameFrame.adMob.showReward(consumable: GameFrame.coreData.getConsumable(consumableId), quantity: quantity)
+            }, image: image)
+        case let .RestoreLink(image: image):
+            return (action: {GameFrame.inApp.restore()}, image: image)
+
+        case let .LikeLink(image: image, appId: appId):
+            return (action: getUrlAction("https://itunes.apple.com/app/id\(appId)?action=write-review"), image: image)
+        case let .SettingsLink(image: image):
+            return (action: getUrlAction(UIApplication.openSettingsURLString), image: image)
+
+        case let .PlayLink(image: image):
+            return (action: {navigator.push(NavigatorItem.InLevel)}, image: image)
+        case let .StoreLink(image: image, consumableIds: consumableIds, nonConsumableIds: nonConsumableIds):
+            return (action: {navigator.push(
+                .Store(consumableIds: consumableIds, nonConsumableIds: nonConsumableIds)
+            )}, image: image)
+        case let .BackLink(image: image):
+            return (action: {navigator.pop()}, image: image)
+        case let .OfferBackLink(image: image):
+            return (action: {GameUI.instance.clearOffer()}, image: image)
+        case let .ErrorBackLink(image: image):
+            return (action: {GameFrame.inApp.clearError()}, image: image)
+        }
+    }
+    
+    fileprivate func asButton(navigator: Navigator, disabled: Bool) -> some View {
+        let unpacked = unpack(navigator: navigator)
+        
+        return Button(action: unpacked.action) {unpacked.image}
+            .disabled(disabled)
+    }
 }
 
-struct NavigationArea<S>: View where S: Skin {
-    var skin: S
-    var geometryProxy: GeometryProxy
-    var parent: String
-    var navigatables: [Navigatable]
+struct NavigationArea<S>: View where S: GameSkin {
+    let parent: String
+    let items: [[NavigationItem]]
+    let isOverlayed: Bool
+    @EnvironmentObject private var skin: S
     
-    private struct NavigatableView: View {
-        var skin: S
-        var geometryProxy: GeometryProxy
-        var parent: String
-        var id: Int
-        var navigatable: Navigatable
+    init(parent: String, items: [[NavigationItem]], isOverlayed: Bool = false) {
+        self.parent = parent
+        self.items = items
+        self.isOverlayed = isOverlayed
+    }
+        
+    private struct Item: View {
+        let parent: String
+        let row: Int
+        let col: Int
+        let item: NavigationItem
+        let isOverlayed: Bool
+        @ObservedObject private var inApp = GameFrame.inApp
+        @ObservedObject private var adMob = GameFrame.adMob
+        @ObservedObject private var gameCenter = GameFrame.gameCenter
+        @ObservedObject private var navigator = GameUI.instance.navigator
+        @EnvironmentObject private var skin: S
         
         var body: some View {
-            let action = unpackWhenAction(navigatable: navigatable)
-            let toInLevel = unpackWhenToInLevel(navigatable: navigatable)
-            let toStore = unpackWhenToStore(navigatable: navigatable)
+            var disabled = isOverlayed
             
-            let actionButton = (action != nil) ? Button(action: action!.action) {
-                Spacer()
-                action!.image
-                Spacer()
-            }
-            .disabled(action!.disabled ?? false)
-            .buttonStyle(self.skin.getNavigatableModifier(
-                geometryProxy: self.geometryProxy, parent: parent,
-                isDisabled: action!.disabled ?? false,
-                id: id))
-            : nil
-            
-            let toInLevelButton = (toInLevel != nil) ? NavigationLink(destination: InLevelView(
-                skin: self.skin, geometryProxy: self.geometryProxy)) {
-                Spacer()
-                toInLevel!
-                Spacer()
-            }
-            .buttonStyle(self.skin.getNavigatableModifier(geometryProxy: self.geometryProxy, parent: parent, isDisabled: false, id: id))
-            : nil
-            
-            let toStoreButton = (toStore != nil) ? NavigationLink(destination:
-                StoreView(
-                    skin: self.skin,
-                    geometryProxy: self.geometryProxy,
-                    consumableIds: toStore!.consumableIds,
-                    nonConsumableIds: toStore!.nonConsumableIds)) {
-                Spacer()
-                toStore!.image
-                Spacer()
-            }
-            .disabled(toStore!.disabled ?? false)
-            .buttonStyle(self.skin.getNavigatableModifier(
-                geometryProxy: self.geometryProxy, parent: parent,
-                isDisabled: toStore!.disabled ?? false,
-                id: id))
-            : nil
-            
-            
-            return HStack {
-                if actionButton != nil {
-                    actionButton
-                } else if toInLevelButton != nil {
-                    toInLevelButton
-                } else if toStoreButton != nil {
-                    toStoreButton
+            if !disabled {
+                switch item {
+                case .GameCenterLink:
+                    disabled = !gameCenter.enabled
+                case .RewardLink:
+                    disabled = !adMob.rewardAvailable
+                case .RestoreLink:
+                    disabled =  !inApp.available
+                case .StoreLink:
+                    disabled = !inApp.available
+                default:
+                    break
                 }
             }
-        }
-        
-        private func unpackWhenAction(navigatable: Navigatable) -> (action: () -> Void, image: Image, disabled: Bool?)? {
-            switch navigatable {
-            case let .Action(action, image, disabled):
-                return (action: action, image: image, disabled: disabled)
-            default:
-                return nil
-            }
-        }
-
-        private func unpackWhenToInLevel(navigatable: Navigatable) -> Image? {
-            switch navigatable {
-            case let .ToInLevel(image: image):
-                return image
-            default:
-                return nil
-            }
-        }
-        
-        private func unpackWhenToStore(navigatable: Navigatable) ->
-            (image: Image, consumableIds: [String], nonConsumableIds: [String], disabled: Bool?)? {
-                
-            switch navigatable {
-            case let .ToStore(image, consumableIds, nonConsumableIds, disabled):
-                return (image, consumableIds, nonConsumableIds, disabled)
-            default:
-                return nil
-            }
+            
+            return item.asButton(navigator: navigator, disabled: disabled)
+                .buttonStyle(skin.getNavigationItemModifier(parent: parent, isDisabled: disabled, row: row, col: col))
         }
     }
     
     var body: some View {
-        HStack {
-            ForEach(0..<navigatables.count, id: \.self) {
-                id in
+        VStack {
+            ForEach(0..<items.count, id: \.self) {
+                row in
                 
-                NavigatableView(skin: self.skin, geometryProxy: self.geometryProxy, parent: self.parent, id: id, navigatable: self.navigatables[id])
+                HStack {
+                    ForEach(0..<self.items[row].count, id: \.self) {
+                        col in
+                        
+                        Item(parent: self.parent, row: row, col: col, item: self.items[row][col], isOverlayed: self.isOverlayed)
+                    }
+                }
+                .modifier(self.skin.getNavigationRowModifier(parent: self.parent, row: row))
             }
         }
     }
@@ -126,15 +140,14 @@ struct NavigationArea<S>: View where S: Skin {
 
 struct NavigationArea_Previews: PreviewProvider {
     static var previews: some View {
-        GeometryReader {
-            NavigationArea(
-                skin: PreviewSkin(),
-                geometryProxy: $0,
-                parent: "Preview",
-                navigatables: [
-                    .Action(action: {print("navigated1")}, image: Image(systemName: "link"), disabled: true),
-                    .Action(action: {print("navigated2")}, image: Image(systemName: "rosette"), disabled: false),
-                    .Action(action: {print("navigated3")}, image: Image(systemName: "gear"), disabled: nil)])
-        }
+        NavigationArea<PreviewSkin>(
+            parent: "Preview",
+            items: [[
+                .UrlLink(image: Image(systemName: "rosette"), urlString: "https://www.apple.com"),
+                .UrlLink(image: Image(systemName: "gear"), urlString: "https://www.google.com")
+            ], [
+                .UrlLink(image: Image(systemName: "link"), urlString: "https://www.bing.com")
+            ]])
+        .environmentObject(PreviewSkin())
     }
 }

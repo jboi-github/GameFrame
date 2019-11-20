@@ -12,14 +12,10 @@ import GameUIKit
 
 // MARK: The GameZone View
 struct TheGameZoneModifier: ViewModifier {
-    var geometryProxy: GeometryProxy
-
-    func body(content: Content) -> some View {TheGameView().background(Color.green)}
+    func body(content: Content) -> some View {TheGameView().background(Color.yellow)}
 }
 
 // MARK: - A Skin that delegates to standard skin implementation
-class TheGameSkin: Skin {
-     func getInLevelGameZoneModifier(geometryProxy: GeometryProxy) -> some ViewModifier {
-         TheGameZoneModifier(geometryProxy: geometryProxy)
-    }
+class TheGameSkin: GameSkin {
+     func getInLevelGameZoneModifier() -> some ViewModifier {TheGameZoneModifier()}
 }

@@ -11,7 +11,6 @@ import GameFrameKit
 import GameUIKit
 
 struct TheGameView: View {
-    @Environment(\.presentationMode) var presentationMode
     @ObservedObject private var points = GameFrame.coreData.getScore("Points")
     @ObservedObject private var medals = GameFrame.coreData.getAchievement("Medals")
     @ObservedObject private var bullets = GameFrame.coreData.getConsumable("Bullets")
@@ -25,9 +24,7 @@ struct TheGameView: View {
                 Button(action: {
                     self.bullets.consume(1)
                     if self.bullets.available <= 0 {
-                        if !self.makeOffer(consumableId: "Bullets", quantity: 100) {
-                            self.presentationMode.wrappedValue.dismiss()
-                        }
+                        self.makeOfferOrDie(consumableId: "Bullets", quantity: 100)
                     }
                 }) {
                     Text("Shot")
@@ -50,9 +47,7 @@ struct TheGameView: View {
                 Button(action: {
                     self.lives.consume(1)
                     if self.lives.available <= 0 {
-                        if !self.makeOffer(consumableId: "Lives", quantity: 1) {
-                            self.presentationMode.wrappedValue.dismiss()
-                        }
+                        self.makeOfferOrDie(consumableId: "Lives", quantity: 1)
                     }
                 }) {
                     Text("Killed")
@@ -62,14 +57,13 @@ struct TheGameView: View {
         }
     }
     
-    // Make an offer to player, if points are in range
-    private func makeOffer(consumableId: String, quantity: Int) -> Bool {
+    // Make an offer to player, if points are in range. If not, die directly
+    private func makeOfferOrDie(consumableId: String, quantity: Int) {
         let range = 0.8*Double(points.highest)..<Double(points.highest)
         if range.contains(Double(points.current)) {
-            GameUI.instance!.makeOffer(consumableId: consumableId, quantity: quantity)
-            return true
+            GameUI.instance.makeOffer(consumableId: consumableId, quantity: quantity)
         } else {
-            return false
+            GameUI.instance.gameOver()
         }
     }
 }

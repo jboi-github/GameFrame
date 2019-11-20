@@ -9,19 +9,14 @@
 import SwiftUI
 import GameFrameKit
 
-struct MainView<S>: View where S: Skin {
-    var startsOffLevel: Bool
-    var skin: S
-    
-    init(skin: S, startsOffLevel: Bool) {
-        log()
-        self.startsOffLevel = startsOffLevel
-        self.skin = skin
-    }
-    
-    private struct Banner<S>: View where S: Skin {
-        var skin: S
+struct MainView<C, S>: View where C: GameConfig, S: GameSkin {
+    @ObservedObject private var navigator = GameUI.instance.navigator
+    @EnvironmentObject private var config: C
+    @EnvironmentObject private var skin: S
+
+    private struct Banner: View {
         @ObservedObject private var adMob = GameFrame.adMob
+        @EnvironmentObject private var skin: S
         
         var body: some View {
             ZStack {
@@ -39,18 +34,10 @@ struct MainView<S>: View where S: Skin {
     var body: some View {
         VStack {
             GeometryReader {
-                geometryProxy in
-                
-                NavigationView {
-                    if self.startsOffLevel {
-                        OffLevelView(skin: self.skin, geometryProxy: geometryProxy)
-                    } else {
-                        InLevelView(skin: self.skin, geometryProxy: geometryProxy)
-                    }
-                }
-                .modifier(self.skin.getMainModifier(geometryProxy: geometryProxy))
+                self.navigator.current.asView(gameConfig: self.config, gameSkin: self.skin, geometryProxy: $0)
+                    .modifier(self.skin.getMainModifier())
             }
-            Banner(skin: skin)
+            Banner()
         }
     }
 }
@@ -63,6 +50,8 @@ struct MainView_Previews: PreviewProvider {
             adUnitIdRewarded: nil,
             adUnitIdInterstitial: nil)
         
-        return MainView(skin: PreviewSkin(), startsOffLevel: true)
+        return MainView<PreViewConfig, PreviewSkin>()
+            .environmentObject(PreviewSkin())
+            .environmentObject(PreViewConfig())
     }
 }

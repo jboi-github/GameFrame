@@ -13,11 +13,10 @@ import GameFrameKit
 /**
  Show Activity-Spinner while waiting and Error-Popup, when error occured.
  */
-struct WaitWithErrorOverlay<S>: View where S: Skin {
-    var skin: S
-    var geometryProxy: GeometryProxy
+struct WaitWithErrorOverlay<S>: View where S: GameSkin {
     var completionHandler: (() -> Void)? = nil
     @ObservedObject private var inApp = GameFrame.inApp
+    @EnvironmentObject private var skin: S
     
     /// Copied from stackoverflow.com: https://stackoverflow.com/questions/56496638/activity-indicator-in-swiftui
     private struct ActivityIndicator: UIViewRepresentable {
@@ -32,65 +31,29 @@ struct WaitWithErrorOverlay<S>: View where S: Skin {
             isAnimating ? uiView.startAnimating() : uiView.stopAnimating()
         }
     }
-    
-    private struct WaitOverlay<S>: View where S: Skin {
-        var skin: S
-        var geometryProxy: GeometryProxy
-        var completionHandler: (() -> Void)?
-        
-        @State private var spin = false
-        @ObservedObject private var inApp = GameFrame.inApp
-        
-        var body: some View {
-            ActivityIndicator(isAnimating: inApp.purchasing, style: .large)
-                .modifier(skin.getWaitModifier(geometryProxy: self.geometryProxy))
-                .onDisappear(perform: {
-                    log(self.inApp.purchasing, self.inApp.error)
-                    if self.inApp.error == nil {self.completionHandler?()}
-                })
-        }
-    }
-
-    private struct ErrorOverlay<S>: View where S: Skin {
-        var skin: S
-        var geometryProxy: GeometryProxy
-        var completionHandler: (() -> Void)?
-        @State private var inApp = GameFrame.inApp
-        
-        var body: some View {
-            VStack {
-                Text("\(inApp.error?.localizedDescription ?? "OK")")
-                    .modifier(skin.getErrorMessageModifier(geometryProxy: self.geometryProxy))
-                Button(action: {
-                    defer {
-                        log(self.completionHandler)
-                        self.completionHandler?()
-                    }
-                    self.inApp.clearError()
-                }) {
-                    Image(systemName: "xmark")
-                }
-                .buttonStyle(skin.getErrorButtonModifier(geometryProxy: self.geometryProxy, isDisabled: false))
-            }
-        }
-    }
 
     var body: some View {
         VStack {
             if inApp.error != nil {
-                ErrorOverlay(skin: skin, geometryProxy: geometryProxy, completionHandler: completionHandler)
+                Text("\(inApp.error?.localizedDescription ?? "OK")")
+                    .modifier(skin.getErrorMessageModifier())
+                NavigationArea<S>(parent: "Error", items: [[.ErrorBackLink()]])
             } else if inApp.purchasing {
-                WaitOverlay(skin: skin, geometryProxy: geometryProxy, completionHandler: completionHandler)
+                ActivityIndicator(isAnimating: inApp.purchasing, style: .large)
+                    .modifier(skin.getWaitModifier())
             }
         }
-        .modifier(skin.getWaitWithErrorModifier(geometryProxy: self.geometryProxy))
+        .modifier(skin.getWaitWithErrorModifier())
+        .onDisappear(perform: {
+            log(self.inApp.purchasing, self.inApp.error)
+            if self.inApp.error == nil {self.completionHandler?()}
+        })
     }
 }
 
 struct WaitWithErrorOverlay_Previews: PreviewProvider {
     static var previews: some View {
-        GeometryReader {
-            WaitWithErrorOverlay(skin: PreviewSkin(), geometryProxy: $0)
-        }
+        WaitWithErrorOverlay<PreviewSkin>()
+        .environmentObject(PreviewSkin())
     }
 }

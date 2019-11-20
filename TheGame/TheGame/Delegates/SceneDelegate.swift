@@ -19,7 +19,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         
-        GameUI.createSharedInstance(scene: scene, gameDelegate: TheGameDelegate(), skin: TheGameSkin()) 
+        GameUI.createSharedInstance(
+            scene: scene,
+            gameConfig: TheGameConfig(),
+            gameDelegate: TheGameDelegate(),
+            gameSkin: TheGameSkin(),
+            startsOffLevel: true) 
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

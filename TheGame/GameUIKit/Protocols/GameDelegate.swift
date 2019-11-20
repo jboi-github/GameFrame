@@ -43,7 +43,6 @@ public protocol GameDelegate {
 }
 
 // MARK: - GameDelegate implementation for PreView
-
 import GameFrameKit
 
 class PreViewDelegate: GameDelegate {

@@ -10,156 +10,160 @@ import SwiftUI
 import GameFrameKit
 import StoreKit
 
-struct StoreView<S>: View where S: Skin {
-    var skin: S
-    var geometryProxy: GeometryProxy
-    var consumableIds: [String]
-    var nonConsumableIds: [String]
+struct StoreView<S>: View where S: GameSkin {
+    let consumableIds: [String]
+    let nonConsumableIds: [String]
+    @ObservedObject private var inApp = GameFrame.inApp
     
-    @Environment(\.presentationMode) var presentationMode
-    var inApp = GameFrame.inApp
-    
-    private struct ConsumableProductRow<S>: View where S: Skin {
-        var skin: S
-        var geometryProxy: GeometryProxy
-        var consumableProduct: GFInApp.ConsumableProduct
+    private struct ConsumableProductRow: View {
+        let consumableProduct: GFInApp.ConsumableProduct
+        let isOverlayed: Bool
         @State private var quantity = 1
+        @EnvironmentObject private var skin: S
         
         var body: some View {
-            HStack {
+            let proxy = GameUI.instance.geometryProxy!
+            
+            return HStack {
                 VStack {
                     Text("\(self.consumableProduct.product.localizedTitle)")
-                        .modifier(self.skin.getStoreConsumableTitleModifier(geometryProxy: self.geometryProxy))
-                    Text("\(self.consumableProduct.product.localizedDescription)")
-                        .modifier(self.skin.getStoreConsumableDescriptionModifier(geometryProxy: self.geometryProxy))
+                        .modifier(skin.getStoreConsumableTitleModifier())
+                    Text("\(consumableProduct.product.localizedDescription)")
+                        .modifier(skin.getStoreConsumableDescriptionModifier())
                 }
                 Spacer()
-                if geometryProxy.size.width > geometryProxy.size.height {
-                    Stepper(value: self.$quantity, in: 1...99) {
+                if proxy.size.width > proxy.size.height {
+                    Stepper(value: $quantity, in: 1...99) {
                         HStack {
                             Spacer()
                             Spacer()
-                            Text("\(self.quantity)")
-                                .modifier(self.skin.getStoreConsumableQuantityModifier(geometryProxy: self.geometryProxy))
+                            Text("\(quantity)")
+                                .modifier(skin.getStoreConsumableQuantityModifier())
                         }
                     }
-                    .buttonStyle(self.skin.getStoreConsumableStepperModifier(
-                        geometryProxy: self.geometryProxy, isDisabled: false))
+                    .disabled(isOverlayed)
+                    .buttonStyle(skin.getStoreConsumableStepperModifier(isDisabled: false))
                 }
                 Button(action: {
                     GameFrame.inApp.buy(product: self.consumableProduct.product, quantity: self.quantity)
                 }) {
                     VStack {
                         Image(systemName: "cart")
-                            .modifier(self.skin.getStoreConsumableCartModifier(geometryProxy: self.geometryProxy))
-                        Text("\(self.consumableProduct.product.localizedPrice(quantity: self.quantity))")
-                            .modifier(self.skin.getStoreConsumablePriceModifier(geometryProxy: self.geometryProxy))
+                            .modifier(skin.getStoreConsumableCartModifier())
+                        Text("\(consumableProduct.product.localizedPrice(quantity: quantity))")
+                            .modifier(skin.getStoreConsumablePriceModifier())
                     }
                 }
-                .buttonStyle(self.skin.getStoreConsumableButtonModifier(
-                    geometryProxy: self.geometryProxy,
+                .disabled(isOverlayed)
+                .buttonStyle(skin.getStoreConsumableButtonModifier(
                     isDisabled: false,
-                    id: self.consumableProduct.product.productIdentifier))
+                    id: consumableProduct.product.productIdentifier))
             }
-            .modifier(self.skin.getStoreConsumableModifier(
-                geometryProxy: self.geometryProxy,
-                id: self.consumableProduct.product.productIdentifier))
+            .modifier(skin.getStoreConsumableModifier(id: consumableProduct.product.productIdentifier))
         }
     }
     
-    private struct NonConsumableProductRow<S>: View where S: Skin {
-        var skin: S
-        var geometryProxy: GeometryProxy
-        var nonConsumable: GFNonConsumable
+    private struct NonConsumableProductRow: View {
+        let nonConsumable: GFNonConsumable
+        let isOverlayed: Bool
+        @EnvironmentObject private var skin: S
         
         var body: some View {
             HStack {
                 VStack {
                     Text("\(nonConsumable.product!.localizedTitle)")
-                        .modifier(skin.getStoreNonConsumableTitleModifier(geometryProxy: self.geometryProxy))
+                        .modifier(skin.getStoreNonConsumableTitleModifier())
                     Text("\(nonConsumable.product!.localizedDescription)")
-                        .modifier(skin.getStoreNonConsumableDescriptionModifier(geometryProxy: self.geometryProxy))
+                        .modifier(skin.getStoreNonConsumableDescriptionModifier())
                 }
                 Spacer()
                 Button(action: {
                     GameFrame.inApp.buy(product: self.nonConsumable.product!, quantity: 1)
                 }) {
                     Text("\(nonConsumable.product!.localizedPrice(quantity: 1))")
-                        .modifier(skin.getStoreNonConsumablePriceModifier(geometryProxy: self.geometryProxy))
+                        .modifier(skin.getStoreNonConsumablePriceModifier())
                     Image(systemName: "cart")
-                        .modifier(skin.getStoreNonConsumableCartModifier(geometryProxy: self.geometryProxy))
+                        .modifier(skin.getStoreNonConsumableCartModifier())
                 }
-                .disabled(nonConsumable.isOpened)
+                .disabled(nonConsumable.isOpened || isOverlayed)
                 .buttonStyle(skin.getStoreNonConsumableButtonModifier(
-                    geometryProxy: self.geometryProxy,
                     isDisabled: nonConsumable.isOpened,
-                    id: self.nonConsumable.product!.productIdentifier))
+                    id: nonConsumable.product!.productIdentifier))
             }
-            .modifier(self.skin.getStoreNonConsumableModifier(
-                geometryProxy: self.geometryProxy,
-                id: self.nonConsumable.product!.productIdentifier))
+            .modifier(skin.getStoreNonConsumableModifier(id: nonConsumable.product!.productIdentifier))
         }
     }
+    
+    private struct ProductsView: View {
+        let consumableIds: [String]
+        let nonConsumableIds: [String]
+        let isOverlayed: Bool
+        @EnvironmentObject private var skin: S
 
-    var body: some View {
-        let consumables = GameFrame.inApp.getConsumables(ids: consumableIds)
-        let nonConsumables = GameFrame.inApp.getNonConsumables(ids: nonConsumableIds)
+        var body: some View {
+            let consumables = GameFrame.inApp.getConsumables(ids: consumableIds)
+            let nonConsumables = GameFrame.inApp.getNonConsumables(ids: nonConsumableIds)
 
-        return VStack {
-            Group {
+            return VStack {
                 Spacer()
+                
                 if consumables.isEmpty && nonConsumables.isEmpty {
                     Text("No products available or store not available")
-                        .modifier(skin.getStoreEmptyModifier(geometryProxy: self.geometryProxy))
+                        .modifier(skin.getStoreEmptyModifier())
                 } else {
                     ScrollView {
                         Section() {
                             ForEach(0..<consumables.count, id: \.self) {
-                                ConsumableProductRow<S>(
-                                    skin: self.skin,
-                                    geometryProxy: self.geometryProxy,
-                                    consumableProduct: consumables[$0])
+                                ConsumableProductRow(consumableProduct: consumables[$0], isOverlayed: self.isOverlayed)
                             }
                         }
-                        .modifier(skin.getStoreConsumablesModifier(geometryProxy: self.geometryProxy))
+                        .modifier(skin.getStoreConsumablesModifier())
                         Section() {
                             ForEach(0..<nonConsumables.count, id: \.self) {
-                                NonConsumableProductRow<S>(
-                                    skin: self.skin,
-                                    geometryProxy: self.geometryProxy,
-                                    nonConsumable: nonConsumables[$0])
+                                NonConsumableProductRow(nonConsumable: nonConsumables[$0], isOverlayed: self.isOverlayed)
                             }
                         }
-                        .modifier(skin.getStoreNonConsumablesModifier(geometryProxy: self.geometryProxy))
+                        .modifier(skin.getStoreNonConsumablesModifier())
                     }
                 }
+                
                 Spacer()
+
+                NavigationArea<S>(parent: "Store", items: [[.RestoreLink(), .BackLink()]], isOverlayed: isOverlayed)
+                    .modifier(skin.getStoreNavigationModifier())
             }
-            
-            // TODO: Put in some Game Configuration
-            NavigationArea<S>(skin: skin, geometryProxy: geometryProxy, parent: "Store",
-                navigatables: [
-                    .Action(action: {GameFrame.inApp.restore()},
-                     image: Image(systemName: "arrow.uturn.right"),
-                     disabled: nil),
-                    .Action(action: {self.presentationMode.wrappedValue.dismiss()},
-                     image: Image(systemName: "xmark"),
-                     disabled: nil)])
-            .modifier(skin.getStoreNavigationModifier(geometryProxy: self.geometryProxy))
+            .modifier(skin.getStoreModifier(isOverlayed: isOverlayed))
         }
-        .modifier(skin.getStoreModifier(
-            geometryProxy: self.geometryProxy,
-            isOverlayed: inApp.purchasing || inApp.error != nil))
-        .overlay(WaitWithErrorOverlay(skin: skin, geometryProxy: geometryProxy))
+    }
+
+    var body: some View {
+        // TODO: Workaround as of XCode 11.2. When reading one published var of an ObservablObject multiple times, the App crashes
+        ZStack {
+            if inApp.purchasing {
+                ProductsView(
+                    consumableIds: consumableIds,
+                    nonConsumableIds: nonConsumableIds,
+                    isOverlayed: true)
+                WaitAlert<S>()
+            } else if inApp.error != nil {
+                ProductsView(
+                    consumableIds: consumableIds,
+                    nonConsumableIds: nonConsumableIds,
+                    isOverlayed: true)
+                ErrorAlert<S>()
+            } else {
+                ProductsView(
+                    consumableIds: consumableIds,
+                    nonConsumableIds: nonConsumableIds,
+                    isOverlayed: false)
+            }
+        }
     }
 }
 
- 
- 
 struct StoreView_Previews: PreviewProvider {
     static var previews: some View {
-        GeometryReader {
-            StoreView(skin: PreviewSkin(), geometryProxy: $0, consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])
-        }
+        StoreView<PreviewSkin>(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])
+        .environmentObject(PreviewSkin())
     }
 }
