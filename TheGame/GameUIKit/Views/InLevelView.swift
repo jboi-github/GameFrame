@@ -95,6 +95,13 @@ struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
                     .modifier(skin.getOfferNavigationModifier())
                 }
                 .modifier(skin.getOfferModifier(isOverlayed: isOverlayed))
+                .onAppear {
+                    guard !self.isOverlayed else {return}
+                    
+                    if !GameUI.instance.gameDelegate.keepOffer() {
+                        GameUI.instance.clearOffer()
+                    }
+                }
             }
         }
         

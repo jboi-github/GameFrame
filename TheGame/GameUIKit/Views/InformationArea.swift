@@ -17,8 +17,8 @@ public enum InformationItem {
     case NonConsumableItem(id: String, opened: Image, closed: Image?)
 
     private struct InformationScore<S>: View where S: GameSkin {
-        var parent: String
-        var id: String
+        let parent: String
+        let id: String
         @ObservedObject private var score: GFScore
         @EnvironmentObject private var skin: S
         
@@ -35,9 +35,9 @@ public enum InformationItem {
     }
 
     private struct InformationAchievement<S>: View where S: GameSkin {
-        var parent: String
-        var id: String
-        var format: String
+        let parent: String
+        let id: String
+        let format: String
         @ObservedObject private var achievement: GFAchievement
         @EnvironmentObject private var skin: S
 
@@ -55,8 +55,8 @@ public enum InformationItem {
     }
 
     private struct InformationConsumable<S>: View where S: GameSkin {
-        var parent: String
-        var id: String
+        let parent: String
+        let id: String
         @ObservedObject private var consumable: GFConsumable
         @EnvironmentObject private var skin: S
 
@@ -73,10 +73,10 @@ public enum InformationItem {
     }
 
     private struct InformationNonConsumable<S>: View where S: GameSkin {
-        var parent: String
-        var id: String
-        var opened: Image
-        var closed: Image?
+        let parent: String
+        let id: String
+        let opened: Image
+        let closed: Image?
         @ObservedObject private var nonConsumable: GFNonConsumable
         @EnvironmentObject private var skin: S
 
@@ -155,8 +155,8 @@ public enum InformationItem {
 
 // MARK: Information Area implementation
 struct InformationArea<S>: View where S: GameSkin {
-    var parent: String
-    var items: [[InformationItem]]
+    let parent: String
+    let items: [[InformationItem]]
     @EnvironmentObject private var skin: S
 
     var body: some View {

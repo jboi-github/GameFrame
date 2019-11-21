@@ -11,14 +11,14 @@ import GameUIKit
 import SwiftUI
 
 class TheGameConfig: GameConfig {
-    let offLevelInformation = [
+    let offLevelInformation: [[InformationItem]] = [
         [
             .AchievementItem(id: "Medals", format: "%.1f"),
             .NonConsumableItem(id: "weaponB", opened: Image(systemName: "location"), closed: Image(systemName: "location.slash")),
             .NonConsumableItem(id: "weaponC", opened: Image(systemName: "location.fill"), closed: nil)
         ], [
-            InformationItem.ScoreItem(id: "Points"),
-            InformationItem.ConsumableItem(id: "Bullets")
+            .ScoreItem(id: "Points"),
+            .ConsumableItem(id: "Bullets")
         ]]
     
     let offLevelNavigation: [[NavigationItem]] = [[
@@ -35,11 +35,11 @@ class TheGameConfig: GameConfig {
             .SettingsLink()
         ]]
     
-    let inLevelInformation = [[
+    let inLevelInformation: [[InformationItem]] = [[
             InformationItem.ScoreItem(id: "Points")
         ], [
-            InformationItem.AchievementItem(id: "Medals", format: "%.1f"),
-            InformationItem.ConsumableItem(id: "Bullets")
+            .AchievementItem(id: "Medals", format: "%.1f"),
+            .ConsumableItem(id: "Bullets")
         ]]
     
     let inLevelNavigation: [[NavigationItem]] = [[

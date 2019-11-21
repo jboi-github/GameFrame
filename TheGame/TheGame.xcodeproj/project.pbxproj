@@ -60,7 +60,6 @@
 		155DBC6A237F095000AA6412 /* OffLevelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155DBC63237F095000AA6412 /* OffLevelView.swift */; };
 		155DBC6B237F095000AA6412 /* InLevelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155DBC64237F095000AA6412 /* InLevelView.swift */; };
 		155DBC6C237F095000AA6412 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155DBC65237F095000AA6412 /* MainView.swift */; };
-		155DBC6D237F095000AA6412 /* WaitWithErrorOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155DBC66237F095000AA6412 /* WaitWithErrorOverlay.swift */; };
 		155DBC70237F0C5000AA6412 /* GameUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155DBC6F237F0C5000AA6412 /* GameUI.swift */; };
 		155DBC7223829FAE00AA6412 /* GameConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155DBC7123829FAE00AA6412 /* GameConfig.swift */; };
 		155DBC742382A1B500AA6412 /* TheGameConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 155DBC732382A1B500AA6412 /* TheGameConfig.swift */; };
@@ -198,7 +197,6 @@
 		155DBC63237F095000AA6412 /* OffLevelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OffLevelView.swift; sourceTree = "<group>"; };
 		155DBC64237F095000AA6412 /* InLevelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InLevelView.swift; sourceTree = "<group>"; };
 		155DBC65237F095000AA6412 /* MainView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
-		155DBC66237F095000AA6412 /* WaitWithErrorOverlay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaitWithErrorOverlay.swift; sourceTree = "<group>"; };
 		155DBC6F237F0C5000AA6412 /* GameUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameUI.swift; sourceTree = "<group>"; };
 		155DBC7123829FAE00AA6412 /* GameConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameConfig.swift; sourceTree = "<group>"; };
 		155DBC732382A1B500AA6412 /* TheGameConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TheGameConfig.swift; sourceTree = "<group>"; };
@@ -395,7 +393,6 @@
 				155DBC63237F095000AA6412 /* OffLevelView.swift */,
 				155DBC64237F095000AA6412 /* InLevelView.swift */,
 				155DBC65237F095000AA6412 /* MainView.swift */,
-				155DBC66237F095000AA6412 /* WaitWithErrorOverlay.swift */,
 				15440B312385A43200233DD3 /* Commons.swift */,
 			);
 			path = Views;
@@ -715,7 +712,6 @@
 				155DBC6C237F095000AA6412 /* MainView.swift in Sources */,
 				15440B322385A43200233DD3 /* Commons.swift in Sources */,
 				155DBC5E237F091E00AA6412 /* GameSkin.swift in Sources */,
-				155DBC6D237F095000AA6412 /* WaitWithErrorOverlay.swift in Sources */,
 				155DBC6A237F095000AA6412 /* OffLevelView.swift in Sources */,
 				155DBC5D237F091E00AA6412 /* GameDelegate.swift in Sources */,
 				155DBC67237F095000AA6412 /* NavigationArea.swift in Sources */,

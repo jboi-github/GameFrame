@@ -48,6 +48,8 @@ public class GameUI: NSObject, ObservableObject  {
      */
     public func makeOffer(consumableId: String, quantity: Int) {
         log(consumableId, quantity)
+        guard gameDelegate.keepOffer() else {return}
+        
         offer = (consumableId: consumableId, quantity: quantity)
     }
     
@@ -70,10 +72,19 @@ public class GameUI: NSObject, ObservableObject  {
     private init(gameDelegate: GameDelegate, navigator: Navigator) {
         self.gameDelegate = gameDelegate
         self.navigator = navigator
+        
+        super.init()
+        
+        // Make sure, data is saved at the right moment
+        NotificationCenter.default
+            .addObserver(self, selector: #selector(onDidActivate(_ :)), name: UIScene.didActivateNotification, object: nil)
+        NotificationCenter.default
+            .addObserver(self, selector: #selector(onDidEnterBackground(_ :)),
+                         name: UIScene.didEnterBackgroundNotification, object: nil)
     }
 
     // MARK: Internals
-    private let gameDelegate: GameDelegate
+    let gameDelegate: GameDelegate
     let navigator: Navigator
 
     /// reading a published variable triggers changes!
@@ -99,8 +110,8 @@ public class GameUI: NSObject, ObservableObject  {
     }
     
     /**
-     Called during game, when the game should pause. During pause, delegates `stayInLevel` is called and if it returns `false` the sequence to
-     end the level is started. therefroe, a call to `pause()` combined with `stayInLevel()` can result in a Game Over sequence.
+     Called during game, when the game should pause. During pause, delegates `isAlive` is called and if it returns `false` the sequence to
+     end the level is started. therefroe, a call to `pause()` combined with `isAlive()` can result in a Game Over sequence.
      */
     func pause() {
         log(isResumedShadow, isInLevelShadow)
@@ -108,6 +119,7 @@ public class GameUI: NSObject, ObservableObject  {
         
         isResumedShadow = false
         gameDelegate.pause()
+        GameFrame.instance.pause()
         
         if !isInLevelShadow {
             let leave = gameDelegate.leaveLevel()
@@ -128,7 +140,7 @@ public class GameUI: NSObject, ObservableObject  {
             gameDelegate.resume()
 
             // Still in game?
-            if !gameDelegate.stayInLevel() {
+            if !gameDelegate.isAlive() {
                 gameOver() // Game was over between pause and resume
             }
         } else {
@@ -138,7 +150,32 @@ public class GameUI: NSObject, ObservableObject  {
             gameDelegate.enterLevel()
 
             isResumedShadow = true
+            GameFrame.instance.resume()
             gameDelegate.resume()
+        }
+    }
+    
+    /// Get notified, when it's time to save
+    @objc func onDidEnterBackground(_ notification:Notification) {
+        log(isResumedShadow, isInLevelShadow)
+        guard isInLevelShadow else {return}
+        
+        if isResumedShadow {
+            pause()
+        } else {
+            GameFrame.instance.pause()
+        }
+    }
+    
+    /// Get notified, when it's time to save
+    @objc func onDidActivate(_ notification:Notification) {
+        log(isResumedShadow, isInLevelShadow)
+        guard isInLevelShadow else {return}
+        
+        if !isResumedShadow {
+            resume()
+        } else {
+            GameFrame.instance.resume()
         }
     }
 }
