@@ -86,10 +86,6 @@ public class GameFrame: NSObject {
         inAppImpl = GFInApp(consumablesConfig)
         adMobImpl = GFAdMob(window, adUnitIdBanner: adUnitIdBanner, adUnitIdRewarded: adUnitIdRewarded, adUnitIdInterstitial: adUnitIdInterstitial)
         guard window != nil else {return}
-
-        // Make sure, data is saved at the right moment
-        NotificationCenter.default
-            .addObserver(self, selector: #selector(onDidEnterBackgroundNotification(_ :)), name: UIScene.didEnterBackgroundNotification, object: nil)
     }
 
     // MARK: - Public functions
@@ -111,14 +107,26 @@ public class GameFrame: NSObject {
      */
     public func leaveLevel(requestReview: Bool, showInterstitial: Bool) {
         log(requestReview, showInterstitial)
-        coreDataImpl.save()
-        gameCenterImpl.report()
         
         // For whatever reason, you cannot show both. Interstitial has prio if available
         let showInterstitial = showInterstitial && (adMobImpl.interstitial?.isReady ?? false)
         if requestReview && !showInterstitial {SKStoreReviewController.requestReview()}
         if showInterstitial {adMobImpl.showInterstitial()}
     }
+    
+    /**
+     Call, when game pauses, e.g. is put into background or overlayed by an offer. Should be called before `leaveLevel()`
+     */
+    public func pause() {
+        log()
+        coreDataImpl.save()
+        gameCenterImpl.report()
+    }
+    
+    /**
+     Call, when game is resumed from pause. Should be called after `enterLevel`
+     */
+    public func resume() {}
     
     public func showShare(greeting: String? = nil, url urlString: String? = nil, format: String) {
         // Put items in the list
@@ -150,13 +158,6 @@ public class GameFrame: NSObject {
     
     // MARK: - Internal handling
     private let window: UIWindow?
-    
-    /// Get notified, when it's time to save
-    @objc func onDidEnterBackgroundNotification(_ notification:Notification) {
-        log()
-        coreDataImpl.save()
-        gameCenterImpl.report()
-    }
 }
 
 private class ShareSubject: NSObject, UIActivityItemSource {

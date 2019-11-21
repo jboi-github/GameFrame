@@ -15,7 +15,7 @@ class TheGameDelegate: GameDelegate {
     
     func resume() {log()}
     
-    func stayInLevel() -> Bool {
+    func isAlive() -> Bool {
         log()
         
         // Is dead? Then end the level
@@ -40,5 +40,10 @@ class TheGameDelegate: GameDelegate {
         let goodLevel = points.current == points.highest
         let timeForInterstitial = (Double.random(in: 0..<1) < 0.5) && !goodLevel // 50% and prio on review
         return (requestReview: goodLevel, showInterstitial: timeForInterstitial)
+    }
+    
+    func keepOffer() -> Bool {
+        log()
+        return !isAlive()
     }
 }

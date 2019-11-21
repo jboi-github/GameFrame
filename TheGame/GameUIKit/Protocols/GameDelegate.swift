@@ -33,13 +33,23 @@ public protocol GameDelegate {
      Called when game leaves the screen.
      - returns: true, if game should only pause and continue. False, if level should end, e.g. player ran out of lives.
      */
-    func stayInLevel() -> Bool
+    func isAlive() -> Bool
     
     /**
      Game or level is over. Game returns to OffLevel.
      - returns: if a review micht be requested and/or an interstitial should be shown.
      */
     func leaveLevel() -> (requestReview: Bool, showInterstitial: Bool)
+    
+    /**
+     Check, if conditions to make offer are fulfilled.
+     
+     This is called multiple times during offering, initiated by a call to `makeOffer()`, to ensure good User Experience.
+     - returns:
+        - true, if conditions for an offer are (still) fullfilled.
+        - false, if no offer should be made or existing offer should disappear.
+     */
+    func keepOffer() -> Bool
 }
 
 // MARK: - GameDelegate implementation for PreView
@@ -52,7 +62,7 @@ class PreViewDelegate: GameDelegate {
     
     func enterLevel() {log()}
     
-    func stayInLevel() -> Bool {
+    func isAlive() -> Bool {
         log()
         return true
     }
@@ -60,5 +70,10 @@ class PreViewDelegate: GameDelegate {
     func leaveLevel() -> (requestReview: Bool, showInterstitial: Bool) {
         log()
         return (requestReview: false, showInterstitial: false)
+    }
+    
+    func keepOffer() -> Bool {
+        log()
+        return true
     }
 }
