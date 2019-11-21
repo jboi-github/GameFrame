@@ -310,14 +310,6 @@ struct NavigationRowModifier: ViewModifier {
     func body(content: Content) -> some View {content}
 }
 
-struct WaitWithErrorModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .padding()
-            .background(Color.secondary.colorInvert())
-    }
-}
-
 struct WaitModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
@@ -336,6 +328,12 @@ struct ErrorModifier: ViewModifier {
     }
 }
 
+/**
+ Define the look of your Game. Implement the protocol and override the given `extensions`as necessary.
+ To implement a change in look for a particular item:
+ 1. Override function to get the `View/Text/ImageModifier` or `ButtonStyle`
+ 2. Write your own modifier and call it in the overridden function
+ */
 public protocol GameSkin: ObservableObject {
     associatedtype MainModifierType: ViewModifier
     associatedtype MainBannerModifierType: ViewModifier
@@ -381,7 +379,6 @@ public protocol GameSkin: ObservableObject {
     associatedtype InformationRowModifierType: ViewModifier
     associatedtype NavigationItemModifierType: ButtonStyle
     associatedtype NavigationRowModifierType: ViewModifier
-    associatedtype WaitWithErrorModifierType: ViewModifier
     associatedtype WaitModifierType: ViewModifier
     associatedtype ErrorMessageModifierType: TextModifier
     associatedtype ErrorModifierType: ViewModifier
@@ -430,7 +427,6 @@ public protocol GameSkin: ObservableObject {
     func getInformationRowModifier(parent: String, row: Int) -> InformationRowModifierType
     func getNavigationItemModifier(parent: String, isDisabled: Bool, row: Int, col: Int) -> NavigationItemModifierType
     func getNavigationRowModifier(parent: String, row: Int) -> NavigationRowModifierType
-    func getWaitWithErrorModifier() -> WaitWithErrorModifierType
     func getWaitModifier() -> WaitModifierType
     func getErrorMessageModifier() -> ErrorMessageModifierType
     func getErrorModifier() -> ErrorModifierType
@@ -566,9 +562,6 @@ public extension GameSkin {
       func getNavigationRowModifier(parent: String, row: Int) -> some ViewModifier {
           NavigationRowModifier(parent: parent, row: row)
      }
-     func getWaitWithErrorModifier() -> some ViewModifier {
-         WaitWithErrorModifier()
-    }
      func getWaitModifier() -> some ViewModifier {
          WaitModifier()
     }

@@ -428,9 +428,9 @@
 			isa = PBXGroup;
 			children = (
 				1540988E23773041002A5E4F /* TheGameView.swift */,
+				155DBC732382A1B500AA6412 /* TheGameConfig.swift */,
 				15B487602379E1210099D8A9 /* TheGameDelegate.swift */,
 				153F1201237C8E2100D3B6AD /* TheGameSkin.swift */,
-				155DBC732382A1B500AA6412 /* TheGameConfig.swift */,
 			);
 			path = Customization;
 			sourceTree = "<group>";

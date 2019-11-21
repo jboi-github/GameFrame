@@ -12,8 +12,29 @@ import GameFrameKit
 
 public class GameUI: NSObject, ObservableObject  {
     // MARK: Model wide available
+    
+    /**
+     Shared instance of GameUI.
+     
+     Initialized by call to `GameUI.createSharedInstance()`
+     */
     public private(set) static var instance: GameUI!
     
+    /**
+     First time creation of the instance of `GameUI`.
+     
+     Call this function in `SceneDelegate.swift`. An example can be found in `TheGame` project.
+     After this function the instances of `GameUI` and `GameFrame` are available.
+     
+     - parameters:
+        - scene: pass through given `scene` parameter in `SceneDelegate.swift`
+        - gameConfig: Configuration for your game, defining which navigation items and information items are shown in the different screens.
+        - gameDelegate: Minimal game logic, that is necessary by `GameFrame` to run User Experience.
+        - gameSkin: Define the skin, colors and formatting of your game.
+        - startsOffLevel: Defines, if game starts with an off-level screen or directly jumps into the game. Games that use timing, likae Arcade games, should set this to `true`. Games like chess set this to `false` to ease User Experience.
+     
+     - warning: `startsOffLevel` currently only supports `true`. Behaviour with `false` is undefined.
+     */
     public static func createSharedInstance<C, S>(
         scene: UIScene, gameConfig: C, gameDelegate: GameDelegate, gameSkin: S, startsOffLevel: Bool)
         where C: GameConfig, S: GameSkin
@@ -31,7 +52,6 @@ public class GameUI: NSObject, ObservableObject  {
                 return MainView<C, S>()
                     .environmentObject(gameSkin)
                     .environmentObject(gameConfig)
-                    .environmentObject(GameFrame.inApp)
         }
     }
 
@@ -43,8 +63,8 @@ public class GameUI: NSObject, ObservableObject  {
      If player decided to not take the offer, the consumables and therefore conditions to show the offer, might still be in place.
      
      - Parameters:
-         - quantity: Numer of consumables to be earned when a rewarded video is played. Has no effect to in-app purchaes.
-         - consumableId: Id of the consumable to offer to the player. alle products, related to the consumable are offered with a qunatity of 1 item.
+         - quantity: Number of consumables to be earned when a rewarded video is played. Has no effect to in-app purchases.
+         - consumableId: Id of the consumable to offer to the player. All products, related to the consumable, are offered with a quantity of 1 item.
      */
     public func makeOffer(consumableId: String, quantity: Int) {
         log(consumableId, quantity)
