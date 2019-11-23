@@ -66,13 +66,13 @@ public enum NavigationItem {
             return (action: getUrlAction(UIApplication.openSettingsURLString), image: image)
 
         case let .PlayLink(image: image):
-            return (action: {navigator.push(NavigatorItem.InLevel)}, image: image)
+            return (action: {navigator.push(.InLevel)}, image: image) // TODO: create NavigationLink destination
         case let .StoreLink(image: image, consumableIds: consumableIds, nonConsumableIds: nonConsumableIds):
             return (action: {navigator.push(
-                .Store(consumableIds: consumableIds, nonConsumableIds: nonConsumableIds)
+                .Store(consumableIds: consumableIds, nonConsumableIds: nonConsumableIds) // TODO: create NavigationLink destination
             )}, image: image)
         case let .BackLink(image: image):
-            return (action: {navigator.pop()}, image: image)
+            return (action: {navigator.pop()}, image: image) // TODO: create dismiss action
         case let .OfferBackLink(image: image):
             return (action: {GameUI.instance.clearOffer()}, image: image)
         case let .ErrorBackLink(image: image):
@@ -83,7 +83,7 @@ public enum NavigationItem {
     fileprivate func asButton(navigator: Navigator, disabled: Bool) -> some View {
         let unpacked = unpack(navigator: navigator)
         
-        return Button(action: unpacked.action) {unpacked.image}
+        return Button(action: unpacked.action) {unpacked.image} // TODO: Return VStack with Button or NAv-Link
             .disabled(disabled)
     }
 }

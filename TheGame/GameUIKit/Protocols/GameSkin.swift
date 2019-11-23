@@ -270,19 +270,9 @@ struct NavigationItemModifier: ButtonStyle {
     var col: Int
 
     func makeBody(configuration: Self.Configuration) -> some View {
-        VStack {
-            if parent == "OffLevel" && row == 0 && col == 0 {
-                Spacer()
-                Image(systemName: "play.circle")
-                    .resizable().scaledToFit()
-                    .foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
-                Spacer()
-            } else {
-                configuration.label
-                    .foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
-                    .padding()
-            }
-        }
+        configuration.label
+            .foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
+            .padding()
     }
 }
 

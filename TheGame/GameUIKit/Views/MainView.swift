@@ -33,7 +33,9 @@ struct MainView<C, S>: View where C: GameConfig, S: GameSkin {
     
     var body: some View {
         VStack {
-            self.navigator.current.asView(gameConfig: config, gameSkin: skin)
+            // TODO: Replace by NavigationView. Tke care of startsOffLevel
+            navigator.current
+                .asView(gameConfig: config, gameSkin: skin)
                 .modifier(skin.getMainModifier())
             Banner()
         }

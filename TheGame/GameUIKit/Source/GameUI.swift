@@ -206,6 +206,8 @@ public class GameUI: NSObject, ObservableObject  {
     }
 }
 
+// TODO: Remove
+
 /// Internal work around to NavigationLink and NavigationView. A simple stack providing state possibility to go back in view hierarchy.
 enum NavigatorItem{
     case OffLevel
