@@ -30,9 +30,6 @@ public class GFConsumable: ObservableObject {
     private var prebooked: Int {didSet {available = earned + bought + prebooked - consumed}}
     private var consumed: Int {didSet {available = earned + bought + prebooked - consumed}}
 
-    // The corresponding product to buy from, if available
-    public internal(set) var products = [Int:SKProduct]() // Products available in store for this consumable, player, country, ...
- 
     internal init(delegate: GFEntityConsumable) {
         self.delegate = delegate
         self.earned = Int(delegate.earned)

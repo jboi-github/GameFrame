@@ -8,6 +8,7 @@
 
 import Foundation
 import GameUIKit
+import GameFrameKit
 import SwiftUI
 
 class TheGameConfig: GameConfig {
@@ -49,11 +50,14 @@ class TheGameConfig: GameConfig {
             .BackLink()
         ]]
 
-    let productsToConsumables = [
-        "bulletsS": (consumable: "Bullets", quantity: 200),
-        "bulletsM": (consumable: "Bullets", quantity: 1000),
-        "bulletsL": (consumable: "Bullets", quantity: 2000),
-        "Lives": (consumable: "Lives", quantity: 1)]
+    let purchasables: [String: [GFInApp.Purchasable]] = [
+        "bulletsS": [.Consumable(id: "Bullets", quantity: 200)],
+        "bulletsM": [.Consumable(id: "Bullets", quantity: 1000)],
+        "bulletsL": [.Consumable(id: "Bullets", quantity: 2000)],
+        "Lives": [.Consumable(id: "Lives", quantity: 1)],
+        "weaponB": [.NonConsumable(id: "weaponB")],
+        "weaponC": [.NonConsumable(id: "weaponC")]]
+    
     let adUnitIdBanner = "ca-app-pub-3940256099942544/2934735716"
     let adUnitIdRewarded = "ca-app-pub-3940256099942544/1712485313"
     let adUnitIdInterstitial = "ca-app-pub-3940256099942544/4411468910"

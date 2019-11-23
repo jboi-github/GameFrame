@@ -33,10 +33,8 @@ struct MainView<C, S>: View where C: GameConfig, S: GameSkin {
     
     var body: some View {
         VStack {
-            GeometryReader {
-                self.navigator.current.asView(gameConfig: self.config, gameSkin: self.skin, geometryProxy: $0)
-                    .modifier(self.skin.getMainModifier())
-            }
+            self.navigator.current.asView(gameConfig: config, gameSkin: skin)
+                .modifier(skin.getMainModifier())
             Banner()
         }
     }
@@ -45,7 +43,7 @@ struct MainView<C, S>: View where C: GameConfig, S: GameSkin {
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
         GameFrame.createSharedInstanceForPreview(
-            consumablesConfig: [:],
+            purchasables: [String: [GFInApp.Purchasable]](),
             adUnitIdBanner: nil,
             adUnitIdRewarded: nil,
             adUnitIdInterstitial: nil)

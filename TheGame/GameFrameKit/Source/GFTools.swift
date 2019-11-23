@@ -70,13 +70,27 @@ public func getUrlAction(_ url: String) -> () -> Void {
     }
 }
 
-/// - returns: The cost of the product formatted in the local currency.
 public extension SKProduct {
+    /// - returns: The cost of the product formatted in the local currency.
     func localizedPrice(quantity: Int) -> String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.locale = priceLocale
         return formatter.string(from: NSDecimalNumber(value: Double(truncating: price) * Double(quantity)))!
+    }
+    
+    /**
+     Product belongs purely to a consumable.
+
+     If true, product can be bought with higher quantity.
+     * true, if product is solely related to consumables
+     * false, if product is related a least one time to a non-consumable or is not configured at all.
+     
+     - warning: App crashes when this variable is read before `GameFrame` was initialized
+
+     */
+    var isPurelyConsumable: Bool {
+        return GameFrame.inApp.isPurelyConsumable(productIdentifier)
     }
 }
 

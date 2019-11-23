@@ -24,9 +24,6 @@ public class GFNonConsumable: ObservableObject {
     /// Current score
     @Published public private(set) var isOpened: Bool
     private var prebooked: Bool // if true, the unlock is only prebooked and needs confirmation
-    
-    // The corresponding product to buy from, if available
-    public internal(set) var product: SKProduct?
 
     internal init(delegate: GFEntityNonConsumable) {
         self.delegate = delegate

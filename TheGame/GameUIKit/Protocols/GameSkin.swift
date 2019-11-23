@@ -20,6 +20,9 @@ public protocol ImageModifier {
 }
 
 public extension Image {
+    /**
+     Specialized version of `View.modifier()` for Image fields. The modifier must be an `ImageModifier`.
+     */
     func modifier<T>(_ modifier: T) -> some View where T: ImageModifier {modifier.body(image: self)}
 }
 
@@ -33,6 +36,9 @@ public protocol TextModifier {
 }
 
 public extension Text {
+    /**
+     Specialized version of `View.modifier()` for Text fields. The modifier must be a `TextModifier`.
+     */
     func modifier<T>(_ modifier: T) -> some View where T: TextModifier {modifier.body(text: self)}
 }
 
@@ -107,11 +113,11 @@ struct StoreNavigationModifier: ViewModifier {
     func body(content: Content) -> some View {content}
 }
 
-struct StoreConsumablesModifier: ViewModifier {
+struct StoreProductsModifier: ViewModifier {
     func body(content: Content) -> some View {content}
 }
 
-struct StoreConsumableModifier: ViewModifier {
+struct StoreProductModifier: ViewModifier {
     var id: String
 
     func body(content: Content) -> some View {
@@ -119,85 +125,54 @@ struct StoreConsumableModifier: ViewModifier {
     }
 }
 
-struct StoreConsumableButtonModifier: ButtonStyle {
-    var isDisabled: Bool
+struct StoreProductButtonModifier: ButtonStyle {
     var id: String
+    var isDisabled: Bool
     
     func makeBody(configuration: Self.Configuration) -> some View {
-        let proxy = (GameUI.instance.geometryProxy)!
-        
         return configuration.label
             .foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
-            .frame(width: proxy.size.width * 1.0/4.0)
     }
 }
 
-struct StoreConsumableTitleModifier: TextModifier {
+struct StoreProductTitleModifier: TextModifier {
+    var id: String
+    
     func body(text: Text) -> some View {text}
 }
 
-struct StoreConsumableDescriptionModifier: TextModifier {
+struct StoreProductDescriptionModifier: TextModifier {
+    var id: String
+    
     func body(text: Text) -> some View {text}
 }
 
-struct StoreConsumableQuantityModifier: TextModifier {
+struct StoreProductQuantityModifier: TextModifier {
+    var id: String
+    
     func body(text: Text) -> some View {text}
 }
 
-struct StoreConsumableStepperModifier: ButtonStyle {
+struct StoreProductStepperModifier: ButtonStyle {
+    var id: String
+    
     var isDisabled: Bool
 
     func makeBody(configuration: Self.Configuration) -> some View {
-        let proxy = GameUI.instance.geometryProxy!
-        
         return configuration.label
             .foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
-            .frame(width: proxy.size.width * 1.0/3.0)
     }
 }
 
-struct StoreConsumableCartModifier: ImageModifier {
+struct StoreProductCartModifier: ImageModifier {
+    var id: String
+    
     func body(image: Image) -> some View {image}
 }
 
-struct StoreConsumablePriceModifier: TextModifier {
-    func body(text: Text) -> some View {text}
-}
-
-struct StoreNonConsumablesModifier: ViewModifier {
-    func body(content: Content) -> some View {content}
-}
-
-struct StoreNonConsumableModifier: ViewModifier {
+struct StoreProductPriceModifier: TextModifier {
     var id: String
-
-    func body(content: Content) -> some View {
-        content.padding(.vertical, nil)
-    }
-}
-
-struct StoreNonConsumableButtonModifier: ButtonStyle {
-    var isDisabled: Bool
-    var id: String
-
-   func makeBody(configuration: Self.Configuration) -> some View {
-        configuration.label.foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
-    }
-}
-
-struct StoreNonConsumableTitleModifier: TextModifier {
-    func body(text: Text) -> some View {text}
-}
-
-struct StoreNonConsumableDescriptionModifier: TextModifier {
-    func body(text: Text) -> some View {text}
-}
-
-struct StoreNonConsumableCartModifier: ImageModifier {
-    func body(image: Image) -> some View {image}
-}
-
-struct StoreNonConsumablePriceModifier: TextModifier {
+    
     func body(text: Text) -> some View {text}
 }
 
@@ -221,8 +196,8 @@ struct OfferProductsModifier: ViewModifier {
 }
 
 struct OfferProductModifier: ButtonStyle {
-    var isDisabled: Bool
     var id: String
+    var isDisabled: Bool
 
    func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label.foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
@@ -230,18 +205,26 @@ struct OfferProductModifier: ButtonStyle {
 }
 
 struct OfferProductTitleModifier: TextModifier {
+    var id: String
+
     func body(text: Text) -> some View {text}
 }
 
 struct OfferProductDescriptionModifier: TextModifier {
+    var id: String
+
     func body(text: Text) -> some View {text}
 }
 
 struct OfferProductCartModifier: ImageModifier {
+    var id: String
+
     func body(image: Image) -> some View {image}
 }
 
 struct OfferProductPriceModifier: TextModifier {
+    var id: String
+
     func body(text: Text) -> some View {text}
 }
 
@@ -348,22 +331,15 @@ public protocol GameSkin: ObservableObject {
     associatedtype StoreModifierType: ViewModifier
     associatedtype StoreEmptyModifierType: TextModifier
     associatedtype StoreNavigationModifierType: ViewModifier
-    associatedtype StoreConsumablesModifierType: ViewModifier
-    associatedtype StoreConsumableModifierType: ViewModifier
-    associatedtype StoreConsumableButtonModifierType: ButtonStyle
-    associatedtype StoreConsumableTitleModifierType: TextModifier
-    associatedtype StoreConsumableDescriptionModifierType: TextModifier
-    associatedtype StoreConsumableQuantityModifierType: TextModifier
-    associatedtype StoreConsumableStepperModifierType: ButtonStyle
-    associatedtype StoreConsumableCartModifierType: ImageModifier
-    associatedtype StoreConsumablePriceModifierType: TextModifier
-    associatedtype StoreNonConsumablesModifierType: ViewModifier
-    associatedtype StoreNonConsumableModifierType: ViewModifier
-    associatedtype StoreNonConsumableButtonModifierType: ButtonStyle
-    associatedtype StoreNonConsumableTitleModifierType: TextModifier
-    associatedtype StoreNonConsumableDescriptionModifierType: TextModifier
-    associatedtype StoreNonConsumableCartModifierType: ImageModifier
-    associatedtype StoreNonConsumablePriceModifierType: TextModifier
+    associatedtype StoreProductsModifierType: ViewModifier
+    associatedtype StoreProductModifierType: ViewModifier
+    associatedtype StoreProductButtonModifierType: ButtonStyle
+    associatedtype StoreProductTitleModifierType: TextModifier
+    associatedtype StoreProductDescriptionModifierType: TextModifier
+    associatedtype StoreProductQuantityModifierType: TextModifier
+    associatedtype StoreProductStepperModifierType: ButtonStyle
+    associatedtype StoreProductCartModifierType: ImageModifier
+    associatedtype StoreProductPriceModifierType: TextModifier
     associatedtype OfferModifierType: ViewModifier
     associatedtype OfferNavigationModifierType: ViewModifier
     associatedtype OfferProductsModifierType: ViewModifier
@@ -396,30 +372,23 @@ public protocol GameSkin: ObservableObject {
     func getStoreModifier(isOverlayed: Bool) -> StoreModifierType
     func getStoreEmptyModifier() -> StoreEmptyModifierType
     func getStoreNavigationModifier() -> StoreNavigationModifierType
-    func getStoreConsumablesModifier() -> StoreConsumablesModifierType
-    func getStoreConsumableModifier(id: String) -> StoreConsumableModifierType
-    func getStoreConsumableButtonModifier(isDisabled: Bool, id: String) -> StoreConsumableButtonModifierType
-    func getStoreConsumableTitleModifier() -> StoreConsumableTitleModifierType
-    func getStoreConsumableDescriptionModifier() -> StoreConsumableDescriptionModifierType
-    func getStoreConsumableQuantityModifier() -> StoreConsumableQuantityModifierType
-    func getStoreConsumableStepperModifier(isDisabled: Bool) -> StoreConsumableStepperModifierType
-    func getStoreConsumableCartModifier() -> StoreConsumableCartModifierType
-    func getStoreConsumablePriceModifier() -> StoreConsumablePriceModifierType
-    func getStoreNonConsumablesModifier() -> StoreNonConsumablesModifierType
-    func getStoreNonConsumableModifier(id: String) -> StoreNonConsumableModifierType
-    func getStoreNonConsumableButtonModifier(isDisabled: Bool, id: String) -> StoreNonConsumableButtonModifierType
-    func getStoreNonConsumableTitleModifier() -> StoreNonConsumableTitleModifierType
-    func getStoreNonConsumableDescriptionModifier() -> StoreNonConsumableDescriptionModifierType
-    func getStoreNonConsumableCartModifier() -> StoreNonConsumableCartModifierType
-    func getStoreNonConsumablePriceModifier() -> StoreNonConsumablePriceModifierType
+    func getStoreProductsModifier() -> StoreProductsModifierType
+    func getStoreProductModifier(id: String) -> StoreProductModifierType
+    func getStoreProductButtonModifier(id: String, isDisabled: Bool) -> StoreProductButtonModifierType
+    func getStoreProductTitleModifier(id: String) -> StoreProductTitleModifierType
+    func getStoreProductDescriptionModifier(id: String) -> StoreProductDescriptionModifierType
+    func getStoreProductQuantityModifier(id: String) -> StoreProductQuantityModifierType
+    func getStoreProductStepperModifier(id: String, isDisabled: Bool) -> StoreProductStepperModifierType
+    func getStoreProductCartModifier(id: String) -> StoreProductCartModifierType
+    func getStoreProductPriceModifier(id: String) -> StoreProductPriceModifierType
     func getOfferModifier(isOverlayed: Bool) -> OfferModifierType
     func getOfferNavigationModifier() -> OfferNavigationModifierType
     func getOfferProductsModifier() -> OfferProductsModifierType
-    func getOfferProductModifier(isDisabled: Bool, id: String) -> OfferProductModifierType
-    func getOfferProductTitleModifier() -> OfferProductTitleModifierType
-    func getOfferProductDescriptionModifier() -> OfferProductDescriptionModifierType
-    func getOfferProductCartModifier() -> OfferProductCartModifierType
-    func getOfferProductPriceModifier() -> OfferProductPriceModifierType
+    func getOfferProductModifier(id: String, isDisabled: Bool) -> OfferProductModifierType
+    func getOfferProductTitleModifier(id: String) -> OfferProductTitleModifierType
+    func getOfferProductDescriptionModifier(id: String) -> OfferProductDescriptionModifierType
+    func getOfferProductCartModifier(id: String) -> OfferProductCartModifierType
+    func getOfferProductPriceModifier(id: String) -> OfferProductPriceModifierType
     func getInformationAchievementModifier(parent: String, id: String) -> InformationAchievementModifierType
     func getInformationScoreModifier(parent: String, id: String) -> InformationScoreModifierType
     func getInformationConsumableModifier(parent: String, id: String) -> InformationConsumableModifierType
@@ -469,55 +438,34 @@ public extension GameSkin {
      func getStoreNavigationModifier() -> some ViewModifier {
          StoreNavigationModifier()
     }
-     func getStoreConsumablesModifier() -> some ViewModifier {
-         StoreConsumablesModifier()
+     func getStoreProductsModifier() -> some ViewModifier {
+         StoreProductsModifier()
     }
-      func getStoreConsumableModifier(id: String) -> some ViewModifier {
-          StoreConsumableModifier(id: id)
+      func getStoreProductModifier(id: String) -> some ViewModifier {
+          StoreProductModifier(id: id)
      }
-      func getStoreConsumableButtonModifier(isDisabled: Bool, id: String) -> some ButtonStyle {
-          StoreConsumableButtonModifier(isDisabled: isDisabled, id: id)
+      func getStoreProductButtonModifier(id: String, isDisabled: Bool) -> some ButtonStyle {
+          StoreProductButtonModifier(id: id, isDisabled: isDisabled)
      }
-     func getStoreConsumableTitleModifier() -> some TextModifier {
-         StoreConsumableTitleModifier()
+    func getStoreProductTitleModifier(id: String) -> some TextModifier {
+        StoreProductTitleModifier(id: id)
     }
-     func getStoreConsumableDescriptionModifier() -> some TextModifier {
-         StoreConsumableDescriptionModifier()
+     func getStoreProductDescriptionModifier(id: String) -> some TextModifier {
+         StoreProductDescriptionModifier(id: id)
     }
-     func getStoreConsumableQuantityModifier() -> some TextModifier {
-         StoreConsumableQuantityModifier()
+     func getStoreProductQuantityModifier(id: String) -> some TextModifier {
+         StoreProductQuantityModifier(id: id)
     }
-     func getStoreConsumableStepperModifier(isDisabled: Bool) -> some ButtonStyle {
-         StoreConsumableStepperModifier(isDisabled: isDisabled)
+     func getStoreProductStepperModifier(id: String, isDisabled: Bool) -> some ButtonStyle {
+        StoreProductStepperModifier(id: id, isDisabled: isDisabled)
     }
-     func getStoreConsumableCartModifier() -> some ImageModifier {
-         StoreConsumableCartModifier()
+     func getStoreProductCartModifier(id: String) -> some ImageModifier {
+         StoreProductCartModifier(id: id)
     }
-     func getStoreConsumablePriceModifier() -> some TextModifier {
-         StoreConsumablePriceModifier()
+     func getStoreProductPriceModifier(id: String) -> some TextModifier {
+         StoreProductPriceModifier(id: id)
     }
-      func getStoreNonConsumablesModifier() -> some ViewModifier {
-          StoreNonConsumablesModifier()
-     }
-     func getStoreNonConsumableModifier(id: String) -> some ViewModifier {
-         StoreNonConsumableModifier(id: id)
-     }
-     func getStoreNonConsumableButtonModifier(isDisabled: Bool, id: String) -> some ButtonStyle {
-         StoreNonConsumableButtonModifier(isDisabled: isDisabled, id: id)
-    }
-     func getStoreNonConsumableTitleModifier() -> some TextModifier {
-         StoreNonConsumableTitleModifier()
-    }
-     func getStoreNonConsumableDescriptionModifier() -> some TextModifier {
-         StoreNonConsumableDescriptionModifier()
-    }
-     func getStoreNonConsumableCartModifier() -> some ImageModifier {
-         StoreNonConsumableCartModifier()
-    }
-     func getStoreNonConsumablePriceModifier() -> some TextModifier {
-         StoreNonConsumablePriceModifier()
-    }
-    func getOfferModifier(isOverlayed: Bool) -> some ViewModifier {
+      func getOfferModifier(isOverlayed: Bool) -> some ViewModifier {
         OfferModifier(isOverlayed: isOverlayed)
     }
      func getOfferNavigationModifier() -> some ViewModifier {
@@ -526,20 +474,20 @@ public extension GameSkin {
      func getOfferProductsModifier() -> some ViewModifier {
          OfferProductsModifier()
     }
-     func getOfferProductModifier(isDisabled: Bool, id: String) -> some ButtonStyle {
-         OfferProductModifier(isDisabled: isDisabled, id: id)
+     func getOfferProductModifier(id: String, isDisabled: Bool) -> some ButtonStyle {
+         OfferProductModifier(id: id, isDisabled: isDisabled)
     }
-     func getOfferProductTitleModifier() -> some TextModifier {
-         OfferProductTitleModifier()
+     func getOfferProductTitleModifier(id: String) -> some TextModifier {
+         OfferProductTitleModifier(id: id)
     }
-     func getOfferProductDescriptionModifier() -> some TextModifier {
-         OfferProductDescriptionModifier()
+     func getOfferProductDescriptionModifier(id: String) -> some TextModifier {
+         OfferProductDescriptionModifier(id: id)
     }
-     func getOfferProductCartModifier() -> some ImageModifier {
-         OfferProductCartModifier()
+     func getOfferProductCartModifier(id: String) -> some ImageModifier {
+         OfferProductCartModifier(id: id)
     }
-     func getOfferProductPriceModifier() -> some TextModifier {
-         OfferProductPriceModifier()
+     func getOfferProductPriceModifier(id: String) -> some TextModifier {
+         OfferProductPriceModifier(id: id)
     }
      func getInformationAchievementModifier(parent: String, id: String) -> some TextModifier {
          InformationAchievementModifier(parent: parent, id: id)

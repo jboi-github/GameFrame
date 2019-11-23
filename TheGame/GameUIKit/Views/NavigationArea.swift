@@ -9,22 +9,37 @@
 import SwiftUI
 import GameFrameKit
 
+/**
+ Navigation items to be used in configuration of the game. Each reflects a button with a certain behaviour and a default image.
+ */
 public enum NavigationItem {
+    /// Start game or level.
     case PlayLink(image: Image = Image(systemName: "play"))
+    /// Open store with given consumables and non-consumables.
     case StoreLink(image: Image = Image(systemName: "cart"), consumableIds: [String], nonConsumableIds: [String])
+    /// Go back one level in store or in-level
     case BackLink(image: Image = Image(systemName: "xmark"))
 
+    /// Open external GameCenter
     case GameCenterLink(image: Image = Image(systemName: "rosette"))
+    /// Open system dialog to share with other applications
     case ShareLink(image: Image = Image(systemName: "square.and.arrow.up"), greeting: String, format: String)
+    /// Start rewarded video
     case RewardLink(image: Image = Image(systemName: "film"), consumableId: String, quantity: Int)
+    /// Inform app store tp restore any existing purchases
     case RestoreLink(image: Image = Image(systemName: "arrow.uturn.right"))
 
+    /// Open review page of given app id
     case LikeLink(image: Image = Image(systemName: "hand.thumbsup"), appId: String)
+    /// Open sysetem preferences for this app
     case SettingsLink(image: Image = Image(systemName: "gear"))
 
+    /// Return from showing an offer
     case OfferBackLink(image: Image = Image(systemName: "xmark"))
+    /// Return from error message
     case ErrorBackLink(image: Image = Image(systemName: "xmark"))
 
+    /// Open any external URL
     case UrlLink(image: Image = Image(systemName: "link"), urlString: String)
     
     private typealias Unpacked = (action: () -> Void, image: Image)

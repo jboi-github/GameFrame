@@ -10,7 +10,9 @@ import CoreData
 import SwiftUI
 
 /**
- Synchronize objects with CoreData and, if player is logged in, iCloud. If the player is logged in, all objects are synchronized to iCloud and therefore available on all
+ Synchronize objects with CoreData and, if player is logged in, iCloud.
+ 
+ If the player is logged in, all objects are synchronized to iCloud and therefore available on all
  devices. The class controls when achievements, scores, consumables and non-consumables are loaded, saved and synchronized.
  The getter functions automatically create the corresponding instance and saves/synchronizes them.
  */
@@ -47,7 +49,9 @@ public class GFCoreDataCloudKit: NSObject {
     
     // MARK: - Public functions
     /**
-     Get and eventually create an achievement with the given id. If the achievement exists in CoreData, the value is taken from there. If not, a new achievement with default values is created.
+     Get and eventually create an achievement with the given id.
+     
+     If the achievement exists in CoreData, the value is taken from there. If not, a new achievement with default values is created.
      - Parameter id: The `id` to get and find the achievement.
      - returns: The achievement as it was found in data or a newly created Default-Achievement
      */
@@ -59,7 +63,9 @@ public class GFCoreDataCloudKit: NSObject {
     }
     
     /**
-     Get and eventually create a score with the given id. If the score exists in CoreData, the value is taken from there.
+     Get and eventually create a score with the given id.
+     
+     If the score exists in CoreData, the value is taken from there.
      If not, a new score with default values is created.
      - Parameter id: The `id` to get and find the score.
      - returns: The score as it was found in data or a newly created Default-Score
@@ -72,7 +78,9 @@ public class GFCoreDataCloudKit: NSObject {
     }
     
     /**
-     Get and eventually create a consumable with the given id. If the consumable exists in CoreData, the value is taken from there.
+     Get and eventually create a consumable with the given id.
+     
+     If the consumable exists in CoreData, the value is taken from there.
      If not, a new consumable with default values is created.
      - Parameter id: The `id` to get and find the score.
      - returns: The score as it was found in data or a newly created Default-Score
@@ -85,7 +93,9 @@ public class GFCoreDataCloudKit: NSObject {
     }
     
     /**
-     Get and eventually create an score with the given id. If the score exists in CoreData, the value is taken from there.
+     Get and eventually create an score with the given id.
+     
+     If the score exists in CoreData, the value is taken from there.
      If not, a new score with default values is created.
      - Parameter id: The `id` to get and find the score.
      - returns: The score as it was found in data or a newly created Default-Score

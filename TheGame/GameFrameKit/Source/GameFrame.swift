@@ -51,39 +51,66 @@ public class GameFrame: NSObject {
      Create the shared instance of GameFrame and does the setup of a scene for `SceneDelegate`
      Replace the content of `func scene` in `SceneDelegate.swift` with a call to this function.
       - Parameter scene:            The `scene` parameter, given in the scene call in SceneDelegate
-     - Parameter consumablesConfig: Associates consumables with products in store. Check GFInAppImpl for explanation and examples.
+      - Parameter consumablesConfig: Associates consumables with products in store. Check GFInAppImpl for explanation and examples.
       - Parameter makeContentView:  A closure that builds the main view. It can already make use of `GameFrame`, e.g. to get Achievements, Scores, Consumables or NonConsumables and apss them to the view.
      */
-    public class func createSharedInstance<Label : View>(_ scene: UIScene, consumablesConfig: [String : (String, Int)], adUnitIdBanner: String?, adUnitIdRewarded: String?, adUnitIdInterstitial: String?, makeContentView: () -> Label) {
-        
+    public class func createSharedInstance<Label : View>(
+        _ scene: UIScene,
+        purchasables: [String: [GFInApp.Purchasable]],
+        adUnitIdBanner: String?,
+        adUnitIdRewarded: String?,
+        adUnitIdInterstitial: String?,
+        makeContentView: () -> Label)
+    {
         // Use a UIHostingController as window root view controller.
         guard let windowScene = scene as? UIWindowScene else {return}
         let window = UIWindow(windowScene: windowScene)
         
-        instance = GameFrame(window: window, consumablesConfig: consumablesConfig, adUnitIdBanner: adUnitIdBanner, adUnitIdRewarded: adUnitIdRewarded, adUnitIdInterstitial: adUnitIdInterstitial)
-        
+        instance = GameFrame(
+            window: window, purchasables: purchasables,
+            adUnitIdBanner: adUnitIdBanner,
+            adUnitIdRewarded: adUnitIdRewarded,
+            adUnitIdInterstitial: adUnitIdInterstitial)
+
         window.rootViewController = UIHostingController(rootView: makeContentView())
         window.makeKeyAndVisible()
         log()
     }
     
     /**
-     Simplified version to create a `GameFrame` instance for previews. It has limited functionality and can not show system views like GameCenter or others. Also all apple and xcode limitations to previews apply.
+     Simplified version to create a `GameFrame` instance for previews.
+     
+     It has limited functionality and can not show system views like GameCenter or others. Also all apple and xcode limitations to previews apply.
      - Parameter consumablesConfig: Associates consumables with products in store. Check GFInAppImpl for explanation and examples.
      */
-    public class func createSharedInstanceForPreview(consumablesConfig: [String : (String, Int)], adUnitIdBanner: String?, adUnitIdRewarded: String?, adUnitIdInterstitial: String?) {
-        instance = GameFrame(window: nil, consumablesConfig: consumablesConfig, adUnitIdBanner: adUnitIdBanner, adUnitIdRewarded: adUnitIdRewarded, adUnitIdInterstitial: adUnitIdInterstitial)
+    public class func createSharedInstanceForPreview(
+        purchasables: [String: [GFInApp.Purchasable]],
+        adUnitIdBanner: String?,
+        adUnitIdRewarded: String?,
+        adUnitIdInterstitial: String?)
+    {
+        instance = GameFrame(
+            window: nil, purchasables: purchasables,
+            adUnitIdBanner: adUnitIdBanner,
+            adUnitIdRewarded: adUnitIdRewarded,
+            adUnitIdInterstitial: adUnitIdInterstitial)
         log()
     }
     
     /// Singelton init
-    private init(window: UIWindow?, consumablesConfig: [String : (String, Int)], adUnitIdBanner: String?, adUnitIdRewarded: String?, adUnitIdInterstitial: String?) {
+    private init(
+        window: UIWindow?,
+        purchasables: [String: [GFInApp.Purchasable]],
+        adUnitIdBanner: String?,
+        adUnitIdRewarded: String?,
+        adUnitIdInterstitial: String?)
+    {
         log()
         self.window = window
         super.init()
         coreDataImpl = GFCoreDataCloudKit()
         gameCenterImpl = GFGameCenter(window)
-        inAppImpl = GFInApp(consumablesConfig)
+        inAppImpl = GFInApp(purchasables)
         adMobImpl = GFAdMob(window, adUnitIdBanner: adUnitIdBanner, adUnitIdRewarded: adUnitIdRewarded, adUnitIdInterstitial: adUnitIdInterstitial)
         guard window != nil else {return}
     }
@@ -101,7 +128,9 @@ public class GameFrame: NSObject {
     }
 
     /**
-     Saves current status and reports to GameCenter. Call this when level or game has ended.
+     Saves current status and reports to GameCenter.
+     
+     Call this when level or game has ended.
      - Parameter requestReview: Set to true to indicate, that the player should be asked for a review by Apples system view. Should be set, if the player has somewhat experience with the game and just had a good, sucessful level played, e.g. reached a new high score. If set to true, it is up to apple's logic to actually show the dialog. During development, that dialog is always shown. In production, Apple ensures, that the dialog is shown at max 3-4 times in 12 months. If both parameters are set to `true` and an interstitial is available, it is only tried to show the interstitial.
      - Parameter showInterstitial: If set to true and an Interstial is available from Googles admob, it is shown to the user. Interstials are percieved as annoying by the community, but are still a way to earn money. Use this flag wisely. If both parameters are set to `true`and an interstitial is available, it is only tried to show the interstitial.
      */
@@ -128,22 +157,35 @@ public class GameFrame: NSObject {
      */
     public func resume() {}
     
+    /**
+     Colletcts available information and shows system view to share with others.
+     
+     Applications to share with are defined by the player.
+     - Parameter greeting: optional to define a greeting, that is used as subject, if sharing as email or is the first line a text.
+     - Parameter url: Optional String that contains a URL to be used in the message
+     - Parameter format: String to define how to format an achievement. e.g. "%.1f" to format to one digit precision.
+     */
     public func showShare(greeting: String? = nil, url urlString: String? = nil, format: String) {
         // Put items in the list
         var items = [Any]()
         if let urlString = urlString, let url = URL(string: urlString) {items.append(url)}
+        if let greeting = greeting {items.append(ShareSubject(greeting: greeting))}
+
         items.append(contentsOf: scores.map({"\($0.key): \($0.value.current) / \($0.value.highest)"}))
         items.append(contentsOf:
             achievements.map({"\($0.key): \($0.value.current.format(format)) / \($0.value.highest.format(format))"}))
         items.append(contentsOf: consumables.map({"\($0.key): \($0.value.available)"}))
         items.append(contentsOf: nonConsumables.map({"\($0.key): \($0.value.isOpened ? "✅" : "❌")"}))
-        if let greeting = greeting {items.append(ShareSubject(greeting: greeting))}
 
         // Create and show view
         let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
         window?.rootViewController?.present(ac, animated: true)
     }
     
+    /**
+     Get screenshot of current window as UIImage.
+     - Warning: Is currently not available.
+     */
     public func getScreenhot() -> UIImage? {
         guard let layer = window?.layer else {return nil}
         

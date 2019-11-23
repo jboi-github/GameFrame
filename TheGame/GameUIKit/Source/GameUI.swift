@@ -10,6 +10,13 @@ import Foundation
 import SwiftUI
 import GameFrameKit
 
+/**
+ The main class to control and work with games.
+ 
+ An instance of this class can be created with `GameUI.createSharedInstance` which ensures, that only one
+ instance of this class exists. To access this class use the `GameUI.instance` attribute. The game indicates, that the player
+ should get an offer or that the game has ended here.
+ */
 public class GameUI: NSObject, ObservableObject  {
     // MARK: Model wide available
     
@@ -44,7 +51,7 @@ public class GameUI: NSObject, ObservableObject  {
         instance = GameUI(gameDelegate: gameDelegate, navigator: Navigator(startsOffLevel: startsOffLevel))
         
         GameFrame.createSharedInstance(
-            scene, consumablesConfig: gameConfig.productsToConsumables,
+            scene, purchasables: gameConfig.purchasables,
             adUnitIdBanner: gameConfig.adUnitIdBanner,
             adUnitIdRewarded: gameConfig.adUnitIdRewarded,
             adUnitIdInterstitial: gameConfig.adUnitIdInterstitial) {
@@ -86,7 +93,6 @@ public class GameUI: NSObject, ObservableObject  {
     @Published private(set) var offer: (consumableId: String, quantity: Int)? = nil
     @Published private(set) var isInLevel: Bool = false
     @Published private(set) var isResumed: Bool = false
-    fileprivate(set) var geometryProxy: GeometryProxy? = nil
 
     // MARK: Initialization
     private init(gameDelegate: GameDelegate, navigator: Navigator) {
@@ -222,9 +228,8 @@ enum NavigatorItem{
         }
     }
     
-    func asView<C, S>(gameConfig: C, gameSkin: S, geometryProxy: GeometryProxy) -> some View where C: GameConfig, S: GameSkin {
+    func asView<C, S>(gameConfig: C, gameSkin: S) -> some View where C: GameConfig, S: GameSkin {
         let item: Unpacked<C, S> = unpack()
-        GameUI.instance.geometryProxy = geometryProxy
         
         return VStack {
             if item.offLevel != nil {
@@ -254,9 +259,11 @@ class Navigator: NSObject, ObservableObject {
     
     // MARK: Initialize
     fileprivate init(startsOffLevel: Bool) {
-        current = startsOffLevel ? .OffLevel : .OffLevel // TODO: !!
+        current = .OffLevel
         super.init()
-        stack.append(current)
+        
+        push(.OffLevel)
+        if !startsOffLevel {push(.InLevel)}
     }
     
     // MARK: Implementation

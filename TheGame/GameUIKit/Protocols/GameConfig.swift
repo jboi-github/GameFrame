@@ -47,15 +47,15 @@ public protocol GameConfig: ObservableObject {
      Define which products affect which consumable after a purchase.
      
      This dictionary uses product-identifier as defined when setup products for in-app store as key.
-     The value is the `Consumable` that is affected and the amount, that is bought with this pruchase.
+     The value is the `Consumable` or `NonConsumable` that is affected and the amount, that is bought with each purchase.
      
      **Example**: You have a product for in-app purchases of `Get1000Bullets` and a consumable `Bullets`. With this, you define by
      
-        `["Get1000Bullets": (consumable: "Bullets", quantity: 1000)]`
+        `["Get1000Bullets": .Consumable(id: "Bullets", quantity: 1000)]`
      
-     to add 1000 bullets when the corrsponding product was bought.
+     to add 1000 bullets when the corrsponding product was bought one time.
      */
-    var productsToConsumables: [String: (consumable: String, quantity: Int)] {get}
+    var purchasables: [String: [GFInApp.Purchasable]] {get}
     
     /**
      Ad Unit ID for banner as given by Google AdMob
@@ -83,7 +83,7 @@ class PreViewConfig: GameConfig {
     let inLevelInformation = [[InformationItem]]()
     let inLevelNavigation = [[NavigationItem]]()
 
-    let productsToConsumables = [String: (consumable: String, quantity: Int)]()
+    let purchasables = [String: [GFInApp.Purchasable]]()
     let adUnitIdBanner = ""
     let adUnitIdRewarded = ""
     let adUnitIdInterstitial = ""
