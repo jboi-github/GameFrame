@@ -12,14 +12,14 @@ import StoreKit
 
 public class GFConsumable: ObservableObject {
     internal var delegate: GFEntityConsumable {
-           didSet(prev) {
-               guard prev != delegate else {return}
-               if let context = delegate.managedObjectContext {
-                   context.delete(prev)
-                   merge(prev: prev)
-               }
+       didSet(prev) {
+           guard prev != delegate else {return}
+           if let context = delegate.managedObjectContext {
+               context.delete(prev)
+               merge(prev: prev)
            }
        }
+   }
      
     /// Currently available goods from bought, earned and consumed
     @Published public private(set) var available: Int

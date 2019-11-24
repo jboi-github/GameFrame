@@ -44,55 +44,48 @@ public enum NavigationItem {
     /// Open any external URL
     case UrlLink(image: Image = Image(systemName: "link"), urlString: String)
     
-    private typealias Unpacked = (action: () -> Void, image: Image)
-    
-    private func unpack(navigator: Navigator) -> Unpacked {
+    /// config and skin are needed as of "Cannot explicitly specialize a generic function"
+    fileprivate func asView<C, S>(presentationMode: Binding<PresentationMode>, config: C, skin: S) -> some View where C: GameConfig, S: GameSkin {
         switch self {
         case let .UrlLink(image: image, urlString: urlString):
-            return (action: getUrlAction(urlString), image: image)
+            return AnyView(Button(action: getUrlAction(urlString)) {image})
             
         case let .GameCenterLink(image: image):
-            return (action: {GameFrame.gameCenter.show()}, image: image)
+            return AnyView(Button(action: {GameFrame.gameCenter.show()}) {image})
         case let .ShareLink(image: image, greeting: greeting, format: format):
-            return (action: {GameFrame.instance!.showShare(greeting: greeting, format: format)}, image: image)
+            return AnyView(Button(action: {GameFrame.instance!.showShare(greeting: greeting, format: format)}) {image})
         case let .RewardLink(image: image, consumableId: consumableId, quantity: quantity):
-            return (action: {
-                GameFrame.adMob.showReward(consumable: GameFrame.coreData.getConsumable(consumableId), quantity: quantity)
-            }, image: image)
+            return AnyView(Button(action: {
+                let consumable = GameFrame.coreData.getConsumable(consumableId)
+                GameFrame.adMob.showReward(consumable: consumable, quantity: quantity)
+            }) {image})
         case let .RestoreLink(image: image):
-            return (action: {GameFrame.inApp.restore()}, image: image)
+            return AnyView(Button(action: {GameFrame.inApp.restore()}) {image})
 
         case let .LikeLink(image: image, appId: appId):
-            return (action: getUrlAction("https://itunes.apple.com/app/id\(appId)?action=write-review"), image: image)
+            return AnyView(Button(action: getUrlAction("https://itunes.apple.com/app/id\(appId)?action=write-review")) {image})
         case let .SystemSettingsLink(image: image):
-            return (action: getUrlAction(UIApplication.openSettingsURLString), image: image)
+            return AnyView(Button(action: getUrlAction(UIApplication.openSettingsURLString)) {image})
 
         case let .PlayLink(image: image):
-            return (action: {navigator.push(.InLevel)}, image: image) // TODO: create NavigationLink destination
+            return AnyView(NavigationLink(destination: InLevelView<C, S>()) {image})
         case let .SettingsLink(image: image):
-            return (action: {navigator.push(.Settings)}, image: image) // TODO: create NavigationLink destination
+            return AnyView(NavigationLink(destination: SettingsView<C, S>()) {image})
         case let .StoreLink(image: image, consumableIds: consumableIds, nonConsumableIds: nonConsumableIds):
-            return (action: {navigator.push(
-                .Store(consumableIds: consumableIds, nonConsumableIds: nonConsumableIds) // TODO: create NavigationLink destination
-            )}, image: image)
+            return AnyView(NavigationLink(destination:
+                StoreView<C, S>(consumableIds: consumableIds, nonConsumableIds: nonConsumableIds)) {image})
+            
         case let .BackLink(image: image):
-            return (action: {navigator.pop()}, image: image) // TODO: create dismiss action
+            return AnyView(Button(action: {presentationMode.wrappedValue.dismiss()}) {image})
         case let .OfferBackLink(image: image):
-            return (action: {GameUI.instance.clearOffer()}, image: image)
+            return AnyView(Button(action: {GameUI.instance.clearOffer()}) {image})
         case let .ErrorBackLink(image: image):
-            return (action: {GameFrame.inApp.clearError()}, image: image)
+            return AnyView(Button(action: {GameFrame.inApp.clearError()}) {image})
         }
-    }
-    
-    fileprivate func asButton(navigator: Navigator, disabled: Bool) -> some View {
-        let unpacked = unpack(navigator: navigator)
-        
-        return Button(action: unpacked.action) {unpacked.image} // TODO: Return VStack with Button or NAv-Link
-            .disabled(disabled)
     }
 }
 
-struct NavigationArea<S>: View where S: GameSkin {
+struct NavigationArea<C, S>: View where C: GameConfig, S: GameSkin {
     let parent: String
     let items: [[NavigationItem]]
     let isOverlayed: Bool
@@ -113,8 +106,9 @@ struct NavigationArea<S>: View where S: GameSkin {
         @ObservedObject private var inApp = GameFrame.inApp
         @ObservedObject private var adMob = GameFrame.adMob
         @ObservedObject private var gameCenter = GameFrame.gameCenter
-        @ObservedObject private var navigator = GameUI.instance.navigator
+        @EnvironmentObject private var config: C
         @EnvironmentObject private var skin: S
+        @Environment(\.presentationMode) var presentationMode
         
         var body: some View {
             var disabled = isOverlayed
@@ -134,7 +128,8 @@ struct NavigationArea<S>: View where S: GameSkin {
                 }
             }
             
-            return item.asButton(navigator: navigator, disabled: disabled)
+            return item.asView(presentationMode: presentationMode, config: config, skin: skin)
+                .disabled(disabled)
                 .buttonStyle(skin.getNavigationItemModifier(parent: parent, isDisabled: disabled, row: row, col: col))
         }
     }
@@ -148,7 +143,10 @@ struct NavigationArea<S>: View where S: GameSkin {
                     ForEach(0..<self.items[row].count, id: \.self) {
                         col in
                         
-                        Item(parent: self.parent, row: row, col: col, item: self.items[row][col], isOverlayed: self.isOverlayed)
+                        Item(
+                            parent: self.parent, row: row, col: col,
+                            item: self.items[row][col],
+                            isOverlayed: self.isOverlayed)
                     }
                 }
                 .modifier(self.skin.getNavigationRowModifier(parent: self.parent, row: row))
@@ -159,7 +157,7 @@ struct NavigationArea<S>: View where S: GameSkin {
 
 struct NavigationArea_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationArea<PreviewSkin>(
+        NavigationArea<PreviewConfig, PreviewSkin>(
             parent: "Preview",
             items: [[
                 .UrlLink(image: Image(systemName: "rosette"), urlString: "https://www.apple.com"),

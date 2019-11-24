@@ -10,7 +10,6 @@ import SwiftUI
 import GameFrameKit
 
 struct MainView<C, S>: View where C: GameConfig, S: GameSkin {
-    @ObservedObject private var navigator = GameUI.instance.navigator
     @EnvironmentObject private var config: C
     @EnvironmentObject private var skin: S
 
@@ -33,10 +32,10 @@ struct MainView<C, S>: View where C: GameConfig, S: GameSkin {
     
     var body: some View {
         VStack {
-            // TODO: Replace by NavigationView. Tke care of startsOffLevel
-            navigator.current
-                .asView(gameConfig: config, gameSkin: skin)
-                .modifier(skin.getMainModifier())
+            // TODO: Take care of startsOffLevel
+            NavigationView {
+                OffLevelView<C, S>().modifier(skin.getMainModifier())
+            }
             Banner()
         }
     }
@@ -44,8 +43,8 @@ struct MainView<C, S>: View where C: GameConfig, S: GameSkin {
 
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
-        MainView<PreViewConfig, PreviewSkin>()
+        MainView<PreviewConfig, PreviewSkin>()
             .environmentObject(PreviewSkin())
-            .environmentObject(PreViewConfig())
+            .environmentObject(PreviewConfig())
     }
 }

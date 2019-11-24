@@ -29,7 +29,7 @@ struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
                     
                     Spacer()
                     
-                    NavigationArea<S>(parent: "InLevel", items: config.inLevelNavigation, isOverlayed: isOverlayed)
+                    NavigationArea<C, S>(parent: "InLevel", items: config.inLevelNavigation, isOverlayed: isOverlayed)
                         .modifier(skin.getInLevelNavigationModifier())
                 }
             }
@@ -94,7 +94,7 @@ struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
                         ProductRow(product: products[$0], isOverlayed: self.isOverlayed)
                     }
                     .modifier(skin.getOfferProductsModifier())
-                    NavigationArea<S>(parent: "Offer",
+                    NavigationArea<C, S>(parent: "Offer",
                         items: [[
                             .OfferBackLink(),
                             .RewardLink(consumableId: consumableId, quantity: rewardQuantity)
@@ -121,7 +121,7 @@ struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
                     WaitAlert<S>()
                 } else if inApp.error != nil {
                     ProductsView(consumableId: consumableId, rewardQuantity: rewardQuantity, isOverlayed: true)
-                    ErrorAlert<S>()
+                    ErrorAlert<C, S>()
                 } else {
                     ProductsView(consumableId: consumableId, rewardQuantity: rewardQuantity, isOverlayed: false)
                 }
@@ -144,8 +144,8 @@ struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
 
 struct InLevel_Previews: PreviewProvider {
     static var previews: some View {
-        InLevelView<PreViewConfig, PreviewSkin>()
-        .environmentObject(PreViewConfig())
+        InLevelView<PreviewConfig, PreviewSkin>()
+        .environmentObject(PreviewConfig())
         .environmentObject(PreviewSkin())
     }
 }

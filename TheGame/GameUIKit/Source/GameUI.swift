@@ -48,7 +48,7 @@ public class GameUI: NSObject, ObservableObject  {
     {
         if instance != nil {return}
         
-        instance = GameUI(gameDelegate: gameDelegate, navigator: Navigator(startsOffLevel: startsOffLevel))
+        instance = GameUI(gameDelegate: gameDelegate)
         
         GameFrame.createSharedInstance(
             scene, purchasables: gameConfig.purchasables,
@@ -81,6 +81,8 @@ public class GameUI: NSObject, ObservableObject  {
         offer = (consumableId: consumableId, quantity: quantity)
     }
     
+    @Environment(\.presentationMode) var presentationMode
+    
     /**
      Call to end level or game.
      
@@ -88,7 +90,7 @@ public class GameUI: NSObject, ObservableObject  {
      */
     public func gameOver() {
         isInLevelShadow = false
-        navigator.pop()
+        presentationMode.wrappedValue.dismiss()
     }
     
     @Published private(set) var offer: (consumableId: String, quantity: Int)? = nil
@@ -96,9 +98,8 @@ public class GameUI: NSObject, ObservableObject  {
     @Published private(set) var isResumed: Bool = false
 
     // MARK: Initialization
-    private init(gameDelegate: GameDelegate, navigator: Navigator) {
+    private init(gameDelegate: GameDelegate) {
         self.gameDelegate = gameDelegate
-        self.navigator = navigator
         
         super.init()
         
@@ -112,7 +113,6 @@ public class GameUI: NSObject, ObservableObject  {
 
     // MARK: Internals
     let gameDelegate: GameDelegate
-    let navigator: Navigator
 
     /// reading a published variable triggers changes!
     var isInLevelShadow: Bool = false {
@@ -207,78 +207,3 @@ public class GameUI: NSObject, ObservableObject  {
     }
 }
 
-// TODO: Remove
-
-/// Internal work around to NavigationLink and NavigationView. A simple stack providing state possibility to go back in view hierarchy.
-enum NavigatorItem{
-    case OffLevel
-    case InLevel
-    case Settings
-    case Store(consumableIds: [String], nonConsumableIds: [String])
-    
-    private typealias Unpacked<C, S> = (
-        offLevel: OffLevelView<C, S>?,
-        inLevel: InLevelView<C, S>?,
-        store: StoreView<S>?,
-        settings: SettingsView<C, S>?)
-        where C: GameConfig, S: GameSkin
-    
-    private func unpack<C, S>() -> Unpacked<C, S> {
-        switch self {
-        case .OffLevel:
-            return (offLevel: OffLevelView<C, S>(), inLevel: nil, store: nil, settings: nil)
-        case .InLevel:
-            return (offLevel: nil, inLevel: InLevelView<C, S>(), store: nil, settings: nil)
-        case .Settings:
-            return (offLevel: nil, inLevel: nil, store: nil, settings: SettingsView<C, S>())
-        case let .Store(consumableIds: consumableIds, nonConsumableIds: nonConsumableIds):
-            return (
-                offLevel: nil, inLevel: nil,
-                store: StoreView(consumableIds: consumableIds, nonConsumableIds: nonConsumableIds),
-                settings: nil)
-        }
-    }
-    
-    func asView<C, S>(gameConfig: C, gameSkin: S) -> some View where C: GameConfig, S: GameSkin {
-        let item: Unpacked<C, S> = unpack()
-        
-        return VStack {
-            if item.offLevel != nil {
-                item.offLevel!
-            } else if item.inLevel != nil {
-                item.inLevel!
-            } else if item.store != nil {
-                item.store!
-            } else if item.settings != nil {
-                item.settings!
-            }
-        }
-    }
-}
-
-class Navigator: NSObject, ObservableObject {
-    // MARK: Model wide available
-    @Published private(set) var current: NavigatorItem
-    
-    func push(_ item: NavigatorItem) {
-        stack.append(item)
-        current = stack.last!
-    }
-    
-    func pop() {
-        _ = stack.popLast()
-        current = stack.last!
-    }
-    
-    // MARK: Initialize
-    fileprivate init(startsOffLevel: Bool) {
-        current = .OffLevel
-        super.init()
-        
-        push(.OffLevel)
-        if !startsOffLevel {push(.InLevel)}
-    }
-    
-    // MARK: Implementation
-    private var stack = [NavigatorItem]()
-}

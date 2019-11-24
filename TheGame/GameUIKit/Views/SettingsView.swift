@@ -17,9 +17,10 @@ struct SettingsView<C, S>: View where C: GameConfig, S: GameSkin {
             InformationArea<S>(parent: "Settings", items: config.settingsInformation)
                 .modifier(skin.getSettingsInformationModifier())
             
+            // TODO: Give Geometry Infos
             Spacer().modifier(skin.getSettingsSpaceModifier())
             
-            NavigationArea<S>(parent: "Settings", items: config.settingsNavigation)
+            NavigationArea<C, S>(parent: "Settings", items: config.settingsNavigation)
                 .modifier(skin.getSettingsNavigationModifier())
         }
         .modifier(skin.getSettingsModifier())
@@ -28,8 +29,8 @@ struct SettingsView<C, S>: View where C: GameConfig, S: GameSkin {
 
 struct Settings_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsView<PreViewConfig, PreviewSkin>()
-        .environmentObject(PreViewConfig())
+        SettingsView<PreviewConfig, PreviewSkin>()
+        .environmentObject(PreviewConfig())
         .environmentObject(PreviewSkin())
     }
 }

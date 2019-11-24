@@ -74,5 +74,5 @@ class TheGameConfig: GameConfig {
     let adUnitIdRewarded: String? = "ca-app-pub-3940256099942544/1712485313"
     let adUnitIdInterstitial: String? = "ca-app-pub-3940256099942544/4411468910"
     
-    let adNonCosumableId: String? = "no-ads2"
+    let adNonCosumableId: String? = "no-ads3"
 }

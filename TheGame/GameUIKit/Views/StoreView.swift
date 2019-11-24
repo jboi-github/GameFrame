@@ -10,7 +10,7 @@ import SwiftUI
 import GameFrameKit
 import StoreKit
 
-struct StoreView<S>: View where S: GameSkin {
+struct StoreView<C, S>: View where C: GameConfig, S: GameSkin {
     let consumableIds: [String]
     let nonConsumableIds: [String]
     @ObservedObject private var inApp = GameFrame.inApp
@@ -94,7 +94,7 @@ struct StoreView<S>: View where S: GameSkin {
                 
                 Spacer()
 
-                NavigationArea<S>(parent: "Store", items: [[.RestoreLink(), .BackLink()]], isOverlayed: isOverlayed)
+                NavigationArea<C, S>(parent: "Store", items: [[.RestoreLink(), .BackLink()]], isOverlayed: isOverlayed)
                     .modifier(skin.getStoreNavigationModifier())
             }
             .modifier(skin.getStoreModifier(isOverlayed: isOverlayed))
@@ -115,7 +115,7 @@ struct StoreView<S>: View where S: GameSkin {
                     consumableIds: consumableIds,
                     nonConsumableIds: nonConsumableIds,
                     isOverlayed: true)
-                ErrorAlert<S>()
+                ErrorAlert<C, S>()
             } else {
                 ProductsView(
                     consumableIds: consumableIds,
@@ -128,7 +128,7 @@ struct StoreView<S>: View where S: GameSkin {
 
 struct StoreView_Previews: PreviewProvider {
     static var previews: some View {
-        StoreView<PreviewSkin>(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])
+        StoreView<PreviewConfig, PreviewSkin>(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])
         .environmentObject(PreviewSkin())
     }
 }

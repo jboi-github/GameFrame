@@ -100,7 +100,7 @@ public protocol GameConfig: ObservableObject {
 
 import GameFrameKit
 
-class PreViewConfig: GameConfig {
+class PreviewConfig: GameConfig {
     let offLevelInformation = [[InformationItem]]()
     let offLevelNavigation = [[NavigationItem]]()
     let inLevelInformation = [[InformationItem]]()
