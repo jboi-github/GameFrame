@@ -15,6 +15,10 @@ struct TheGameZoneModifier: ViewModifier {
     func body(content: Content) -> some View {TheGameView().background(Color.yellow)}
 }
 
+struct TheGameSettingsModifier: ViewModifier {
+    func body(content: Content) -> some View {TheGameSettingsView().background(Color.yellow)}
+}
+
 struct TheGameNavigationItemModifier: ButtonStyle {
     var parent: String
     var isDisabled: Bool
@@ -59,6 +63,8 @@ struct TheGameNavigationItemModifier: ButtonStyle {
 // MARK: - A Skin that delegates to standard skin implementation
 class TheGameSkin: GameSkin {
     func getInLevelGameZoneModifier() -> some ViewModifier {TheGameZoneModifier()}
+    
+    func getSettingsSpaceModifier() -> some ViewModifier {TheGameSettingsModifier()}
 
     func getNavigationItemModifier(parent: String, isDisabled: Bool, row: Int, col: Int) -> some ButtonStyle {
          TheGameNavigationItemModifier(parent: parent, isDisabled: isDisabled, row: row, col: col)

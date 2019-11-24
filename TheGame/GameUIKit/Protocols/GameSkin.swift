@@ -63,10 +63,7 @@ struct MainBannerEmptyModifier: ViewModifier {
 }
 
 struct OffLevelModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-        .padding()
-    }
+    func body(content: Content) -> some View {content.padding()}
 }
 
 struct OffLevelNavigationModifier: ViewModifier {
@@ -93,7 +90,15 @@ struct InLevelInformationModifier: ViewModifier {
     func body(content: Content) -> some View {content}
 }
 
-struct InLevelGameZoneModifier: ViewModifier {
+struct SettingsModifier: ViewModifier {
+    func body(content: Content) -> some View {content.padding()}
+}
+
+struct SettingsNavigationModifier: ViewModifier {
+    func body(content: Content) -> some View {content}
+}
+
+struct SettingsInformationModifier: ViewModifier {
     func body(content: Content) -> some View {content}
 }
 
@@ -318,6 +323,10 @@ public protocol GameSkin: ObservableObject {
     associatedtype InLevelNavigationModifierType: ViewModifier
     associatedtype InLevelInformationModifierType: ViewModifier
     associatedtype InLevelGameZoneModifierType: ViewModifier
+    associatedtype SettingsModifierType: ViewModifier
+    associatedtype SettingsSpaceModifierType: ViewModifier
+    associatedtype SettingsNavigationModifierType: ViewModifier
+    associatedtype SettingsInformationModifierType: ViewModifier
     associatedtype StoreModifierType: ViewModifier
     associatedtype StoreEmptyModifierType: TextModifier
     associatedtype StoreNavigationModifierType: ViewModifier
@@ -359,6 +368,10 @@ public protocol GameSkin: ObservableObject {
     func getInLevelNavigationModifier() -> InLevelNavigationModifierType
     func getInLevelInformationModifier() -> InLevelInformationModifierType
     func getInLevelGameZoneModifier() -> InLevelGameZoneModifierType
+    func getSettingsModifier() -> SettingsModifierType
+    func getSettingsSpaceModifier() -> SettingsSpaceModifierType
+    func getSettingsNavigationModifier() -> SettingsNavigationModifierType
+    func getSettingsInformationModifier() -> SettingsInformationModifierType
     func getStoreModifier(isOverlayed: Bool) -> StoreModifierType
     func getStoreEmptyModifier() -> StoreEmptyModifierType
     func getStoreNavigationModifier() -> StoreNavigationModifierType
@@ -418,6 +431,15 @@ public extension GameSkin {
      }
       func getInLevelInformationModifier() -> some ViewModifier {
           InLevelInformationModifier()
+     }
+      func getSettingsModifier() -> some ViewModifier {
+          SettingsModifier()
+     }
+      func getSettingsNavigationModifier() -> some ViewModifier {
+          SettingsNavigationModifier()
+     }
+      func getSettingsInformationModifier() -> some ViewModifier {
+          SettingsInformationModifier()
      }
      func getStoreModifier(isOverlayed: Bool) -> some ViewModifier {
          StoreModifier(isOverlayed: isOverlayed)
@@ -518,7 +540,10 @@ struct PreviewModifier: ViewModifier {
 
 // MARK: - A Skin that delegates to standard skin implementation
 class PreviewSkin: GameSkin {
-     func getInLevelGameZoneModifier() -> some ViewModifier {
+      func getInLevelGameZoneModifier() -> some ViewModifier {
+          PreviewModifier()
+     }
+     func getSettingsSpaceModifier() -> some ViewModifier {
          PreviewModifier()
     }
 }

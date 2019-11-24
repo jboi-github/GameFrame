@@ -24,20 +24,19 @@ public class GFAdMob: NSObject, ObservableObject {
         adUnitIdRewarded = _adUnitIdRewarded
         adUnitIdInterstitial = _adUnitIdInterstitial
         super.init()
-        guard window != nil else {return}
+        
+        guard let window = window else {return}
+        gadAdSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(window.frame.width)
+        bannerSize = gadAdSize!.size
 
         delegater = Delegater(parent: self)
-
-        GADMobileAds.sharedInstance().start(completionHandler: nil)
         prepareReward()
-        prepareInterstitial()
     }
     
     // MARK: - Public functions and properties
     // MARK: For banner
     @Published public internal(set) var bannerAvailable: Bool = false
-    @Published public internal(set) var bannerWidth: CGFloat = 0.0
-    @Published public internal(set) var bannerHeight: CGFloat = 0.0
+    @Published public internal(set) var bannerSize: CGSize = .zero
 
     // MARK: For rewards
     /// True, if reward is loaded and available to be shown
@@ -61,6 +60,22 @@ public class GFAdMob: NSObject, ObservableObject {
     }
 
     // MARK: - Internal handling
+    /// Is connected to corresponding nonConsumable in GameFrame createInstance
+    var wasBought: Bool = true { // Maybe bought already, which has priority
+        didSet(prev) {
+            log(prev, wasBought)
+            guard wasBought != prev else {return} // has actually changed
+            
+            if wasBought {
+                bannerAvailable = false
+            } else {
+                if adUnitIdBanner != nil {GADMobileAds.sharedInstance().start(completionHandler: nil)}
+                prepareInterstitial()
+            }
+        }
+    }
+    fileprivate var gadAdSize: GADAdSize? = nil
+    
     // MARK: For Banner
     
     // MARK: For Rewards
@@ -83,12 +98,15 @@ public class GFAdMob: NSObject, ObservableObject {
     }
 
     // MARK: For Interstitials
-    internal private(set) var interstitial: GADInterstitial?
+    internal private(set) var interstitial: GADInterstitial? = nil
     private let adUnitIdInterstitial: String?
 
     /// Show Interstial if available. If not do nothing.
     internal func showInterstitial() {
+        if wasBought {return}
+        guard adUnitIdInterstitial != nil else {return}
         guard interstitial?.isReady ?? false else {return}
+        
         if let window = window {
             interstitial!.present(fromRootViewController: window.rootViewController!)
         }
@@ -96,6 +114,7 @@ public class GFAdMob: NSObject, ObservableObject {
     
     /// Load first interstitial. Is automatically called, when one interstitial was shown
     fileprivate func prepareInterstitial() {
+        if wasBought {return}
         guard let adUnitIdInterstitial = adUnitIdInterstitial else {return}
         
         interstitial = GADInterstitial(adUnitID: adUnitIdInterstitial)
@@ -114,21 +133,23 @@ public struct GFBannerView: UIViewControllerRepresentable {
     
     public func makeUIViewController(context: Context) -> UIViewController {
         log()
-        let view = GADBannerView(adSize: kGADAdSizeBanner)
-        let viewController = UIViewController()
 
+        let viewController = UIViewController()
+        
+        // No adId? Do nothing and don't bother the network
+        if GameFrame.instance.adMobImpl.wasBought {return viewController}
+        guard let adUnitIdBanner = adUnitIdBanner else {return viewController}
+        guard let gadAdSize = GameFrame.instance.adMobImpl.gadAdSize else {return viewController}
+        
+        let view = GADBannerView(adSize: kGADAdSizeBanner)
+        view.adSize = gadAdSize
         view.adUnitID = adUnitIdBanner
-        if let width = window?.frame.width {
-            view.adSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(width)
-            GameFrame.instance.adMobImpl.bannerWidth = view.adSize.size.width
-            GameFrame.instance.adMobImpl.bannerHeight = view.adSize.size.height
-        }
         view.rootViewController = viewController
 
         viewController.view.addSubview(view)
+        if let delegater = delegater {view.delegate = delegater}
         
         view.load(GADRequest())
-        if let delegater = delegater {view.delegate = delegater}
         return viewController
     }
 
@@ -146,6 +167,7 @@ private class Delegater: NSObject, GADBannerViewDelegate, GADRewardedAdDelegate,
     // Banner events
     func adViewDidReceiveAd(_ bannerView: GADBannerView) {
         log()
+        if parent.wasBought {return}
         parent.bannerAvailable.set()
     }
     func adView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: GADRequestError) {

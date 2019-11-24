@@ -37,7 +37,7 @@ class TheGameConfig: GameConfig {
         ]]
     
     let inLevelInformation: [[InformationItem]] = [[
-            InformationItem.ScoreItem(id: "Points")
+            .ScoreItem(id: "Points")
         ], [
             .AchievementItem(id: "Medals", format: "%.1f"),
             .ConsumableItem(id: "Bullets")
@@ -49,6 +49,18 @@ class TheGameConfig: GameConfig {
         ], [
             .BackLink()
         ]]
+    
+    let settingsInformation: [[InformationItem]] = [[
+            .AchievementItem(id: "Medals", format: "%.1f"),
+            .ConsumableItem(id: "Bullets")
+        ]]
+    
+    let settingsNavigation: [[NavigationItem]] = [[
+            .StoreLink(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"]),
+            .RewardLink(consumableId: "Bullets", quantity: 100),
+            .SystemSettingsLink(),
+            .BackLink()
+        ]]
 
     let purchasables: [String: [GFInApp.Purchasable]] = [
         "bulletsS": [.Consumable(id: "Bullets", quantity: 200)],
@@ -58,7 +70,9 @@ class TheGameConfig: GameConfig {
         "weaponB": [.NonConsumable(id: "weaponB")],
         "weaponC": [.NonConsumable(id: "weaponC")]]
     
-    let adUnitIdBanner = "ca-app-pub-3940256099942544/2934735716"
-    let adUnitIdRewarded = "ca-app-pub-3940256099942544/1712485313"
-    let adUnitIdInterstitial = "ca-app-pub-3940256099942544/4411468910"
+    let adUnitIdBanner: String? = "ca-app-pub-3940256099942544/2934735716"
+    let adUnitIdRewarded: String? = "ca-app-pub-3940256099942544/1712485313"
+    let adUnitIdInterstitial: String? = "ca-app-pub-3940256099942544/4411468910"
+    
+    let adNonCosumableId: String? = "no-ads2"
 }

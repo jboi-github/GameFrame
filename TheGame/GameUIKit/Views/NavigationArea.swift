@@ -17,6 +17,8 @@ public enum NavigationItem {
     case PlayLink(image: Image = Image(systemName: "play"))
     /// Open store with given consumables and non-consumables.
     case StoreLink(image: Image = Image(systemName: "cart"), consumableIds: [String], nonConsumableIds: [String])
+    /// Open Settings page for this game.
+    case SettingsLink(image: Image = Image(systemName: "gear"))
     /// Go back one level in store or in-level
     case BackLink(image: Image = Image(systemName: "xmark"))
 
@@ -31,8 +33,8 @@ public enum NavigationItem {
 
     /// Open review page of given app id
     case LikeLink(image: Image = Image(systemName: "hand.thumbsup"), appId: String)
-    /// Open sysetem preferences for this app
-    case SettingsLink(image: Image = Image(systemName: "gear"))
+    /// Open system preferences for this app
+    case SystemSettingsLink(image: Image = Image(systemName: "slider.horizontal.3"))
 
     /// Return from showing an offer
     case OfferBackLink(image: Image = Image(systemName: "xmark"))
@@ -62,11 +64,13 @@ public enum NavigationItem {
 
         case let .LikeLink(image: image, appId: appId):
             return (action: getUrlAction("https://itunes.apple.com/app/id\(appId)?action=write-review"), image: image)
-        case let .SettingsLink(image: image):
+        case let .SystemSettingsLink(image: image):
             return (action: getUrlAction(UIApplication.openSettingsURLString), image: image)
 
         case let .PlayLink(image: image):
             return (action: {navigator.push(.InLevel)}, image: image) // TODO: create NavigationLink destination
+        case let .SettingsLink(image: image):
+            return (action: {navigator.push(.Settings)}, image: image) // TODO: create NavigationLink destination
         case let .StoreLink(image: image, consumableIds: consumableIds, nonConsumableIds: nonConsumableIds):
             return (action: {navigator.push(
                 .Store(consumableIds: consumableIds, nonConsumableIds: nonConsumableIds) // TODO: create NavigationLink destination

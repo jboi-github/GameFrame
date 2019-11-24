@@ -20,14 +20,14 @@ struct MainView<C, S>: View where C: GameConfig, S: GameSkin {
         
         var body: some View {
             ZStack {
-                GFBannerView() // Must be called to get initial height & width
+                GFBannerView() // Must be shown, otherwise AdMob doe not start to load anything
                 if !adMob.bannerAvailable {
                     EmptyView()
                         .modifier(skin.getMainBannerEmptyModifier())
                 }
             }
-            .frame(width: adMob.bannerWidth, height: adMob.bannerHeight)
-            .modifier(skin.getMainBannerModifier(width: adMob.bannerWidth, height: adMob.bannerHeight))
+            .frame(width: adMob.bannerSize.width, height: adMob.bannerSize.height)
+            .modifier(skin.getMainBannerModifier(width: adMob.bannerSize.width, height: adMob.bannerSize.height))
         }
     }
     
@@ -44,13 +44,7 @@ struct MainView<C, S>: View where C: GameConfig, S: GameSkin {
 
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
-        GameFrame.createSharedInstanceForPreview(
-            purchasables: [String: [GFInApp.Purchasable]](),
-            adUnitIdBanner: nil,
-            adUnitIdRewarded: nil,
-            adUnitIdInterstitial: nil)
-        
-        return MainView<PreViewConfig, PreviewSkin>()
+        MainView<PreViewConfig, PreviewSkin>()
             .environmentObject(PreviewSkin())
             .environmentObject(PreViewConfig())
     }

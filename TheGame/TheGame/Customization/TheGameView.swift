@@ -18,8 +18,8 @@ struct TheGameView: View {
 
     var body: some View {
         VStack {
-            HStack{Spacer()}
-            Group {
+            Spacer()
+            HStack {
                 Spacer()
                 Button(action: {
                     self.bullets.consume(1)
@@ -35,8 +35,10 @@ struct TheGameView: View {
                 }) {
                     Text("Hit")
                 }
+                Spacer()
             }
-            Group {
+            Spacer()
+            HStack {
                 Spacer()
                 Button(action: {
                     self.medals.achieved(self.medals.current + 1)
@@ -54,6 +56,13 @@ struct TheGameView: View {
                 }
                 Spacer()
             }
+            Spacer()
+            Button(action: {
+                GameFrame.coreData.getNonConsumable("no-ads2").unlock()
+            }) {
+                Text("Bought no-ads: \(GameFrame.coreData.getNonConsumable("no-ads2").isOpened ? "YES":"NO")")
+            }
+            Spacer()
         }
     }
     

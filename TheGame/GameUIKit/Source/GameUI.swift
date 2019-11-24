@@ -54,7 +54,8 @@ public class GameUI: NSObject, ObservableObject  {
             scene, purchasables: gameConfig.purchasables,
             adUnitIdBanner: gameConfig.adUnitIdBanner,
             adUnitIdRewarded: gameConfig.adUnitIdRewarded,
-            adUnitIdInterstitial: gameConfig.adUnitIdInterstitial) {
+            adUnitIdInterstitial: gameConfig.adUnitIdInterstitial,
+            adNonCosumableId: gameConfig.adNonCosumableId) {
             
                 return MainView<C, S>()
                     .environmentObject(gameSkin)
@@ -212,21 +213,29 @@ public class GameUI: NSObject, ObservableObject  {
 enum NavigatorItem{
     case OffLevel
     case InLevel
+    case Settings
     case Store(consumableIds: [String], nonConsumableIds: [String])
     
-    private typealias Unpacked<C, S> = (offLevel: OffLevelView<C, S>?, inLevel: InLevelView<C, S>?, store: StoreView<S>?)
+    private typealias Unpacked<C, S> = (
+        offLevel: OffLevelView<C, S>?,
+        inLevel: InLevelView<C, S>?,
+        store: StoreView<S>?,
+        settings: SettingsView<C, S>?)
         where C: GameConfig, S: GameSkin
     
     private func unpack<C, S>() -> Unpacked<C, S> {
         switch self {
         case .OffLevel:
-            return (offLevel: OffLevelView<C, S>(), inLevel: nil, store: nil)
+            return (offLevel: OffLevelView<C, S>(), inLevel: nil, store: nil, settings: nil)
         case .InLevel:
-            return (offLevel: nil, inLevel: InLevelView<C, S>(), store: nil)
+            return (offLevel: nil, inLevel: InLevelView<C, S>(), store: nil, settings: nil)
+        case .Settings:
+            return (offLevel: nil, inLevel: nil, store: nil, settings: SettingsView<C, S>())
         case let .Store(consumableIds: consumableIds, nonConsumableIds: nonConsumableIds):
             return (
                 offLevel: nil, inLevel: nil,
-                store: StoreView(consumableIds: consumableIds, nonConsumableIds: nonConsumableIds))
+                store: StoreView(consumableIds: consumableIds, nonConsumableIds: nonConsumableIds),
+                settings: nil)
         }
     }
     
@@ -240,6 +249,8 @@ enum NavigatorItem{
                 item.inLevel!
             } else if item.store != nil {
                 item.store!
+            } else if item.settings != nil {
+                item.settings!
             }
         }
     }

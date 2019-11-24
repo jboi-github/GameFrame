@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import GameFrameKit
 
 struct OffLevelView<C, S>: View where C: GameConfig, S: GameSkin {
     @EnvironmentObject private var config: C

@@ -8,6 +8,7 @@
 
 import SwiftUI
 import StoreKit
+import Combine
 
 // TODO: Test with sandbox user
 // TODO: Purchase Simple purchase
@@ -60,6 +61,7 @@ public class GameFrame: NSObject {
         adUnitIdBanner: String?,
         adUnitIdRewarded: String?,
         adUnitIdInterstitial: String?,
+        adNonCosumableId: String?,
         makeContentView: () -> Label)
     {
         // Use a UIHostingController as window root view controller.
@@ -70,30 +72,23 @@ public class GameFrame: NSObject {
             window: window, purchasables: purchasables,
             adUnitIdBanner: adUnitIdBanner,
             adUnitIdRewarded: adUnitIdRewarded,
-            adUnitIdInterstitial: adUnitIdInterstitial)
+            adUnitIdInterstitial: adUnitIdInterstitial,
+            adNonCosumableId: adNonCosumableId)
 
+        // Connect changes in nonConsumable for non-ads-purchases to GFAdMob
+        waitForCoreData = coreData.$hasFetchedLocally.first().sink(receiveCompletion: {_ in
+            log()
+        }) { hasFetchedLocally in
+            log(hasFetchedLocally)
+            guard hasFetchedLocally else {return}
+            
+            if let adNonCosumableId = adNonCosumableId {
+                adAssignements = coreData.getNonConsumable(adNonCosumableId).$isOpened.assign(to: \.wasBought, on: adMob)
+            }
+        }
+        
         window.rootViewController = UIHostingController(rootView: makeContentView())
         window.makeKeyAndVisible()
-        log()
-    }
-    
-    /**
-     Simplified version to create a `GameFrame` instance for previews.
-     
-     It has limited functionality and can not show system views like GameCenter or others. Also all apple and xcode limitations to previews apply.
-     - Parameter consumablesConfig: Associates consumables with products in store. Check GFInAppImpl for explanation and examples.
-     */
-    public class func createSharedInstanceForPreview(
-        purchasables: [String: [GFInApp.Purchasable]],
-        adUnitIdBanner: String?,
-        adUnitIdRewarded: String?,
-        adUnitIdInterstitial: String?)
-    {
-        instance = GameFrame(
-            window: nil, purchasables: purchasables,
-            adUnitIdBanner: adUnitIdBanner,
-            adUnitIdRewarded: adUnitIdRewarded,
-            adUnitIdInterstitial: adUnitIdInterstitial)
         log()
     }
     
@@ -103,16 +98,19 @@ public class GameFrame: NSObject {
         purchasables: [String: [GFInApp.Purchasable]],
         adUnitIdBanner: String?,
         adUnitIdRewarded: String?,
-        adUnitIdInterstitial: String?)
+        adUnitIdInterstitial: String?,
+        adNonCosumableId: String?)
     {
         log()
         self.window = window
         super.init()
-        coreDataImpl = GFCoreDataCloudKit()
-        gameCenterImpl = GFGameCenter(window)
-        inAppImpl = GFInApp(purchasables)
-        adMobImpl = GFAdMob(window, adUnitIdBanner: adUnitIdBanner, adUnitIdRewarded: adUnitIdRewarded, adUnitIdInterstitial: adUnitIdInterstitial)
-        guard window != nil else {return}
+        self.coreDataImpl = GFCoreDataCloudKit()
+        self.gameCenterImpl = GFGameCenter(window)
+        self.inAppImpl = GFInApp(purchasables)
+        self.adMobImpl = GFAdMob(
+            window, adUnitIdBanner: adUnitIdBanner,
+            adUnitIdRewarded: adUnitIdRewarded,
+            adUnitIdInterstitial: adUnitIdInterstitial)
     }
 
     // MARK: - Public functions
@@ -183,23 +181,18 @@ public class GameFrame: NSObject {
     }
     
     /**
-     Get screenshot of current window as UIImage.
-     - Warning: Is currently not available.
+     Get screenshot of a rectangle of the current window as UIImage.
      */
-    public func getScreenhot() -> UIImage? {
-        guard let layer = window?.layer else {return nil}
-        
-        UIGraphicsBeginImageContextWithOptions(layer.frame.size, false, UIScreen.main.scale)
-        
-        defer { UIGraphicsEndImageContext() }
-        guard let context = UIGraphicsGetCurrentContext() else { return nil }
-        
-        layer.render(in: context)
-        return UIGraphicsGetImageFromCurrentImageContext()
+    public func getScreenhot(bounds: CGRect) -> UIImage? {
+        return UIGraphicsImageRenderer(bounds: bounds).image {
+            window?.layer.render(in: $0.cgContext)
+        }
     }
     
     // MARK: - Internal handling
     private let window: UIWindow?
+    private static var adAssignements: AnyCancellable? = nil
+    private static var waitForCoreData: AnyCancellable? = nil
 }
 
 private class ShareSubject: NSObject, UIActivityItemSource {

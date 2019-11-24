@@ -42,6 +42,20 @@ public protocol GameConfig: ObservableObject {
      The two dimensional array is layed out to rows and columns. Each row can have different number of columns.
      */
     var inLevelNavigation: [[NavigationItem]] {get}
+
+    /**
+     Set information items to be shown while the player is in settings.
+     
+     The two dimensional array is layed out to rows and columns. Each row can have different number of columns.
+     */
+    var settingsInformation: [[InformationItem]] {get}
+    
+    /**
+     Set navigation items to be shown while the player is in settings.
+     
+     The two dimensional array is layed out to rows and columns. Each row can have different number of columns.
+     */
+    var settingsNavigation: [[NavigationItem]] {get}
     
     /**
      Define which products affect which consumable after a purchase.
@@ -60,17 +74,26 @@ public protocol GameConfig: ObservableObject {
     /**
      Ad Unit ID for banner as given by Google AdMob
      */
-    var adUnitIdBanner: String {get}
+    var adUnitIdBanner: String? {get}
     
     /**
      Ad Unit ID for rewarded videos as given by Google AdMob
      */
-    var adUnitIdRewarded: String {get}
+    var adUnitIdRewarded: String? {get}
     
     /**
      Ad Unit ID for interstitials as given by Google AdMob
      */
-    var adUnitIdInterstitial: String {get}
+    var adUnitIdInterstitial: String? {get}
+    
+    /**
+     Id for a non-consumable to stop advertisements.
+     
+     If player earned or bought this, no more advertiesements (banner and interstitials) are shown. Rewarded videos are still available.
+     You can setuop a corresponding product in the app-store for the user and let him buy it in the store. In order to achieve this, you also need to map
+     the product as `purchasable`
+     */
+    var adNonCosumableId: String? {get}
 }
 
 // MARK: - GameConfig implementation for PreView
@@ -82,9 +105,12 @@ class PreViewConfig: GameConfig {
     let offLevelNavigation = [[NavigationItem]]()
     let inLevelInformation = [[InformationItem]]()
     let inLevelNavigation = [[NavigationItem]]()
+    let settingsInformation = [[InformationItem]]()
+    let settingsNavigation = [[NavigationItem]]()
 
     let purchasables = [String: [GFInApp.Purchasable]]()
-    let adUnitIdBanner = ""
-    let adUnitIdRewarded = ""
-    let adUnitIdInterstitial = ""
+    let adUnitIdBanner: String? = nil
+    let adUnitIdRewarded: String? = nil
+    let adUnitIdInterstitial: String? = nil
+    let adNonCosumableId: String? = nil
 }

@@ -97,7 +97,7 @@ public class GFInApp: NSObject, ObservableObject {
         fileprivate func buy(isPrebook: Bool, quantity purchasedQuantity: Int = 1) {
             switch self {
             case let .Consumable(id: id, quantity: quantity):
-                guard let consumable = consumables[id] else {return}
+                let consumable = GameFrame.coreData.getConsumable(id)
                 
                 if isPrebook {
                     consumable.prebook(quantity * purchasedQuantity)
@@ -106,7 +106,7 @@ public class GFInApp: NSObject, ObservableObject {
                 }
                 
             case let .NonConsumable(id: id):
-                guard let nonConsumable = nonConsumables[id] else {return}
+                let nonConsumable = GameFrame.coreData.getNonConsumable(id)
                 
                 if isPrebook {
                     nonConsumable.prebook()
@@ -119,11 +119,11 @@ public class GFInApp: NSObject, ObservableObject {
         fileprivate func rollback() {
             switch self {
             case let .Consumable(id: id, quantity: _):
-                guard let consumable = consumables[id] else {return}
+                let consumable = GameFrame.coreData.getConsumable(id)
                 consumable.rollback()
                 
             case let .NonConsumable(id: id):
-                guard let nonConsumable = nonConsumables[id] else {return}
+                let nonConsumable = GameFrame.coreData.getNonConsumable(id)
                 nonConsumable.rollback()
             }
         }
@@ -192,9 +192,7 @@ public class GFInApp: NSObject, ObservableObject {
      */
     fileprivate func productBought(_ productId: String, quantity: Int, isPrebook: Bool) {
         if let productToPurchasable = productToPurchasable[productId] {
-            productToPurchasable.forEach {
-                $0.buy(isPrebook: isPrebook, quantity: quantity)
-            }
+            productToPurchasable.forEach {$0.buy(isPrebook: isPrebook, quantity: quantity)}
         } else {
             log(productId, "not received from store!")
         }
