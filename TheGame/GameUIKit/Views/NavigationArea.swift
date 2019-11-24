@@ -44,43 +44,47 @@ public enum NavigationItem {
     /// Open any external URL
     case UrlLink(image: Image = Image(systemName: "link"), urlString: String)
     
-    /// config and skin are needed as of "Cannot explicitly specialize a generic function"
-    fileprivate func asView<C, S>(presentationMode: Binding<PresentationMode>, config: C, skin: S) -> some View where C: GameConfig, S: GameSkin {
-        switch self {
-        case let .UrlLink(image: image, urlString: urlString):
-            return AnyView(Button(action: getUrlAction(urlString)) {image})
-            
-        case let .GameCenterLink(image: image):
-            return AnyView(Button(action: {GameFrame.gameCenter.show()}) {image})
-        case let .ShareLink(image: image, greeting: greeting, format: format):
-            return AnyView(Button(action: {GameFrame.instance!.showShare(greeting: greeting, format: format)}) {image})
-        case let .RewardLink(image: image, consumableId: consumableId, quantity: quantity):
-            return AnyView(Button(action: {
-                let consumable = GameFrame.coreData.getConsumable(consumableId)
-                GameFrame.adMob.showReward(consumable: consumable, quantity: quantity)
-            }) {image})
-        case let .RestoreLink(image: image):
-            return AnyView(Button(action: {GameFrame.inApp.restore()}) {image})
+    fileprivate struct AsView<C, S> where C: GameConfig, S: GameSkin {
+        let item: NavigationItem
+        
+        /// config and skin are needed as of "Cannot explicitly specialize a generic function"
+        fileprivate func asView(presentationMode: Binding<PresentationMode>) -> some View {
+            switch item {
+            case let .UrlLink(image: image, urlString: urlString):
+                return AnyView(Button(action: getUrlAction(urlString)) {image})
+                
+            case let .GameCenterLink(image: image):
+                return AnyView(Button(action: {GameFrame.gameCenter.show()}) {image})
+            case let .ShareLink(image: image, greeting: greeting, format: format):
+                return AnyView(Button(action: {GameFrame.instance!.showShare(greeting: greeting, format: format)}) {image})
+            case let .RewardLink(image: image, consumableId: consumableId, quantity: quantity):
+                return AnyView(Button(action: {
+                    let consumable = GameFrame.coreData.getConsumable(consumableId)
+                    GameFrame.adMob.showReward(consumable: consumable, quantity: quantity)
+                }) {image})
+            case let .RestoreLink(image: image):
+                return AnyView(Button(action: {GameFrame.inApp.restore()}) {image})
 
-        case let .LikeLink(image: image, appId: appId):
-            return AnyView(Button(action: getUrlAction("https://itunes.apple.com/app/id\(appId)?action=write-review")) {image})
-        case let .SystemSettingsLink(image: image):
-            return AnyView(Button(action: getUrlAction(UIApplication.openSettingsURLString)) {image})
+            case let .LikeLink(image: image, appId: appId):
+                return AnyView(Button(action: getUrlAction("https://itunes.apple.com/app/id\(appId)?action=write-review")) {image})
+            case let .SystemSettingsLink(image: image):
+                return AnyView(Button(action: getUrlAction(UIApplication.openSettingsURLString)) {image})
 
-        case let .PlayLink(image: image):
-            return AnyView(NavigationLink(destination: InLevelView<C, S>()) {image})
-        case let .SettingsLink(image: image):
-            return AnyView(NavigationLink(destination: SettingsView<C, S>()) {image})
-        case let .StoreLink(image: image, consumableIds: consumableIds, nonConsumableIds: nonConsumableIds):
-            return AnyView(NavigationLink(destination:
-                StoreView<C, S>(consumableIds: consumableIds, nonConsumableIds: nonConsumableIds)) {image})
-            
-        case let .BackLink(image: image):
-            return AnyView(Button(action: {presentationMode.wrappedValue.dismiss()}) {image})
-        case let .OfferBackLink(image: image):
-            return AnyView(Button(action: {GameUI.instance.clearOffer()}) {image})
-        case let .ErrorBackLink(image: image):
-            return AnyView(Button(action: {GameFrame.inApp.clearError()}) {image})
+            case let .PlayLink(image: image):
+                return AnyView(NavigationLink(destination: InLevelView<C, S>()) {image})
+            case let .SettingsLink(image: image):
+                return AnyView(NavigationLink(destination: SettingsView<C, S>()) {image})
+            case let .StoreLink(image: image, consumableIds: consumableIds, nonConsumableIds: nonConsumableIds):
+                return AnyView(NavigationLink(destination:
+                    StoreView<C, S>(consumableIds: consumableIds, nonConsumableIds: nonConsumableIds)) {image})
+                
+            case let .BackLink(image: image):
+                return AnyView(Button(action: {presentationMode.wrappedValue.dismiss()}) {image})
+            case let .OfferBackLink(image: image):
+                return AnyView(Button(action: {GameUI.instance.clearOffer()}) {image})
+            case let .ErrorBackLink(image: image):
+                return AnyView(Button(action: {GameFrame.inApp.clearError()}) {image})
+            }
         }
     }
 }
@@ -106,7 +110,6 @@ struct NavigationArea<C, S>: View where C: GameConfig, S: GameSkin {
         @ObservedObject private var inApp = GameFrame.inApp
         @ObservedObject private var adMob = GameFrame.adMob
         @ObservedObject private var gameCenter = GameFrame.gameCenter
-        @EnvironmentObject private var config: C
         @EnvironmentObject private var skin: S
         @Environment(\.presentationMode) var presentationMode
         
@@ -128,7 +131,7 @@ struct NavigationArea<C, S>: View where C: GameConfig, S: GameSkin {
                 }
             }
             
-            return item.asView(presentationMode: presentationMode, config: config, skin: skin)
+            return NavigationItem.AsView<C, S>(item: item).asView(presentationMode: presentationMode)
                 .disabled(disabled)
                 .buttonStyle(skin.getNavigationItemModifier(parent: parent, isDisabled: disabled, row: row, col: col))
         }

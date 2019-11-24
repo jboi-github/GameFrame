@@ -42,12 +42,16 @@ struct TheGameNavigationItemModifier: ButtonStyle {
                     proxy in
                     
                     if proxy.size.width < proxy.size.height {
-                        VStack {
+                        HStack {
                             Spacer()
-                            Text("The Game!").font(.largeTitle)
-                            Image(systemName: "play.circle")
-                                .resizable().scaledToFit()
-                                .foregroundColor(self.isDisabled ? Color.secondary : Color.accentColor)
+                            VStack {
+                                Spacer()
+                                Text("The Game!").font(.largeTitle)
+                                Image(systemName: "play.circle")
+                                    .resizable().scaledToFit()
+                                    .foregroundColor(self.isDisabled ? Color.secondary : Color.accentColor)
+                                Spacer()
+                            }
                             Spacer()
                         }
                     } else {
