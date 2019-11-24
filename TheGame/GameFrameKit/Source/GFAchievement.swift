@@ -12,14 +12,14 @@ import GameKit
 
 public class GFAchievement: ObservableObject, Identifiable {
     internal var delegate: GFEntityAchievement {
-           didSet(prev) {
-               guard prev != delegate else {return}
-               if let context = delegate.managedObjectContext {
-                   context.delete(prev)
-                   merge(prev: prev)
-               }
+       didSet(prev) {
+           guard prev != delegate else {return}
+           if let context = delegate.managedObjectContext {
+               context.delete(prev)
+               merge(prev: prev)
            }
        }
+   }
     
     /// Current achievement up to 100%
     @Published public private(set) var current: Double

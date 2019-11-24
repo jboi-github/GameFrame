@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import GameFrameKit
 
 struct OffLevelView<C, S>: View where C: GameConfig, S: GameSkin {
     @EnvironmentObject private var config: C
@@ -20,7 +19,7 @@ struct OffLevelView<C, S>: View where C: GameConfig, S: GameSkin {
             
             Spacer()
             
-            NavigationArea<S>(parent: "OffLevel", items: config.offLevelNavigation)
+            NavigationArea<C, S>(parent: "OffLevel", items: config.offLevelNavigation)
                 .modifier(skin.getOffLevelNavigationModifier())
         }
         .modifier(skin.getOffLevelModifier())
@@ -29,8 +28,8 @@ struct OffLevelView<C, S>: View where C: GameConfig, S: GameSkin {
 
 struct OffLevel_Previews: PreviewProvider {
     static var previews: some View {
-        OffLevelView<PreViewConfig, PreviewSkin>()
-        .environmentObject(PreViewConfig())
+        OffLevelView<PreviewConfig, PreviewSkin>()
+        .environmentObject(PreviewConfig())
         .environmentObject(PreviewSkin())
     }
 }

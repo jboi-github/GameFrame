@@ -10,7 +10,6 @@ import SwiftUI
 import GameFrameKit
 
 struct MainView<C, S>: View where C: GameConfig, S: GameSkin {
-    @ObservedObject private var navigator = GameUI.instance.navigator
     @EnvironmentObject private var config: C
     @EnvironmentObject private var skin: S
 
@@ -20,22 +19,22 @@ struct MainView<C, S>: View where C: GameConfig, S: GameSkin {
         
         var body: some View {
             ZStack {
-                GFBannerView() // Must be called to get initial height & width
+                GFBannerView() // Must be shown, otherwise AdMob doe not start to load anything
                 if !adMob.bannerAvailable {
                     EmptyView()
                         .modifier(skin.getMainBannerEmptyModifier())
                 }
             }
-            .frame(width: adMob.bannerWidth, height: adMob.bannerHeight)
-            .modifier(skin.getMainBannerModifier(width: adMob.bannerWidth, height: adMob.bannerHeight))
+            .frame(width: adMob.bannerSize.width, height: adMob.bannerSize.height)
+            .modifier(skin.getMainBannerModifier(width: adMob.bannerSize.width, height: adMob.bannerSize.height))
         }
     }
     
     var body: some View {
         VStack {
-            GeometryReader {
-                self.navigator.current.asView(gameConfig: self.config, gameSkin: self.skin, geometryProxy: $0)
-                    .modifier(self.skin.getMainModifier())
+            // TODO: Take care of startsOffLevel
+            NavigationView {
+                OffLevelView<C, S>().modifier(skin.getMainModifier())
             }
             Banner()
         }
@@ -44,14 +43,8 @@ struct MainView<C, S>: View where C: GameConfig, S: GameSkin {
 
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
-        GameFrame.createSharedInstanceForPreview(
-            consumablesConfig: [:],
-            adUnitIdBanner: nil,
-            adUnitIdRewarded: nil,
-            adUnitIdInterstitial: nil)
-        
-        return MainView<PreViewConfig, PreviewSkin>()
+        MainView<PreviewConfig, PreviewSkin>()
             .environmentObject(PreviewSkin())
-            .environmentObject(PreViewConfig())
+            .environmentObject(PreviewConfig())
     }
 }

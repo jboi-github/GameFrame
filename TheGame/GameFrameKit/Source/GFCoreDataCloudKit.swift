@@ -10,11 +10,13 @@ import CoreData
 import SwiftUI
 
 /**
- Synchronize objects with CoreData and, if player is logged in, iCloud. If the player is logged in, all objects are synchronized to iCloud and therefore available on all
+ Synchronize objects with CoreData and, if player is logged in, iCloud.
+ 
+ If the player is logged in, all objects are synchronized to iCloud and therefore available on all
  devices. The class controls when achievements, scores, consumables and non-consumables are loaded, saved and synchronized.
  The getter functions automatically create the corresponding instance and saves/synchronizes them.
  */
-public class GFCoreDataCloudKit: NSObject {
+public class GFCoreDataCloudKit: NSObject, ObservableObject {
     // MARK: - Initializaton
     internal override init() {
         log()
@@ -46,8 +48,14 @@ public class GFCoreDataCloudKit: NSObject {
     }
     
     // MARK: - Public functions
+    
+    /// True, after all local data has been fetched and is available in objects
+    @Published internal private(set) var hasFetchedLocally: Bool = false
+    
     /**
-     Get and eventually create an achievement with the given id. If the achievement exists in CoreData, the value is taken from there. If not, a new achievement with default values is created.
+     Get and eventually create an achievement with the given id.
+     
+     If the achievement exists in CoreData, the value is taken from there. If not, a new achievement with default values is created.
      - Parameter id: The `id` to get and find the achievement.
      - returns: The achievement as it was found in data or a newly created Default-Achievement
      */
@@ -59,7 +67,9 @@ public class GFCoreDataCloudKit: NSObject {
     }
     
     /**
-     Get and eventually create a score with the given id. If the score exists in CoreData, the value is taken from there.
+     Get and eventually create a score with the given id.
+     
+     If the score exists in CoreData, the value is taken from there.
      If not, a new score with default values is created.
      - Parameter id: The `id` to get and find the score.
      - returns: The score as it was found in data or a newly created Default-Score
@@ -72,7 +82,9 @@ public class GFCoreDataCloudKit: NSObject {
     }
     
     /**
-     Get and eventually create a consumable with the given id. If the consumable exists in CoreData, the value is taken from there.
+     Get and eventually create a consumable with the given id.
+     
+     If the consumable exists in CoreData, the value is taken from there.
      If not, a new consumable with default values is created.
      - Parameter id: The `id` to get and find the score.
      - returns: The score as it was found in data or a newly created Default-Score
@@ -85,7 +97,9 @@ public class GFCoreDataCloudKit: NSObject {
     }
     
     /**
-     Get and eventually create an score with the given id. If the score exists in CoreData, the value is taken from there.
+     Get and eventually create an score with the given id.
+     
+     If the score exists in CoreData, the value is taken from there.
      If not, a new score with default values is created.
      - Parameter id: The `id` to get and find the score.
      - returns: The score as it was found in data or a newly created Default-Score
@@ -117,53 +131,54 @@ public class GFCoreDataCloudKit: NSObject {
         }
     }
 
-   /// Load context.
-   fileprivate func loadAll() {
-       load(request: GFEntityScore.fetchRequest()) {
-           (element) in
+    /// Load context.
+    fileprivate func loadAll() {
+        load(request: GFEntityScore.fetchRequest()) {
+            (element) in
 
-           guard let score = element as? GFEntityScore else {return}
-           guard let id = score.id else {return}
-           scores.getAndAddIfNotExisting(key: id, closure: {_ in GFScore(delegate: score)}).delegate = score
-       }
-       load(request: GFEntityAchievement.fetchRequest()) {
-           (element) in
-           
-           guard let achievement = element as? GFEntityAchievement else {return}
-           guard let id = achievement.id else {return}
-           achievements.getAndAddIfNotExisting(key: id, closure: {_ in GFAchievement(delegate: achievement)}).delegate = achievement
-       }
-       load(request: GFEntityConsumable.fetchRequest()) {
-           (element) in
-           
-           guard let consumable = element as? GFEntityConsumable else {return}
-           guard let id = consumable.id else {return}
-           consumables.getAndAddIfNotExisting(key: id, closure: {_ in GFConsumable(delegate: consumable)}).delegate = consumable
-       }
-       load(request: GFEntityNonConsumable.fetchRequest()) {
-           (element) in
-           
-           guard let nonConsumable = element as? GFEntityNonConsumable else {return}
-           guard let id = nonConsumable.id else {return}
-           nonConsumables.getAndAddIfNotExisting(key: id, closure: {_ in GFNonConsumable(delegate: nonConsumable)}).delegate = nonConsumable
-       }
-   }
+            guard let score = element as? GFEntityScore else {return}
+            guard let id = score.id else {return}
+            scores.getAndAddIfNotExisting(key: id, closure: {_ in GFScore(delegate: score)}).delegate = score
+        }
+        load(request: GFEntityAchievement.fetchRequest()) {
+            (element) in
 
-   private func load(request: NSFetchRequest<NSFetchRequestResult>, map: (NSFetchRequestResult) -> Void) {
+            guard let achievement = element as? GFEntityAchievement else {return}
+            guard let id = achievement.id else {return}
+            achievements.getAndAddIfNotExisting(key: id, closure: {_ in GFAchievement(delegate: achievement)}).delegate = achievement
+        }
+        load(request: GFEntityConsumable.fetchRequest()) {
+            (element) in
+
+            guard let consumable = element as? GFEntityConsumable else {return}
+            guard let id = consumable.id else {return}
+            consumables.getAndAddIfNotExisting(key: id, closure: {_ in GFConsumable(delegate: consumable)}).delegate = consumable
+        }
+        load(request: GFEntityNonConsumable.fetchRequest()) {
+            (element) in
+
+            guard let nonConsumable = element as? GFEntityNonConsumable else {return}
+            guard let id = nonConsumable.id else {return}
+            nonConsumables.getAndAddIfNotExisting(key: id, closure: {_ in GFNonConsumable(delegate: nonConsumable)}).delegate = nonConsumable
+        }
+        hasFetchedLocally.set()
+    }
+
+    private func load(request: NSFetchRequest<NSFetchRequestResult>, map: (NSFetchRequestResult) -> Void) {
         do {
-           request.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)] // It simply needs one
-           let controller = NSFetchedResultsController(fetchRequest: request, managedObjectContext: delegate.viewContext, sectionNameKeyPath: nil, cacheName: nil)
-           controller.delegate = incorporateChanges
-           try controller.performFetch()
-           if let fetched = controller.fetchedObjects {
-               fetched.forEach {element in map(element)}
-           }
-       } catch {
-        guard check(error) else {return}
-       }
-   }
+            request.sortDescriptors = [NSSortDescriptor(key: "id", ascending: true)] // It simply needs one
+            let controller = NSFetchedResultsController(fetchRequest: request, managedObjectContext: delegate.viewContext, sectionNameKeyPath: nil, cacheName: nil)
+            controller.delegate = incorporateChanges
+            try controller.performFetch()
+            if let fetched = controller.fetchedObjects {
+                fetched.forEach {element in map(element)}
+            }
+        } catch {
+            guard check(error) else {return}
+        }
+    }
    
-   private let incorporateChanges = IncorporateChanges()
+    private let incorporateChanges = IncorporateChanges()
 }
 
 fileprivate class IncorporateChanges: NSObject, NSFetchedResultsControllerDelegate {

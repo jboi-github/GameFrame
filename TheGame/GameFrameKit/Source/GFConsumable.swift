@@ -12,14 +12,14 @@ import StoreKit
 
 public class GFConsumable: ObservableObject {
     internal var delegate: GFEntityConsumable {
-           didSet(prev) {
-               guard prev != delegate else {return}
-               if let context = delegate.managedObjectContext {
-                   context.delete(prev)
-                   merge(prev: prev)
-               }
+       didSet(prev) {
+           guard prev != delegate else {return}
+           if let context = delegate.managedObjectContext {
+               context.delete(prev)
+               merge(prev: prev)
            }
        }
+   }
      
     /// Currently available goods from bought, earned and consumed
     @Published public private(set) var available: Int
@@ -30,9 +30,6 @@ public class GFConsumable: ObservableObject {
     private var prebooked: Int {didSet {available = earned + bought + prebooked - consumed}}
     private var consumed: Int {didSet {available = earned + bought + prebooked - consumed}}
 
-    // The corresponding product to buy from, if available
-    public internal(set) var products = [Int:SKProduct]() // Products available in store for this consumable, player, country, ...
- 
     internal init(delegate: GFEntityConsumable) {
         self.delegate = delegate
         self.earned = Int(delegate.earned)

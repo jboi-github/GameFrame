@@ -9,7 +9,9 @@
 import GameKit
 
 /**
- Handle GameCenter related features. This class offers:
+ Handle GameCenter related features.
+ 
+ This class offers:
  - Reporting of `Achievement` and `Score` to the corresponding GameCenter achievements and leaderboards.
  - Values are automatially reported, when data is saved, at the end of each level, when an achievement was reached or when a new high score was reached.
  - Check if GameCenter is enabled and show Apple's GameCenter including its login page. You can put the `show()` as action to a button and call disable on the button, if GameCenter is not `enabled`

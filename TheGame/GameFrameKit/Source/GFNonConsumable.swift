@@ -12,21 +12,18 @@ import StoreKit
 
 public class GFNonConsumable: ObservableObject {
     internal var delegate: GFEntityNonConsumable {
-           didSet(prev) {
-               guard prev != delegate else {return}
-               if let context = delegate.managedObjectContext {
-                   context.delete(prev)
-                   merge(prev: prev)
-               }
-           }
-       }
-    
+        didSet(prev) {
+            guard prev != delegate else {return}
+            if let context = delegate.managedObjectContext {
+                context.delete(prev)
+                merge(prev: prev)
+            }
+        }
+    }
+
     /// Current score
     @Published public private(set) var isOpened: Bool
     private var prebooked: Bool // if true, the unlock is only prebooked and needs confirmation
-    
-    // The corresponding product to buy from, if available
-    public internal(set) var product: SKProduct?
 
     internal init(delegate: GFEntityNonConsumable) {
         self.delegate = delegate

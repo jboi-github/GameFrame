@@ -47,14 +47,14 @@ struct BlurView: UIViewRepresentable {
     func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<BlurView>) {}
 }
 
-struct ErrorAlert<S>: View  where S: GameSkin {
+struct ErrorAlert<C, S>: View  where C: GameConfig, S: GameSkin {
     @EnvironmentObject private var skin: S
     
     var body: some View {
         VStack {
             Text("\(GameFrame.inApp.error?.localizedDescription ?? "OK")")
             .modifier(skin.getErrorMessageModifier())
-            NavigationArea<S>(parent: "Error", items: [[.ErrorBackLink()]])
+            NavigationArea<C, S>(parent: "Error", items: [[.ErrorBackLink()]])
         }
         .modifier(skin.getErrorModifier())
     }

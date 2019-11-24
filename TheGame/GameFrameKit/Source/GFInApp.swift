@@ -15,24 +15,21 @@ import StoreKit
  */
 public class GFInApp: NSObject, ObservableObject {
     // MARK: - Initializaton
-    
     /**
      Initialize InApp handling.
-     - Parameter consumableConfig: A dictionary of consumables that are backed by one or more products in the store. Each consumable is given by its id and associated by an array of tuples containing the products id as defined in the store and the quantity of consumable, that the product represents.
-     Example: Say, you have one consumable "bullets" and two products with the ids "bullets10" and "bullets20". You can configure this with:
-     `GFInApp(["bullets10" : ("bullets", 10), "bullets20" : ("bullets", 20)])`
+     - Parameter purchasables: A mapping from products in app store to internal consumables and non-consumables. The dictionary key is the product-identifier as defined in app store. The value is the list of consumables and non-consumables that are impacted by this product.
      */
-    internal init(_ consumablesConfig: [String: (String, Int)]) {
+    internal init(_ purchasables: [String: [Purchasable]]) {
         log()
+        productToPurchasable = purchasables
         super.init()
-        delegater = Delegater(parent: self, consumablesConfig: consumablesConfig)
-        delegater!.consumablesConfig = consumablesConfig
 
         // Start listening
+        delegater = Delegater(parent: self)
         SKPaymentQueue.default().add(delegater!)
         load()
     }
-    
+
     deinit {
         log()
         SKPaymentQueue.default().remove(delegater!)
@@ -47,63 +44,7 @@ public class GFInApp: NSObject, ObservableObject {
 
     /// Contains the latest error, if a purchase failed. Cleared, if a transaction finished succesfully.
     @Published public fileprivate(set) var error: Error?
-    
-    /**
-     Return consumables with one of the given `ids` and at least one available product in store and loaded.
-     `Consumable.products` contains the store products and is garuanteed to have at least one entry.
-     - Parameter ids: An array of all id's of the consumables to consider.
-     - returns: An Array of products, base quantity and Consumables where the products are available.
-     The array is sorted in the same order, as `ids` were given and then by quantity.
-     */
-    public func getConsumables(ids: [String]) -> [ConsumableProduct] {
-        // Get all Consumables with available products
-        return ids.compactMap({
-            (id) -> GFConsumable? in
-            guard let consumable = consumables[id] else {return nil}
-            guard !consumable.products.isEmpty else {return nil}
-            
-            return consumable
-        })
-        .flatMap {
-            (consumable) -> [ConsumableProduct] in
-            consumable.products.map {
-                (key: Int, value: SKProduct) -> ConsumableProduct in
-                ConsumableProduct(product: value, quantity: key, consumable: consumable)
-            }
-            // Sort by consumable-Id and quantity
-            .sorted {
-                (lhs, rhs) -> Bool in
-                lhs.quantity <= rhs.quantity
-            }
-        }
-    }
-    
-    /// Struct, returned by getConsumables() is identifiable for use in List{} and ForEach{}
-    public struct ConsumableProduct: Identifiable {
-        public var id: String {product.productIdentifier}
-        
-        public var product: SKProduct
-        public var quantity: Int
-        public var consumable: GFConsumable
-    }
-    
-    /**
-     Return non-consumables with one of the given `ids` and an available product in store and loaded.
-     `NonConsumable.product` contains the store product and is garuanteed to have an entry.
-     - Parameter ids: An array of all id's of the non-consumables to consider.
-     - returns: An Array of NonConsumables where the product is available. The array is sorted in the same order, as `ids` were given.
-     */
-    public func getNonConsumables(ids: [String]) -> [GFNonConsumable] {
-        var cs = [GFNonConsumable]()
-        for id in ids {
-            guard let nonConsumable = nonConsumables[id] else {continue}
-            guard nonConsumable.product != nil else {continue}
-            
-            cs.append(nonConsumable)
-        }
-        return cs
-    }
-    
+
     /**
      Request payment (player decided to buy). Use the product(s) variable from the (Non)Consumable.
      - Parameter product: The product to buy. This value should be taken from the chosens consumable or non-consumable.
@@ -127,7 +68,7 @@ public class GFInApp: NSObject, ObservableObject {
     }
     
     /**
-     Clear error. This should be done, when shown to the player.
+     Clear error. This should be done, after error was shown to the player.
      */
     public func clearError() {error = nil}
     
@@ -138,13 +79,146 @@ public class GFInApp: NSObject, ObservableObject {
 
     /// Load all available products from store.
     private func load() {
-        // Get all product Ids
-        let ids = Set(nonConsumables.keys).union(delegater!.consumablesConfig.keys)
-        
-        // Request from store
-        request = SKProductsRequest(productIdentifiers: ids)
+        request = SKProductsRequest(productIdentifiers: Set(productToPurchasable.keys))
         request.delegate = delegater!
         request.start()
+    }
+
+    // MARK: - Configuration handling
+    /**
+     Used to map products in app store to consumables and non-consumables.
+     */
+    public enum Purchasable {
+        /// Product affects consumables with quantity amount of units, e.g. product is to buy 20 coffee mugs, then "coffee mug" is the consumable and 20 the quantity
+        case Consumable(id: String, quantity: Int)
+        /// Non-Consumable affected by product.
+        case NonConsumable(id: String)
+        
+        fileprivate func buy(isPrebook: Bool, quantity purchasedQuantity: Int = 1) {
+            switch self {
+            case let .Consumable(id: id, quantity: quantity):
+                let consumable = GameFrame.coreData.getConsumable(id)
+                
+                if isPrebook {
+                    consumable.prebook(quantity * purchasedQuantity)
+                } else {
+                    consumable.buy(quantity * purchasedQuantity)
+                }
+                
+            case let .NonConsumable(id: id):
+                let nonConsumable = GameFrame.coreData.getNonConsumable(id)
+                
+                if isPrebook {
+                    nonConsumable.prebook()
+                } else {
+                    nonConsumable.unlock()
+                }
+            }
+        }
+        
+        fileprivate func rollback() {
+            switch self {
+            case let .Consumable(id: id, quantity: _):
+                let consumable = GameFrame.coreData.getConsumable(id)
+                consumable.rollback()
+                
+            case let .NonConsumable(id: id):
+                let nonConsumable = GameFrame.coreData.getNonConsumable(id)
+                nonConsumable.rollback()
+            }
+        }
+        
+        fileprivate var isConsumable: Bool {
+            switch self {
+            case .Consumable(id: _, quantity: _):
+                return true
+                
+            default:
+                return false
+            }
+        }
+    }
+    
+    // MARK: publicly available functions
+    /**
+     Get all products, related to consumables and non-consumables.
+     
+     The returned list contains each product only once, regardless how much cons/non-nos are impacted by a purchase.
+     - Parameters:
+        - consumableIds: List of id's of consumables
+        - nonConsumableIds: List of id's of non-consumables
+     - returns: An array of SKProducts, where a purchase would affect the given cons/non-cons. The list is sorted by product-identifier.
+     */
+    public func getProducts(consumableIds: [String], nonConsumableIds: [String]) -> [SKProduct] {
+        log(consumableIds, nonConsumableIds)
+        
+        let products: Set<SKProduct> = Set()
+            .union(consumableIds.flatMap {consumableToProducts[$0] ?? []})
+            .union(nonConsumableIds.flatMap {nonConsumableToProducts[$0] ?? []})
+        
+        return products.sorted {$0.productIdentifier < $1.productIdentifier}
+    }
+    
+    // MARK: Internals
+    private let productToPurchasable: [String: [Purchasable]] /// ProductId -> purchasables
+    private var consumableToProducts = [String: [SKProduct]]() /// Receieved products
+    private var nonConsumableToProducts = [String: [SKProduct]]() /// Receieved products
+
+    /**
+     Called, when a product was received from the app store.
+     */
+    fileprivate func productReceived(_ product: SKProduct) {
+        guard let purchasables = productToPurchasable[product.productIdentifier] else {
+            log(product.productIdentifier, "not configured!")
+            return
+        }
+        
+        purchasables.forEach {
+            switch $0 {
+            case let .Consumable(id: id, quantity: _):
+                var products = consumableToProducts.getAndAddIfNotExisting(key: id, closure: {_ in []})
+                products.append(product)
+                consumableToProducts[id] = products
+            case let .NonConsumable(id: id):
+                var products = nonConsumableToProducts.getAndAddIfNotExisting(key: id, closure: {_ in []})
+                products.append(product)
+                nonConsumableToProducts[id] = products
+            }
+        }
+    }
+    
+    /**
+     Called, when product was bought or prebooked.
+     */
+    fileprivate func productBought(_ productId: String, quantity: Int, isPrebook: Bool) {
+        if let productToPurchasable = productToPurchasable[productId] {
+            productToPurchasable.forEach {$0.buy(isPrebook: isPrebook, quantity: quantity)}
+        } else {
+            log(productId, "not received from store!")
+        }
+    }
+    
+    /**
+     Called, when purchase failed
+     */
+    fileprivate func purchaseFailed(_ productId: String) {
+        if let productToPurchasable = productToPurchasable[productId] {
+            productToPurchasable.forEach {
+                $0.rollback()
+            }
+        } else {
+            log(productId, "not received from store!")
+        }
+    }
+    
+    /**
+     Product belongs purely to a consumable. Can be bought with higher quantity.
+     - returns: true, if product is solely related to consumables. False, if product is related a least one time to a non-consumable or is not configured at all.
+     */
+    func isPurelyConsumable(_ productId: String) -> Bool {
+        guard let purchasables = productToPurchasable[productId] else {return false}
+        
+        return purchasables.allSatisfy {$0.isConsumable}
     }
 }
 
@@ -152,31 +226,22 @@ fileprivate var delegater: Delegater? = nil
 
 private class Delegater: NSObject, SKPaymentTransactionObserver, SKProductsRequestDelegate {
     private var parent: GFInApp
-    
-    /// Dictionary of product-Ids -> Consumable-Id and base quantity
-    fileprivate var consumablesConfig: [String: (consumableId: String, baseQuantity: Int)]
 
-    fileprivate init(parent: GFInApp, consumablesConfig: [String: (consumableId: String, baseQuantity: Int)]) {
+    fileprivate init(parent: GFInApp) {
         log()
         self.parent = parent
-        self.consumablesConfig = consumablesConfig
     }
     
     internal func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
         log(response.products.map({$0.productIdentifier}), response.invalidProductIdentifiers)
         
         for product in response.products {
-            if let (consumable, baseQuantity) = readConfigFor(product.productIdentifier) {
-                consumable.products[baseQuantity] = product
-                DispatchQueue.main.async {self.parent.available.set()}
-            } else if let nonConsumable = nonConsumables[product.productIdentifier] {
-                nonConsumable.product = product
-                DispatchQueue.main.async {self.parent.available.set()}
-            }
+            parent.productReceived(product)
         }
+        if !response.products.isEmpty {DispatchQueue.main.async {self.parent.available.set()}}
         
         for invalidId in response.invalidProductIdentifiers {
-            log("Not available: \(invalidId)")
+            log(invalidId, "not available in store")
         }
     }
 
@@ -191,44 +256,31 @@ private class Delegater: NSObject, SKPaymentTransactionObserver, SKProductsReque
             case .purchasing:
                 log("purchasing")
                 // Keep paused and fingers crossed
-                DispatchQueue.main.async {self.parent.purchasing.set()}
+                self.parent.purchasing.set()
                 break
             case .deferred:
                 log("deferred")
-                // Purchase is reflected immediately and rolled back later, if purchase failed.
-                if let (consumable, baseQuantity) = readConfigFor(transaction.payment.productIdentifier) {
-                    consumable.prebook(transaction.payment.quantity * baseQuantity)
-                } else if let nonConsumable = nonConsumables[transaction.payment.productIdentifier] {
-                    nonConsumable.prebook()
-                } else {
-                    log("Unknown product! \(transaction.payment)")
-                }
+                // Purchase is reflected immediately and rolled back later, if purchase fails.
+                parent.productBought(
+                    transaction.payment.productIdentifier,
+                    quantity: transaction.payment.quantity,
+                    isPrebook: true)
                 self.parent.purchasing.unset()
                 break
             case .failed:
                 log("failed", transaction.error)
                 // Rollback if necessary
-                if let (consumable, _) = readConfigFor(transaction.payment.productIdentifier) {
-                    consumable.rollback()
-                } else if let nonConsumable = nonConsumables[transaction.payment.productIdentifier] {
-                    nonConsumable.rollback()
-                } else {
-                    log("Unknown product! \(transaction.payment)")
-                }
+                parent.purchaseFailed(transaction.payment.productIdentifier)
                 SKPaymentQueue.default().finishTransaction(transaction)
                 self.parent.error = transaction.error
                 self.parent.purchasing.unset()
                 break
             case .purchased:
                 log("purchased")
-                // Find right object for product
-                if let (consumable, baseQuantity) = readConfigFor(transaction.payment.productIdentifier) {
-                    consumable.buy(transaction.payment.quantity * baseQuantity)
-                } else if let nonConsumable = nonConsumables[transaction.payment.productIdentifier] {
-                    nonConsumable.unlock()
-                } else {
-                    log("Unknown product! \(transaction.payment)")
-                }
+                parent.productBought(
+                    transaction.payment.productIdentifier,
+                    quantity: transaction.payment.quantity,
+                    isPrebook: false)
                 SKPaymentQueue.default().finishTransaction(transaction)
                 self.parent.error = nil
                 self.parent.purchasing.unset()
@@ -246,14 +298,5 @@ private class Delegater: NSObject, SKPaymentTransactionObserver, SKProductsReque
                 self.parent.purchasing.unset()
             }
         }
-    }
-    
-    private func readConfigFor(_ productId: String) -> (consumable: GFConsumable, baseQuantity: Int)? {
-        if let (consumableId, baseQuantity) = consumablesConfig[productId],
-            let consumable = consumables[consumableId] {
-            
-            return (consumable, baseQuantity)
-        }
-        return nil
     }
 }

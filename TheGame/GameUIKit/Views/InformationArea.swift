@@ -10,10 +10,17 @@ import SwiftUI
 import GameFrameKit
 
 // MARK: Publicly available information items
+/**
+ Information items to be used in configuration of the game. Each reflects an information.
+*/
 public enum InformationItem {
+    /// Score item with given id. Current and highest value is shown.
     case ScoreItem(id: String)
+    /// Achievement with given id is formatted and its current value shown
     case AchievementItem(id: String, format: String)
+    /// Consumable with given id is shown with its current availability
     case ConsumableItem(id: String)
+    /// Non-Consumable is shown as image. Optionally an image is shown, when it is closed.
     case NonConsumableItem(id: String, opened: Image, closed: Image?)
 
     private struct InformationScore<S>: View where S: GameSkin {

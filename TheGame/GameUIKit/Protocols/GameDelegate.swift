@@ -19,8 +19,7 @@ public protocol GameDelegate {
     func pause()
     
     /**
-     Called when the game comes back to players attention. This function is also called, when the player returns
-     from an offer. Therefore check here for game over conditions.
+     Called when the game comes back to players attention.
      */
     func resume()
     
@@ -37,12 +36,12 @@ public protocol GameDelegate {
     
     /**
      Game or level is over. Game returns to OffLevel.
-     - returns: if a review micht be requested and/or an interstitial should be shown.
+     - returns: If a review might be requested and/or an interstitial should be shown.
      */
     func leaveLevel() -> (requestReview: Bool, showInterstitial: Bool)
     
     /**
-     Check, if conditions to make offer are fulfilled.
+     Check, if conditions to make offer, are fulfilled.
      
      This is called multiple times during offering, initiated by a call to `makeOffer()`, to ensure good User Experience.
      - returns:
