@@ -60,7 +60,15 @@ struct TheGameOffLevelModifier: ViewModifier {
 struct TheGameSettingsModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
-        //.navigationBarTitle("Settings", displayMode: .inline)
+        .navigationBarTitle("Settings", displayMode: .inline)
+    }
+}
+
+struct TheGameInLevelModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+        .navigationBarTitle("The Game", displayMode: .inline)
+        .navigationBarBackButtonHidden(true)
     }
 }
 
@@ -78,5 +86,17 @@ class TheGameSkin: GameSkin {
     // Get a big play-button
     func getNavigationItemModifier(parent: String, isDisabled: Bool, row: Int, col: Int) -> some ButtonStyle {
          TheGameNavigationItemModifier(parent: parent, isDisabled: isDisabled, row: row, col: col)
+    }
+    
+    func getOffLevelModifier() -> some ViewModifier {
+         TheGameOffLevelModifier()
+    }
+    
+    func getSettingsModifier() -> some ViewModifier {
+         TheGameSettingsModifier()
+    }
+    
+    func getInLevelModifier() -> some ViewModifier {
+        TheGameInLevelModifier()
     }
 }

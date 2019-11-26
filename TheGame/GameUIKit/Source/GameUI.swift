@@ -88,11 +88,15 @@ public class GameUI: NSObject, ObservableObject  {
      */
     public func gameOver() {
         isInLevelShadow = false
+        log(presentationMode)
+        presentationMode?.wrappedValue.dismiss()
     }
     
     @Published private(set) var offer: (consumableId: String, quantity: Int)? = nil
     @Published private(set) var isInLevel: Bool = false
     @Published private(set) var isResumed: Bool = false
+    
+    var presentationMode: Binding<PresentationMode>?
 
     // MARK: Initialization
     private init(gameDelegate: GameDelegate) {

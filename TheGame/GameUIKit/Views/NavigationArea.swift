@@ -65,9 +65,9 @@ struct NavigationArea<C, S>: View where C: GameConfig, S: GameSkin {
             switch item {
             case let .Generics(generic: generic):
                 switch generic {
-                case let .Action(action: action, image: image):
+                case let .Action(action, image: image):
                     return AnyView(Button(action: action) {image})
-                case let .Url(urlString: urlString, image: image):
+                case let .Url(urlString, image: image):
                     return AnyView(Button(action: getUrlAction(urlString)) {image})
                 }
             case let .Buttons(button: button):
@@ -138,9 +138,9 @@ struct NavigationArea_Previews: PreviewProvider {
         NavigationArea<PreviewConfig, PreviewSkin>(
             parent: "Preview",
             items: [[
-                .Generics(generic: .Url(urlString: "https://www.apple.com")),
-                .Generics(generic: .Url(urlString: "https://www.google.com")),
-                .Generics(generic: .Url(urlString: "https://www.bing.com"))
+                .Generics(.Url("https://www.apple.com")),
+                .Generics(.Url("https://www.google.com")),
+                .Generics(.Url("https://www.bing.com"))
             ]])
             .environmentObject(PreviewSkin())
             .environmentObject(PreviewConfig())

@@ -18,8 +18,8 @@ import SwiftUI
 public enum Navigation {
     public enum Generic {
         /// Open any external URL
-        case Url(urlString: String, image: Image = Image(systemName: "link"))
-        case Action(action: () -> Void, image: Image)
+        case Url(_ urlString: String, image: Image = Image(systemName: "link"))
+        case Action(_ action: () -> Void, image: Image)
     }
     
     public enum Link {
@@ -52,7 +52,7 @@ public enum Navigation {
         case GameCenter(image: Image = Image(systemName: "rosette"))
     }
     
-    case Generics(generic: Generic)
-    case Links(link: Link)
-    case Buttons(button: Button)
+    case Generics(_ generic: Generic)
+    case Links(_ link: Link)
+    case Buttons(_ button: Button)
 }
