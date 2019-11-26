@@ -43,12 +43,6 @@ public extension Text {
 }
 
 // MARK: - Modifier Implementations for Identity Skin
-struct MainModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-    }
-}
-
 struct MainBannerModifier: ViewModifier {
     var width: CGFloat
     var height: CGFloat
@@ -75,6 +69,10 @@ struct OffLevelInformationModifier: ViewModifier {
 }
 
 struct InLevelModifier: ViewModifier {
+    func body(content: Content) -> some View {content}
+}
+
+struct InLevelGameModifier: ViewModifier {
     let isOverlayed: Bool
     
     func body(content: Content) -> some View {
@@ -103,11 +101,7 @@ struct SettingsInformationModifier: ViewModifier {
 }
 
 struct StoreModifier: ViewModifier {
-    let isOverlayed: Bool
-    
-    func body(content: Content) -> some View {
-        content.padding().blur(radius: isOverlayed ? 5.0 : 0.0)
-    }
+    func body(content: Content) -> some View {content}
 }
 
 struct StoreEmptyModifier: TextModifier {
@@ -119,7 +113,11 @@ struct StoreNavigationModifier: ViewModifier {
 }
 
 struct StoreProductsModifier: ViewModifier {
-    func body(content: Content) -> some View {content}
+    let isOverlayed: Bool
+    
+    func body(content: Content) -> some View {
+        content.padding().blur(radius: isOverlayed ? 5.0 : 0.0)
+    }
 }
 
 struct StoreProductModifier: ViewModifier {
@@ -160,7 +158,6 @@ struct StoreProductQuantityModifier: TextModifier {
 
 struct StoreProductStepperModifier: ButtonStyle {
     var id: String
-    
     var isDisabled: Bool
 
     func makeBody(configuration: Self.Configuration) -> some View {
@@ -233,21 +230,7 @@ struct OfferProductPriceModifier: TextModifier {
     func body(text: Text) -> some View {text}
 }
 
-struct InformationAchievementModifier: TextModifier {
-    var parent: String
-    var id: String
-
-    func body(text: Text) -> some View {text}
-}
-
-struct InformationScoreModifier: TextModifier {
-    var parent: String
-    var id: String
-
-    func body(text: Text) -> some View {text}
-}
-
-struct InformationConsumableModifier: TextModifier {
+struct InformationItemModifier: TextModifier {
     var parent: String
     var id: String
 
@@ -313,13 +296,13 @@ struct ErrorModifier: ViewModifier {
  2. Write your own modifier and call it in the overridden function
  */
 public protocol GameSkin: ObservableObject {
-    associatedtype MainModifierType: ViewModifier
     associatedtype MainBannerModifierType: ViewModifier
     associatedtype MainBannerEmptyModifierType: ViewModifier
     associatedtype OffLevelModifierType: ViewModifier
     associatedtype OffLevelNavigationModifierType: ViewModifier
     associatedtype OffLevelInformationModifierType: ViewModifier
     associatedtype InLevelModifierType: ViewModifier
+    associatedtype InLevelGameModifierType: ViewModifier
     associatedtype InLevelNavigationModifierType: ViewModifier
     associatedtype InLevelInformationModifierType: ViewModifier
     associatedtype InLevelGameZoneModifierType: ViewModifier
@@ -347,9 +330,7 @@ public protocol GameSkin: ObservableObject {
     associatedtype OfferProductDescriptionModifierType: TextModifier
     associatedtype OfferProductCartModifierType: ImageModifier
     associatedtype OfferProductPriceModifierType: TextModifier
-    associatedtype InformationAchievementModifierType: TextModifier
-    associatedtype InformationScoreModifierType: TextModifier
-    associatedtype InformationConsumableModifierType: TextModifier
+    associatedtype InformationItemModifierType: TextModifier
     associatedtype InformationNonConsumableModifierType: ViewModifier
     associatedtype InformationRowModifierType: ViewModifier
     associatedtype NavigationItemModifierType: ButtonStyle
@@ -358,13 +339,13 @@ public protocol GameSkin: ObservableObject {
     associatedtype ErrorMessageModifierType: TextModifier
     associatedtype ErrorModifierType: ViewModifier
     
-    func getMainModifier() -> MainModifierType
     func getMainBannerModifier(width: CGFloat, height: CGFloat) -> MainBannerModifierType
     func getMainBannerEmptyModifier() -> MainBannerEmptyModifierType
     func getOffLevelModifier() -> OffLevelModifierType
     func getOffLevelNavigationModifier() -> OffLevelNavigationModifierType
     func getOffLevelInformationModifier() -> OffLevelInformationModifierType
-    func getInLevelModifier(isOverlayed: Bool) -> InLevelModifierType
+    func getInLevelModifier() -> InLevelModifierType
+    func getInLevelGameModifier(isOverlayed: Bool) -> InLevelGameModifierType
     func getInLevelNavigationModifier() -> InLevelNavigationModifierType
     func getInLevelInformationModifier() -> InLevelInformationModifierType
     func getInLevelGameZoneModifier() -> InLevelGameZoneModifierType
@@ -372,10 +353,10 @@ public protocol GameSkin: ObservableObject {
     func getSettingsSpaceModifier() -> SettingsSpaceModifierType
     func getSettingsNavigationModifier() -> SettingsNavigationModifierType
     func getSettingsInformationModifier() -> SettingsInformationModifierType
-    func getStoreModifier(isOverlayed: Bool) -> StoreModifierType
+    func getStoreModifier() -> StoreModifierType
     func getStoreEmptyModifier() -> StoreEmptyModifierType
     func getStoreNavigationModifier() -> StoreNavigationModifierType
-    func getStoreProductsModifier() -> StoreProductsModifierType
+    func getStoreProductsModifier(isOverlayed: Bool) -> StoreProductsModifierType
     func getStoreProductModifier(id: String) -> StoreProductModifierType
     func getStoreProductButtonModifier(id: String, isDisabled: Bool) -> StoreProductButtonModifierType
     func getStoreProductTitleModifier(id: String) -> StoreProductTitleModifierType
@@ -392,9 +373,7 @@ public protocol GameSkin: ObservableObject {
     func getOfferProductDescriptionModifier(id: String) -> OfferProductDescriptionModifierType
     func getOfferProductCartModifier(id: String) -> OfferProductCartModifierType
     func getOfferProductPriceModifier(id: String) -> OfferProductPriceModifierType
-    func getInformationAchievementModifier(parent: String, id: String) -> InformationAchievementModifierType
-    func getInformationScoreModifier(parent: String, id: String) -> InformationScoreModifierType
-    func getInformationConsumableModifier(parent: String, id: String) -> InformationConsumableModifierType
+    func getInformationItemModifier(parent: String, id: String) -> InformationItemModifierType
     func getInformationNonConsumableModifier(parent: String, id: String) -> InformationNonConsumableModifierType
     func getInformationRowModifier(parent: String, row: Int) -> InformationRowModifierType
     func getNavigationItemModifier(parent: String, isDisabled: Bool, row: Int, col: Int) -> NavigationItemModifierType
@@ -405,9 +384,6 @@ public protocol GameSkin: ObservableObject {
 }
 
 public extension GameSkin {
-     func getMainModifier() -> some ViewModifier {
-         return MainModifier()
-    }
       func getMainBannerModifier(width: CGFloat, height: CGFloat) -> some ViewModifier {
           MainBannerModifier(width: width, height: height)
      }
@@ -423,9 +399,12 @@ public extension GameSkin {
       func getOffLevelInformationModifier() -> some ViewModifier {
           OffLevelInformationModifier()
      }
-    func getInLevelModifier(isOverlayed: Bool) -> some ViewModifier {
-        InLevelModifier(isOverlayed: isOverlayed)
+    func getInLevelModifier() -> some ViewModifier {
+        InLevelModifier()
      }
+      func getInLevelGameModifier(isOverlayed: Bool) -> some ViewModifier {
+          InLevelGameModifier(isOverlayed: isOverlayed)
+       }
       func getInLevelNavigationModifier() -> some ViewModifier {
           InLevelNavigationModifier()
      }
@@ -441,8 +420,8 @@ public extension GameSkin {
       func getSettingsInformationModifier() -> some ViewModifier {
           SettingsInformationModifier()
      }
-     func getStoreModifier(isOverlayed: Bool) -> some ViewModifier {
-         StoreModifier(isOverlayed: isOverlayed)
+     func getStoreModifier() -> some ViewModifier {
+         StoreModifier()
     }
      func getStoreEmptyModifier() -> some TextModifier {
          StoreEmptyModifier()
@@ -450,8 +429,8 @@ public extension GameSkin {
      func getStoreNavigationModifier() -> some ViewModifier {
          StoreNavigationModifier()
     }
-     func getStoreProductsModifier() -> some ViewModifier {
-         StoreProductsModifier()
+     func getStoreProductsModifier(isOverlayed: Bool) -> some ViewModifier {
+         StoreProductsModifier(isOverlayed: isOverlayed)
     }
       func getStoreProductModifier(id: String) -> some ViewModifier {
           StoreProductModifier(id: id)
@@ -501,14 +480,8 @@ public extension GameSkin {
      func getOfferProductPriceModifier(id: String) -> some TextModifier {
          OfferProductPriceModifier(id: id)
     }
-     func getInformationAchievementModifier(parent: String, id: String) -> some TextModifier {
-         InformationAchievementModifier(parent: parent, id: id)
-    }
-     func getInformationScoreModifier(parent: String, id: String) -> some TextModifier {
-         InformationScoreModifier(parent: parent, id: id)
-    }
-     func getInformationConsumableModifier(parent: String, id: String) -> some TextModifier {
-         InformationConsumableModifier(parent: parent, id: id)
+     func getInformationItemModifier(parent: String, id: String) -> some TextModifier {
+         InformationItemModifier(parent: parent, id: id)
     }
       func getInformationNonConsumableModifier(parent: String, id: String) -> some ViewModifier {
           InformationNonConsumableModifier(parent: parent, id: id)

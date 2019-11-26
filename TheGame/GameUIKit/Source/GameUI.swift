@@ -80,9 +80,7 @@ public class GameUI: NSObject, ObservableObject  {
         
         offer = (consumableId: consumableId, quantity: quantity)
     }
-    
-    @Environment(\.presentationMode) var presentationMode
-    
+
     /**
      Call to end level or game.
      
@@ -90,7 +88,6 @@ public class GameUI: NSObject, ObservableObject  {
      */
     public func gameOver() {
         isInLevelShadow = false
-        presentationMode.wrappedValue.dismiss()
     }
     
     @Published private(set) var offer: (consumableId: String, quantity: Int)? = nil
@@ -195,7 +192,7 @@ public class GameUI: NSObject, ObservableObject  {
     }
     
     /// Get notified, when it's time to save
-    @objc func onDidActivate(_ notification:Notification) {
+    @objc func onDidActivate(_ notification: Notification) {
         log(isResumedShadow, isInLevelShadow)
         guard isInLevelShadow else {return}
         

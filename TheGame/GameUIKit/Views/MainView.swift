@@ -12,6 +12,7 @@ import GameFrameKit
 struct MainView<C, S>: View where C: GameConfig, S: GameSkin {
     @EnvironmentObject private var config: C
     @EnvironmentObject private var skin: S
+    @State private var isStarting: Bool = true
 
     private struct Banner: View {
         @ObservedObject private var adMob = GameFrame.adMob
@@ -32,11 +33,19 @@ struct MainView<C, S>: View where C: GameConfig, S: GameSkin {
     
     var body: some View {
         VStack {
+            Text("\(isStarting ? "YES":"NO")")
+            
             // TODO: Take care of startsOffLevel
             NavigationView {
-                OffLevelView<C, S>().modifier(skin.getMainModifier())
+                OffLevelView<C, S>()
             }
             Banner()
+        }
+        .onAppear {
+            log("1 *********", self.isStarting)
+            DispatchQueue.main.async {
+                log("2 ***********", self.isStarting)
+            }
         }
     }
 }

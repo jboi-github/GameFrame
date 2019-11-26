@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		15134583238D9AA000A56D01 /* Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15134582238D9AA000A56D01 /* Navigation.swift */; };
+		15134585238DB10200A56D01 /* Information.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15134584238DB10200A56D01 /* Information.swift */; };
 		153F1202237C8E2100D3B6AD /* TheGameSkin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 153F1201237C8E2100D3B6AD /* TheGameSkin.swift */; };
 		1540988F23773041002A5E4F /* TheGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1540988E23773041002A5E4F /* TheGameView.swift */; };
 		15440B322385A43200233DD3 /* Commons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15440B312385A43200233DD3 /* Commons.swift */; };
@@ -148,6 +150,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		15134582238D9AA000A56D01 /* Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
+		15134584238DB10200A56D01 /* Information.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Information.swift; sourceTree = "<group>"; };
 		153F1201237C8E2100D3B6AD /* TheGameSkin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TheGameSkin.swift; sourceTree = "<group>"; };
 		1540988E23773041002A5E4F /* TheGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TheGameView.swift; sourceTree = "<group>"; };
 		15440B312385A43200233DD3 /* Commons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Commons.swift; sourceTree = "<group>"; };
@@ -384,6 +388,8 @@
 				155DBC54237F091E00AA6412 /* GameDelegate.swift */,
 				155DBC55237F091E00AA6412 /* GameSkin.swift */,
 				155DBC7123829FAE00AA6412 /* GameConfig.swift */,
+				15134582238D9AA000A56D01 /* Navigation.swift */,
+				15134584238DB10200A56D01 /* Information.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -721,7 +727,9 @@
 				155DBC5E237F091E00AA6412 /* GameSkin.swift in Sources */,
 				15A289C32389C02D00C230A2 /* SettingsView.swift in Sources */,
 				155DBC6A237F095000AA6412 /* OffLevelView.swift in Sources */,
+				15134585238DB10200A56D01 /* Information.swift in Sources */,
 				155DBC5D237F091E00AA6412 /* GameDelegate.swift in Sources */,
+				15134583238D9AA000A56D01 /* Navigation.swift in Sources */,
 				155DBC67237F095000AA6412 /* NavigationArea.swift in Sources */,
 				155DBC69237F095000AA6412 /* StoreView.swift in Sources */,
 				155DBC68237F095000AA6412 /* InformationArea.swift in Sources */,

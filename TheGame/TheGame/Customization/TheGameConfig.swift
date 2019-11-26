@@ -12,55 +12,62 @@ import GameFrameKit
 import SwiftUI
 
 class TheGameConfig: GameConfig {
-    let offLevelInformation: [[InformationItem]] = [
+    let offLevelInformation: [[Information]] = [
         [
-            .AchievementItem(id: "Medals", format: "%.1f"),
-            .NonConsumableItem(id: "weaponB", opened: Image(systemName: "location"), closed: Image(systemName: "location.slash")),
-            .NonConsumableItem(id: "weaponC", opened: Image(systemName: "location.fill"), closed: nil)
+            .Achievement(id: "Medals", format: "%.1f"),
+            .NonConsumable(id: "weaponB", opened: Image(systemName: "location"), closed: Image(systemName: "location.slash")),
+            .NonConsumable(id: "weaponC", opened: Image(systemName: "location.fill"), closed: nil)
         ], [
-            .ScoreItem(id: "Points"),
-            .ConsumableItem(id: "Bullets")
+            .Score(id: "Points"),
+            .Consumable(id: "Bullets")
         ]]
     
-    let offLevelNavigation: [[NavigationItem]] = [[
-            .PlayLink()
+    let offLevelNavigation: [[Navigation]] = [
+        [
+            .Links(link: .Store(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])),
+            .Buttons(button: .Reward(consumableId: "Bullets", quantity: 100))
         ], [
-            .StoreLink(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"]),
-            .RewardLink(consumableId: "Bullets", quantity: 100)
+            .Buttons(button: .GameCenter()),
+            .Buttons(button: .Share(greeting: "Hi! I'm playing The Game", format: "%.1f")),
+            .Buttons(button: .Like(appId: "X")) // TODO: Replace with real value from AppStore
         ], [
-            .GameCenterLink(),
-            .ShareLink(greeting: "Hi! I'm playing The Game", format: "%.1f"),
-            .LikeLink(appId: "X") // TODO: Replace with real value from AppStore
+            .Generics(generic: .Url(urlString: "https://www.apple.com")),
+            .Links(link: .Settings())
         ], [
-            .UrlLink(urlString: "https://www.apple.com"),
-            .SettingsLink()
+            .Links(link: .Play())
+        ]
+    ]
+    
+    let inLevelInformation: [[Information]] = [[
+            .Score(id: "Points")
+        ], [
+            .Achievement(id: "Medals", format: "%.1f"),
+            .Consumable(id: "Bullets")
         ]]
     
-    let inLevelInformation: [[InformationItem]] = [[
-            .ScoreItem(id: "Points")
+    let inLevelNavigation: [[Navigation]] = [
+        [
+            .Links(link: .Store(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])),
+            .Buttons(button: .Reward(consumableId: "Bullets", quantity: 100))
         ], [
-            .AchievementItem(id: "Medals", format: "%.1f"),
-            .ConsumableItem(id: "Bullets")
+            .Links(link: .Back())
+        ]
+    ]
+    
+    let settingsInformation: [[Information]] = [[
+            .Achievement(id: "Medals", format: "%.1f"),
+            .Consumable(id: "Bullets")
         ]]
     
-    let inLevelNavigation: [[NavigationItem]] = [[
-            .StoreLink(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"]),
-            .RewardLink(consumableId: "Bullets", quantity: 100)
+    let settingsNavigation: [[Navigation]] = [
+        [
+            .Links(link: .Store(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])),
+            .Buttons(button: .Reward(consumableId: "Bullets", quantity: 100))
         ], [
-            .BackLink()
-        ]]
-    
-    let settingsInformation: [[InformationItem]] = [[
-            .AchievementItem(id: "Medals", format: "%.1f"),
-            .ConsumableItem(id: "Bullets")
-        ]]
-    
-    let settingsNavigation: [[NavigationItem]] = [[
-            .StoreLink(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"]),
-            .RewardLink(consumableId: "Bullets", quantity: 100),
-            .SystemSettingsLink(),
-            .BackLink()
-        ]]
+            .Buttons(button: .SystemSettings()),
+            .Links(link: .Back())
+        ]
+    ]
 
     let purchasables: [String: [GFInApp.Purchasable]] = [
         "bulletsS": [.Consumable(id: "Bullets", quantity: 200)],
@@ -74,5 +81,5 @@ class TheGameConfig: GameConfig {
     let adUnitIdRewarded: String? = "ca-app-pub-3940256099942544/1712485313"
     let adUnitIdInterstitial: String? = "ca-app-pub-3940256099942544/4411468910"
     
-    let adNonCosumableId: String? = "no-ads3"
+    let adNonCosumableId: String? = "no-ads4"
 }
