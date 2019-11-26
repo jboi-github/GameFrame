@@ -58,9 +58,9 @@ struct TheGameView: View {
             }
             Spacer()
             Button(action: {
-                GameFrame.coreData.getNonConsumable("no-ads3").unlock()
+                GameFrame.coreData.getNonConsumable("no-ads4").unlock()
             }) {
-                Text("Bought no-ads: \(GameFrame.coreData.getNonConsumable("no-ads3").isOpened ? "YES":"NO")")
+                Text("Bought no-ads: \(GameFrame.coreData.getNonConsumable("no-ads4").isOpened ? "YES":"NO")")
             }
             Spacer()
         }

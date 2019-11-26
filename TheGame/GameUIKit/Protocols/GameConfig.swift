@@ -20,42 +20,42 @@ public protocol GameConfig: ObservableObject {
      
      The two dimensional array is layed out to rows and columns. Each row can have different number of columns.
      */
-    var offLevelInformation: [[InformationItem]] {get}
+    var offLevelInformation: [[Information]] {get}
     
     /**
      Set navigation items to be shown while the player is off level.
      
      The two dimensional array is layed out to rows and columns. Each row can have different number of columns.
      */
-    var offLevelNavigation: [[NavigationItem]] {get}
+    var offLevelNavigation: [[Navigation]] {get}
     
     /**
      Set information items to be shown while the player is in level. The information is shown as overlay to your game view.
      
      The two dimensional array is layed out to rows and columns. Each row can have different number of columns.
      */
-    var inLevelInformation: [[InformationItem]] {get}
+    var inLevelInformation: [[Information]] {get}
     
     /**
      Set navigation items to be shown while the player is in level. The navigation is shown as overlay to your game view.
      
      The two dimensional array is layed out to rows and columns. Each row can have different number of columns.
      */
-    var inLevelNavigation: [[NavigationItem]] {get}
+    var inLevelNavigation: [[Navigation]] {get}
 
     /**
      Set information items to be shown while the player is in settings.
      
      The two dimensional array is layed out to rows and columns. Each row can have different number of columns.
      */
-    var settingsInformation: [[InformationItem]] {get}
+    var settingsInformation: [[Information]] {get}
     
     /**
      Set navigation items to be shown while the player is in settings.
      
      The two dimensional array is layed out to rows and columns. Each row can have different number of columns.
      */
-    var settingsNavigation: [[NavigationItem]] {get}
+    var settingsNavigation: [[Navigation]] {get}
     
     /**
      Define which products affect which consumable after a purchase.
@@ -101,12 +101,12 @@ public protocol GameConfig: ObservableObject {
 import GameFrameKit
 
 class PreviewConfig: GameConfig {
-    let offLevelInformation = [[InformationItem]]()
-    let offLevelNavigation = [[NavigationItem]]()
-    let inLevelInformation = [[InformationItem]]()
-    let inLevelNavigation = [[NavigationItem]]()
-    let settingsInformation = [[InformationItem]]()
-    let settingsNavigation = [[NavigationItem]]()
+    let offLevelInformation = [[Information]]()
+    let offLevelNavigation = [[Navigation]]()
+    let inLevelInformation = [[Information]]()
+    let inLevelNavigation = [[Navigation]]()
+    let settingsInformation = [[Information]]()
+    let settingsNavigation = [[Navigation]]()
 
     let purchasables = [String: [GFInApp.Purchasable]]()
     let adUnitIdBanner: String? = nil

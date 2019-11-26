@@ -14,14 +14,16 @@ struct SettingsView<C, S>: View where C: GameConfig, S: GameSkin {
     
     var body: some View {
         VStack {
+            NavigationArea<C, S>(
+                parent: "Settings",
+                items: config.settingsNavigation)
+                .modifier(skin.getSettingsNavigationModifier())
             InformationArea<S>(parent: "Settings", items: config.settingsInformation)
                 .modifier(skin.getSettingsInformationModifier())
-            
+
             // TODO: Give Geometry Infos
-            Spacer().modifier(skin.getSettingsSpaceModifier())
-            
-            NavigationArea<C, S>(parent: "Settings", items: config.settingsNavigation)
-                .modifier(skin.getSettingsNavigationModifier())
+            Spacer()
+                .modifier(skin.getSettingsSpaceModifier())
         }
         .modifier(skin.getSettingsModifier())
     }

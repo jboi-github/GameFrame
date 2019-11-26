@@ -15,7 +15,7 @@ struct TheGameZoneModifier: ViewModifier {
     func body(content: Content) -> some View {TheGameView().background(Color.yellow)}
 }
 
-struct TheGameSettingsModifier: ViewModifier {
+struct TheGameSettingsSpaceModifier: ViewModifier {
     func body(content: Content) -> some View {TheGameSettingsView().background(Color.yellow)}
 }
 
@@ -35,36 +35,12 @@ struct TheGameNavigationItemModifier: ButtonStyle {
 
     func makeBody(configuration: Self.Configuration) -> some View {
         VStack {
-            // Make the play button big with a title either on top or to the left.
-            // Depending on portrait or landscape orientation
-            if parent == "OffLevel" && row == 0 && col == 0 {
-                GeometryReader {
-                    proxy in
-                    
-                    if proxy.size.width < proxy.size.height {
-                        HStack {
-                            Spacer()
-                            VStack {
-                                Spacer()
-                                Text("The Game!").font(.largeTitle)
-                                Image(systemName: "play.circle")
-                                    .resizable().scaledToFit()
-                                    .foregroundColor(self.isDisabled ? Color.secondary : Color.accentColor)
-                                Spacer()
-                            }
-                            Spacer()
-                        }
-                    } else {
-                        HStack {
-                            Spacer()
-                            Text("The Game!").font(.largeTitle)
-                            Image(systemName: "play.circle")
-                                .resizable().scaledToFit()
-                                .foregroundColor(self.isDisabled ? Color.secondary : Color.accentColor)
-                            Spacer()
-                        }
-                    }
-                }
+            // Make the play button big
+            if parent == "OffLevel" && row == 3 && col == 0 {
+                Image(systemName: "play.circle")
+                    .resizable().scaledToFit()
+                    .foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
+                    .padding()
             } else {
                 configuration.label
                     .foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
@@ -74,15 +50,53 @@ struct TheGameNavigationItemModifier: ButtonStyle {
     }
 }
 
+struct TheGameOffLevelModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+        .navigationBarTitle("The Game")
+    }
+}
+
+struct TheGameSettingsModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+        .navigationBarTitle("Settings", displayMode: .inline)
+    }
+}
+
+struct TheGameInLevelModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+        .navigationBarTitle("The Game", displayMode: .inline)
+        .navigationBarBackButtonHidden(true)
+    }
+}
+
 // MARK: - A Skin that delegates to standard skin implementation
 class TheGameSkin: GameSkin {
+    // Add The Game Gamezone
     func getInLevelGameZoneModifier() -> some ViewModifier {TheGameZoneModifier()}
     
-    func getSettingsSpaceModifier() -> some ViewModifier {TheGameSettingsModifier()}
+    // Add The Game settings
+    func getSettingsSpaceModifier() -> some ViewModifier {TheGameSettingsSpaceModifier()}
     
+    // Add placeholder, when no banner available
     func getMainBannerEmptyModifier() -> some ViewModifier {TheGameMainBannerEmptyModifier()}
 
+    // Get a big play-button
     func getNavigationItemModifier(parent: String, isDisabled: Bool, row: Int, col: Int) -> some ButtonStyle {
          TheGameNavigationItemModifier(parent: parent, isDisabled: isDisabled, row: row, col: col)
+    }
+    
+    func getOffLevelModifier() -> some ViewModifier {
+         TheGameOffLevelModifier()
+    }
+    
+    func getSettingsModifier() -> some ViewModifier {
+         TheGameSettingsModifier()
+    }
+    
+    func getInLevelModifier() -> some ViewModifier {
+        TheGameInLevelModifier()
     }
 }

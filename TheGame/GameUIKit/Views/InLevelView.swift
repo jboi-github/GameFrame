@@ -12,11 +12,13 @@ import StoreKit
 
 struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
     @ObservedObject var gameUI = GameUI.instance
-    
+    @EnvironmentObject private var skin: S
+
     private struct GameView: View {
         let isOverlayed: Bool
         @EnvironmentObject private var config: C
         @EnvironmentObject private var skin: S
+        @Environment(\.presentationMode) private var presentationMode
         
         var body: some View {
             ZStack {
@@ -24,21 +26,24 @@ struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
                     // TODO: Add GeometryReader and sizes for Navigation- and Information-Area
                     .modifier(skin.getInLevelGameZoneModifier())
                 VStack {
+                    NavigationArea<C, S>(
+                        parent: "InLevel",
+                        items: config.inLevelNavigation,
+                        isOverlayed: isOverlayed)
+                        .modifier(skin.getInLevelNavigationModifier())
                     InformationArea<S>(parent: "InLevel", items: config.inLevelInformation)
                         .modifier(skin.getInLevelInformationModifier())
-                    
                     Spacer()
-                    
-                    NavigationArea<C, S>(parent: "InLevel", items: config.inLevelNavigation, isOverlayed: isOverlayed)
-                        .modifier(skin.getInLevelNavigationModifier())
                 }
             }
-            .modifier(skin.getInLevelModifier(isOverlayed: isOverlayed))
+            .modifier(skin.getInLevelGameModifier(isOverlayed: isOverlayed))
             .onAppear {
+                GameUI.instance.presentationMode = self.presentationMode
                 if !self.isOverlayed {GameUI.instance.resume()}
             }
             .onDisappear {
                 if !self.isOverlayed {GameUI.instance.pause()}
+                GameUI.instance.presentationMode = nil
             }
         }
     }
@@ -96,8 +101,8 @@ struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
                     .modifier(skin.getOfferProductsModifier())
                     NavigationArea<C, S>(parent: "Offer",
                         items: [[
-                            .OfferBackLink(),
-                            .RewardLink(consumableId: consumableId, quantity: rewardQuantity)
+                            .Buttons(.OfferBack()),
+                            .Buttons(.Reward(consumableId: consumableId, quantity: rewardQuantity))
                         ]],
                         isOverlayed: isOverlayed)
                     .modifier(skin.getOfferNavigationModifier())
@@ -117,13 +122,22 @@ struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
             // TODO: Workaround as of XCode 11.2. When reading one published var of an ObservablObject multiple times, the App crashes
             ZStack {
                 if inApp.purchasing {
-                    ProductsView(consumableId: consumableId, rewardQuantity: rewardQuantity, isOverlayed: true)
+                    ProductsView(
+                        consumableId: consumableId,
+                        rewardQuantity: rewardQuantity,
+                        isOverlayed: true)
                     WaitAlert<S>()
                 } else if inApp.error != nil {
-                    ProductsView(consumableId: consumableId, rewardQuantity: rewardQuantity, isOverlayed: true)
+                    ProductsView(
+                        consumableId: consumableId,
+                        rewardQuantity: rewardQuantity,
+                        isOverlayed: true)
                     ErrorAlert<C, S>()
                 } else {
-                    ProductsView(consumableId: consumableId, rewardQuantity: rewardQuantity, isOverlayed: false)
+                    ProductsView(
+                        consumableId: consumableId,
+                        rewardQuantity: rewardQuantity,
+                        isOverlayed: false)
                 }
             }
         }
@@ -134,11 +148,14 @@ struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
         ZStack {
             if gameUI.offer != nil {
                 GameView(isOverlayed: true)
-                OfferOverlay(consumableId: GameUI.instance.offer!.consumableId, rewardQuantity: GameUI.instance.offer!.quantity)
+                OfferOverlay(
+                    consumableId: GameUI.instance!.offer!.consumableId,
+                    rewardQuantity: GameUI.instance!.offer!.quantity)
             } else {
                 GameView(isOverlayed: false)
             }
         }
+        .modifier(skin.getInLevelModifier())
     }
 }
 

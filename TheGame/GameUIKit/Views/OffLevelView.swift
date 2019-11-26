@@ -14,13 +14,11 @@ struct OffLevelView<C, S>: View where C: GameConfig, S: GameSkin {
     
     var body: some View {
         VStack {
-            InformationArea<S>(parent: "OffLevel", items: config.offLevelInformation)
-                .modifier(skin.getOffLevelInformationModifier())
-            
-            Spacer()
-            
             NavigationArea<C, S>(parent: "OffLevel", items: config.offLevelNavigation)
                 .modifier(skin.getOffLevelNavigationModifier())
+             InformationArea<S>(parent: "OffLevel", items: config.offLevelInformation)
+                .modifier(skin.getOffLevelInformationModifier())
+            Spacer()
         }
         .modifier(skin.getOffLevelModifier())
     }

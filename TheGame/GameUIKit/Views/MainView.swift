@@ -34,7 +34,7 @@ struct MainView<C, S>: View where C: GameConfig, S: GameSkin {
         VStack {
             // TODO: Take care of startsOffLevel
             NavigationView {
-                OffLevelView<C, S>().modifier(skin.getMainModifier())
+                OffLevelView<C, S>()
             }
             Banner()
         }
