@@ -41,7 +41,7 @@ public enum Navigation {
         /// Open system preferences for this app
         case SystemSettings(image: Image = Image(systemName: "slider.horizontal.3"))
         /// Open review page of given app id
-        case Like(image: Image = Image(systemName: "hand.thumbsup"), appId: String)
+        case Like(image: Image = Image(systemName: "hand.thumbsup"), appId: Int)
         /// Inform app store to restore any existing purchases
         case Restore(image: Image = Image(systemName: "arrow.uturn.right"))
         /// Start rewarded video

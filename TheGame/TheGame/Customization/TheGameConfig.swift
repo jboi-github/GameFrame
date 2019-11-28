@@ -29,7 +29,7 @@ class TheGameConfig: GameConfig {
         ], [
             .Buttons(.GameCenter()),
             .Buttons(.Share(greeting: "Hi! I'm playing The Game", format: "%.1f")),
-            .Buttons(.Like(appId: "X")) // TODO: Replace with real value from AppStore
+            .Buttons(.Like(appId: 1293516048)) // TODO: Replace with real value from AppStore
         ], [
             .Generics(.Url("https://www.apple.com")),
             .Links(.Settings())
