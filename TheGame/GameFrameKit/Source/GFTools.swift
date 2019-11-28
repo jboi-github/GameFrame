@@ -70,6 +70,16 @@ public func getUrlAction(_ url: String) -> () -> Void {
     }
 }
 
+/// - returns: true, if action for Buttons will work. Falls if not
+public func canUrlAction(_ url: String) -> Bool {
+    if let url = URL(string: url) {
+        return UIApplication.shared.canOpenURL(url)
+    } else {
+        log("Invalid URL: \"\(url)\"")
+        return false
+    }
+}
+
 public extension SKProduct {
     /// - returns: The cost of the product formatted in the local currency.
     func localizedPrice(quantity: Int) -> String {

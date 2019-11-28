@@ -17,6 +17,7 @@ struct TheGameSettingsView: View {
             proxy in
             
             VStack {
+                Spacer()
                 HStack {
                     Spacer()
                     Text("Hello, Settings!").font(.largeTitle)

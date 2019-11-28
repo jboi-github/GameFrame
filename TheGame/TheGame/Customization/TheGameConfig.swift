@@ -77,9 +77,9 @@ class TheGameConfig: GameConfig {
         "weaponB": [.NonConsumable(id: "weaponB")],
         "weaponC": [.NonConsumable(id: "weaponC")]]
     
-    let adUnitIdBanner: String? = "ca-app-pub-3940256099942544/2934735716"
-    let adUnitIdRewarded: String? = "ca-app-pub-3940256099942544/1712485313"
-    let adUnitIdInterstitial: String? = "ca-app-pub-3940256099942544/4411468910"
+    let adUnitIdBanner: String? = "ca-app-pub-3940256099942544/2934735716" // TODO: Replace with id from Google AdMob
+    let adUnitIdRewarded: String? = "ca-app-pub-3940256099942544/1712485313" // TODO: Replace with id from AppStore
+    let adUnitIdInterstitial: String? = "ca-app-pub-3940256099942544/4411468910" // TODO: Replace with id from AppStore
     
     let adNonCosumableId: String? = "no-ads4"
 }

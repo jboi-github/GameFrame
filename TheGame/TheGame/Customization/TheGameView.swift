@@ -62,7 +62,6 @@ struct TheGameView: View {
             }) {
                 Text("Bought no-ads: \(GameFrame.coreData.getNonConsumable("no-ads4").isOpened ? "YES":"NO")")
             }
-            Spacer()
         }
     }
     

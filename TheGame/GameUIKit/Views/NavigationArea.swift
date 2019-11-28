@@ -120,6 +120,8 @@ struct NavigationArea<C, S>: View where C: GameConfig, S: GameSkin {
                     return !adMob.rewardAvailable
                 case .GameCenter:
                     return !gameCenter.enabled
+                case let .Like(image: _, appId: appId):
+                    return !canUrlAction("https://itunes.apple.com/app/id\(appId)?action=write-review")
                 default: return false
             }
             case let .Links(link: link):
