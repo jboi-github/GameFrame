@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		15134583238D9AA000A56D01 /* Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15134582238D9AA000A56D01 /* Navigation.swift */; };
 		15134585238DB10200A56D01 /* Information.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15134584238DB10200A56D01 /* Information.swift */; };
+		151345A823904EA500A56D01 /* GFShare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 151345A723904EA500A56D01 /* GFShare.swift */; };
 		153F1202237C8E2100D3B6AD /* TheGameSkin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 153F1201237C8E2100D3B6AD /* TheGameSkin.swift */; };
 		1540988F23773041002A5E4F /* TheGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1540988E23773041002A5E4F /* TheGameView.swift */; };
 		15440B322385A43200233DD3 /* Commons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15440B312385A43200233DD3 /* Commons.swift */; };
@@ -152,6 +153,7 @@
 /* Begin PBXFileReference section */
 		15134582238D9AA000A56D01 /* Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
 		15134584238DB10200A56D01 /* Information.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Information.swift; sourceTree = "<group>"; };
+		151345A723904EA500A56D01 /* GFShare.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GFShare.swift; sourceTree = "<group>"; };
 		153F1201237C8E2100D3B6AD /* TheGameSkin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TheGameSkin.swift; sourceTree = "<group>"; };
 		1540988E23773041002A5E4F /* TheGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TheGameView.swift; sourceTree = "<group>"; };
 		15440B312385A43200233DD3 /* Commons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Commons.swift; sourceTree = "<group>"; };
@@ -350,6 +352,7 @@
 				155DBBF4237EF65800AA6412 /* GFConsumable.swift */,
 				155DBBF5237EF65800AA6412 /* GFAdMob.swift */,
 				155DBBF6237EF65800AA6412 /* GFTools.swift */,
+				151345A723904EA500A56D01 /* GFShare.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -703,6 +706,7 @@
 				155DBC04237EF65800AA6412 /* GFNonConsumable.swift in Sources */,
 				155DBC13237EF65800AA6412 /* GFEntityNonConsumable+CoreDataProperties.swift in Sources */,
 				155DBC0D237EF65800AA6412 /* GFTools.swift in Sources */,
+				151345A823904EA500A56D01 /* GFShare.swift in Sources */,
 				155DBC0A237EF65800AA6412 /* GFInApp.swift in Sources */,
 				155DBC0C237EF65800AA6412 /* GFAdMob.swift in Sources */,
 				155DBC12237EF65800AA6412 /* GFEntityAchievement+CoreDataClass.swift in Sources */,

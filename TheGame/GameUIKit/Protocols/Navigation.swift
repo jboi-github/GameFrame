@@ -41,13 +41,13 @@ public enum Navigation {
         /// Open system preferences for this app
         case SystemSettings(image: Image = Image(systemName: "slider.horizontal.3"))
         /// Open review page of given app id
-        case Like(image: Image = Image(systemName: "hand.thumbsup"), appId: String)
+        case Like(image: Image = Image(systemName: "hand.thumbsup"), appId: Int)
         /// Inform app store to restore any existing purchases
         case Restore(image: Image = Image(systemName: "arrow.uturn.right"))
         /// Start rewarded video
         case Reward(image: Image = Image(systemName: "film"), consumableId: String, quantity: Int)
         /// Open system dialog to share with other applications
-        case Share(image: Image = Image(systemName: "square.and.arrow.up"), greeting: String, format: String)
+        case Share(image: Image = Image(systemName: "square.and.arrow.up"))
         /// Open external GameCenter
         case GameCenter(image: Image = Image(systemName: "rosette"))
     }

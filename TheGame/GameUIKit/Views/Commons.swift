@@ -68,3 +68,30 @@ struct WaitAlert<S>: View  where S: GameSkin {
             .modifier(skin.getWaitModifier())
     }
 }
+
+struct FramePreferenceKey: PreferenceKey {
+    static var defaultValue: CGRect = .zero
+    
+    static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
+        log(value)
+        value = nextValue()
+        log(value)
+    }
+    
+    typealias Value = CGRect
+}
+
+extension View {
+    func framePreference(_ frame: Binding<CGRect>) -> some View {
+        self
+        .background(
+            GeometryReader {
+                proxy in
+                
+                Color.clear
+                    .preference(key: FramePreferenceKey.self, value: proxy.frame(in: .global))
+                    .onPreferenceChange(FramePreferenceKey.self) {frame.wrappedValue = $0}
+            }
+        )
+    }
+}

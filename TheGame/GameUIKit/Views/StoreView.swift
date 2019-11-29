@@ -97,7 +97,7 @@ struct StoreView<C, S>: View where C: GameConfig, S: GameSkin {
                 }
                 Spacer()
             }
-            .modifier(self.skin.getStoreProductsModifier(isOverlayed: isOverlayed))
+            .modifier(skin.getStoreProductsModifier(isOverlayed: isOverlayed))
         }
     }
 

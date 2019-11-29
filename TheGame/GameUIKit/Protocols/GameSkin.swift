@@ -348,9 +348,9 @@ public protocol GameSkin: ObservableObject {
     func getInLevelGameModifier(isOverlayed: Bool) -> InLevelGameModifierType
     func getInLevelNavigationModifier() -> InLevelNavigationModifierType
     func getInLevelInformationModifier() -> InLevelInformationModifierType
-    func getInLevelGameZoneModifier() -> InLevelGameZoneModifierType
+    func getInLevelGameZoneModifier(_ selfFrame: CGRect, informationFrame: CGRect, navigationFrame: CGRect) -> InLevelGameZoneModifierType
     func getSettingsModifier() -> SettingsModifierType
-    func getSettingsSpaceModifier() -> SettingsSpaceModifierType
+    func getSettingsSpaceModifier(_ selfFrame: CGRect, informationFrame: CGRect, navigationFrame: CGRect) -> SettingsSpaceModifierType
     func getSettingsNavigationModifier() -> SettingsNavigationModifierType
     func getSettingsInformationModifier() -> SettingsInformationModifierType
     func getStoreModifier() -> StoreModifierType
@@ -513,11 +513,15 @@ struct PreviewModifier: ViewModifier {
 
 // MARK: - A Skin that delegates to standard skin implementation
 class PreviewSkin: GameSkin {
-      func getInLevelGameZoneModifier() -> some ViewModifier {
-          PreviewModifier()
-     }
-     func getSettingsSpaceModifier() -> some ViewModifier {
-         PreviewModifier()
+    func getInLevelGameZoneModifier(_ selfFrame: CGRect, informationFrame: CGRect, navigationFrame: CGRect)
+        -> some ViewModifier
+    {
+        PreviewModifier()
+    }
+    func getSettingsSpaceModifier(_ selfFrame: CGRect, informationFrame: CGRect, navigationFrame: CGRect)
+        -> some ViewModifier
+    {
+        PreviewModifier()
     }
 }
 

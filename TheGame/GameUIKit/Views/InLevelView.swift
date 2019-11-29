@@ -16,6 +16,10 @@ struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
 
     private struct GameView: View {
         let isOverlayed: Bool
+        @State private var gameFrame: CGRect = .zero
+        @State private var informationFrame: CGRect = .zero
+        @State private var navigationFrame: CGRect = .zero
+        @State private var sharedImage: UIImage?
         @EnvironmentObject private var config: C
         @EnvironmentObject private var skin: S
         @Environment(\.presentationMode) private var presentationMode
@@ -23,20 +27,26 @@ struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
         var body: some View {
             ZStack {
                 EmptyView()
-                    // TODO: Add GeometryReader and sizes for Navigation- and Information-Area
-                    .modifier(skin.getInLevelGameZoneModifier())
+                    .modifier(skin.getInLevelGameZoneModifier(
+                        gameFrame,
+                        informationFrame: informationFrame,
+                        navigationFrame: navigationFrame))
                 VStack {
                     NavigationArea<C, S>(
                         parent: "InLevel",
                         items: config.inLevelNavigation,
+                        bounds: self.gameFrame,
                         isOverlayed: isOverlayed)
                         .modifier(skin.getInLevelNavigationModifier())
+                        .framePreference($navigationFrame)
                     InformationArea<S>(parent: "InLevel", items: config.inLevelInformation)
                         .modifier(skin.getInLevelInformationModifier())
+                        .framePreference($informationFrame)
                     Spacer()
                 }
             }
             .modifier(skin.getInLevelGameModifier(isOverlayed: isOverlayed))
+            .framePreference($gameFrame)
             .onAppear {
                 GameUI.instance.presentationMode = self.presentationMode
                 if !self.isOverlayed {GameUI.instance.resume()}
