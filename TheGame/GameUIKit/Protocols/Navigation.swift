@@ -47,7 +47,7 @@ public enum Navigation {
         /// Start rewarded video
         case Reward(image: Image = Image(systemName: "film"), consumableId: String, quantity: Int)
         /// Open system dialog to share with other applications
-        case Share(image: Image = Image(systemName: "square.and.arrow.up"), greeting: String, format: String)
+        case Share(image: Image = Image(systemName: "square.and.arrow.up"))
         /// Open external GameCenter
         case GameCenter(image: Image = Image(systemName: "rosette"))
     }

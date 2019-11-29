@@ -28,7 +28,7 @@ class TheGameConfig: GameConfig {
             .Buttons(.Reward(consumableId: "Bullets", quantity: 100))
         ], [
             .Buttons(.GameCenter()),
-            .Buttons(.Share(greeting: "Hi! I'm playing The Game", format: "%.1f")),
+            .Buttons(.Share()),
             .Buttons(.Like(appId: 1293516048)) // TODO: Replace with real value from AppStore
         ], [
             .Generics(.Url("https://www.apple.com")),
@@ -50,6 +50,7 @@ class TheGameConfig: GameConfig {
             .Links(.Store(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])),
             .Buttons(.Reward(consumableId: "Bullets", quantity: 100))
         ], [
+            .Buttons(.Share()),
             .Links(.Back())
         ]
     ]
@@ -82,4 +83,11 @@ class TheGameConfig: GameConfig {
     let adUnitIdInterstitial: String? = "ca-app-pub-3940256099942544/4411468910" // TODO: Replace with id from AppStore
     
     let adNonCosumableId: String? = "no-ads4"
+
+    let sharedAppId: Int = 1293516048
+    let sharedGreeting: String = "Hi! I'm playing The Game"
+    let sharedInformations: [GFShareInformation] = [
+        .Score("Points") {"My best: \($0.highest)"},
+        .NonConsumable("weaponC") {$0.isOpened ? "Got the coolest weapon!" : "Struggeling to get weaponC. Can you help?"}
+    ]
 }

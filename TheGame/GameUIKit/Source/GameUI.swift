@@ -55,7 +55,10 @@ public class GameUI: NSObject, ObservableObject  {
             adUnitIdBanner: gameConfig.adUnitIdBanner,
             adUnitIdRewarded: gameConfig.adUnitIdRewarded,
             adUnitIdInterstitial: gameConfig.adUnitIdInterstitial,
-            adNonCosumableId: gameConfig.adNonCosumableId) {
+            adNonCosumableId: gameConfig.adNonCosumableId,
+            appId: gameConfig.sharedAppId,
+            infos: gameConfig.sharedInformations,
+            greeting: gameConfig.sharedGreeting) {
             
                 return MainView<C, S>()
                     .environmentObject(gameSkin)

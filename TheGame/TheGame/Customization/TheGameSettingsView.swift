@@ -10,8 +10,6 @@ import SwiftUI
 import GameFrameKit
 
 struct TheGameSettingsView: View {
-    @State var image: UIImage?
-    
     var body: some View {
         GeometryReader {
             proxy in
@@ -21,11 +19,6 @@ struct TheGameSettingsView: View {
                 HStack {
                     Spacer()
                     Text("Hello, Settings!").font(.largeTitle)
-                    Button(action: {
-                        self.image = GameFrame.instance!.getScreenhot(bounds: proxy.frame(in: .global))
-                    }) {
-                        Text("Get Screenshot")
-                    }
                     Text("White text on blue background")
                         .font(.largeTitle)
                         .padding(20.0)
@@ -35,11 +28,6 @@ struct TheGameSettingsView: View {
                     Spacer()
                 }
                 Spacer()
-                if self.image == nil {
-                    Text("No image")
-                } else {
-                    Image(uiImage: self.image!).resizable().scaledToFit().scaleEffect(0.5).border(Color.red, width: 4.0)
-                }
             }
         }
     }

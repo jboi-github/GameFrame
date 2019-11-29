@@ -82,14 +82,14 @@ struct FramePreferenceKey: PreferenceKey {
 }
 
 extension View {
-    func framePreference(_ coordinateSpaceName: String, frame: Binding<CGRect>) -> some View {
+    func framePreference(_ frame: Binding<CGRect>) -> some View {
         self
         .background(
             GeometryReader {
                 proxy in
                 
                 Color.clear
-                    .preference(key: FramePreferenceKey.self, value: proxy.frame(in: .named(coordinateSpaceName)))
+                    .preference(key: FramePreferenceKey.self, value: proxy.frame(in: .global))
                     .onPreferenceChange(FramePreferenceKey.self) {frame.wrappedValue = $0}
             }
         )

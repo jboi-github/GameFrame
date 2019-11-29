@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct SettingsView<C, S>: View where C: GameConfig, S: GameSkin {
+    @State private var gameFrame: CGRect = .zero
     @State private var informationFrame: CGRect = .zero
     @State private var navigationFrame: CGRect = .zero
     @EnvironmentObject private var config: C
@@ -16,29 +17,25 @@ struct SettingsView<C, S>: View where C: GameConfig, S: GameSkin {
 
     var body: some View {
         ZStack {
-            GeometryReader {
-                proxy in
-                
-                EmptyView()
-                    .modifier(self.skin.getSettingsSpaceModifier(
-                        proxy.frame(in: .named("SettingsView")),
-                        informationFrame: self.informationFrame,
-                        navigationFrame: self.navigationFrame))
-            }
+            EmptyView()
+                .modifier(skin.getSettingsSpaceModifier(
+                    gameFrame,
+                    informationFrame: informationFrame,
+                    navigationFrame: navigationFrame))
             VStack {
                 NavigationArea<C, S>(
                     parent: "Settings",
                     items: config.settingsNavigation)
                     .modifier(skin.getSettingsNavigationModifier())
-                    .framePreference("SettingsView", frame: $navigationFrame)
+                    .framePreference( $navigationFrame)
                 InformationArea<S>(parent: "Settings", items: config.settingsInformation)
                     .modifier(skin.getSettingsInformationModifier())
-                    .framePreference("SettingsView", frame: $informationFrame)
+                    .framePreference($informationFrame)
                 Spacer()
             }
         }
         .modifier(skin.getSettingsModifier())
-        .coordinateSpace(name: "SettingsView")
+        .framePreference($gameFrame)
     }
 }
 

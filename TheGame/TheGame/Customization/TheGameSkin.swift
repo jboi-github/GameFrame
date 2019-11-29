@@ -58,30 +58,31 @@ struct TheGameNavigationItemModifier: ButtonStyle {
     }
 }
 
-struct TheGameOffLevelModifier: ViewModifier {
+struct TheGamePrimaryViewModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
-        .navigationBarTitle("The Game")
-        .navigationBarBackButtonHidden(true)
-        .navigationBarHidden(true)
+            .navigationBarTitle("The Game", displayMode: .large)
+            .navigationBarBackButtonHidden(false)
     }
 }
 
-struct TheGameSettingsModifier: ViewModifier {
+struct TheGameSecondaryViewModifier: ViewModifier {
+    let title: String
+    
     func body(content: Content) -> some View {
         content
-        .navigationBarTitle("The Game")
-        .navigationBarBackButtonHidden(true)
-        .navigationBarHidden(true)
+            .navigationBarTitle(Text(title), displayMode: .inline)
+            .navigationBarBackButtonHidden(false)
     }
 }
 
-struct TheGameInLevelModifier: ViewModifier {
+struct TheGameNoNavigationModifier: ViewModifier {
+    let title: String
+    
     func body(content: Content) -> some View {
         content
-        .navigationBarTitle("The Game")
-        .navigationBarBackButtonHidden(true)
-        .navigationBarHidden(true)
+            .navigationBarTitle(Text(title), displayMode: .inline)
+            .navigationBarBackButtonHidden(true)
     }
 }
 
@@ -109,15 +110,9 @@ class TheGameSkin: GameSkin {
          TheGameNavigationItemModifier(parent: parent, isDisabled: isDisabled, row: row, col: col)
     }
     
-    func getOffLevelModifier() -> some ViewModifier {
-         TheGameOffLevelModifier()
-    }
-    
-    func getSettingsModifier() -> some ViewModifier {
-         TheGameSettingsModifier()
-    }
-    
-    func getInLevelModifier() -> some ViewModifier {
-        TheGameInLevelModifier()
-    }
+    // Remove navigation bar on all Navigation Views
+    func getOffLevelModifier() -> some ViewModifier {TheGamePrimaryViewModifier()}
+    func getSettingsModifier() -> some ViewModifier {TheGameSecondaryViewModifier(title: "Settings")}
+    func getInLevelModifier() -> some ViewModifier {TheGameNoNavigationModifier(title: "The Game")}
+    func getStoreModifier() -> some ViewModifier {TheGameSecondaryViewModifier(title: "Store")}
 }

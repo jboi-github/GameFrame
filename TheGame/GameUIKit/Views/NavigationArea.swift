@@ -9,16 +9,17 @@
 import SwiftUI
 import GameFrameKit
 
-
 struct NavigationArea<C, S>: View where C: GameConfig, S: GameSkin {
     let parent: String
     let items: [[Navigation]]
     let isOverlayed: Bool
+    let bounds: CGRect?
     @EnvironmentObject private var skin: S
     
-    init(parent: String, items: [[Navigation]], isOverlayed: Bool = false) {
+    init(parent: String, items: [[Navigation]], bounds: CGRect? = nil, isOverlayed: Bool = false) {
         self.parent = parent
         self.items = items
+        self.bounds = bounds
         self.isOverlayed = isOverlayed
     }
     
@@ -35,7 +36,8 @@ struct NavigationArea<C, S>: View where C: GameConfig, S: GameSkin {
                             parent: self.parent,
                             row: row, col: col,
                             item: self.items[row][col],
-                            isOverlayed: self.isOverlayed)
+                            isOverlayed: self.isOverlayed,
+                            bounds: self.bounds)
                     }
                 }
                 .modifier(self.skin.getNavigationRowModifier(parent: self.parent, row: row))
@@ -49,6 +51,7 @@ struct NavigationArea<C, S>: View where C: GameConfig, S: GameSkin {
         let col: Int
         let item: Navigation
         let isOverlayed: Bool
+        let bounds: CGRect?
         @ObservedObject private var inApp = GameFrame.inApp
         @ObservedObject private var adMob = GameFrame.adMob
         @ObservedObject private var gameCenter = GameFrame.gameCenter
@@ -56,12 +59,12 @@ struct NavigationArea<C, S>: View where C: GameConfig, S: GameSkin {
         @Environment(\.presentationMode) private var presentationMode
 
         var body: some View {
-            asView(item)
+            asView(item, bounds: bounds)
                 .disabled(isDisabled(item))
                 .buttonStyle(skin.getNavigationItemModifier(parent: parent, isDisabled: isDisabled(item), row: row, col: col))
         }
 
-        private func asView(_ item: Navigation) -> some View {
+        private func asView(_ item: Navigation, bounds: CGRect?) -> some View {
             switch item {
             case let .Generics(generic: generic):
                 switch generic {
@@ -88,8 +91,8 @@ struct NavigationArea<C, S>: View where C: GameConfig, S: GameSkin {
                             let consumable = GameFrame.coreData.getConsumable(consumableId)
                             GameFrame.adMob.showReward(consumable: consumable, quantity: quantity)
                         }) {image})
-                case let .Share(image: image, greeting: greeting, format: format):
-                    return AnyView(Button(action: {GameFrame.instance.showShare(greeting: greeting, format: format)}) {image})
+                case let .Share(image: image):
+                    return AnyView(Button(action: {GameFrame.share.show(bounds: bounds)}) {image})
                 case let .GameCenter(image: image):
                     return AnyView(Button(action: {GameFrame.gameCenter.show()}) {image})
             }

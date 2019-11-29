@@ -94,6 +94,10 @@ public protocol GameConfig: ObservableObject {
      the product as `purchasable`
      */
     var adNonCosumableId: String? {get}
+    
+    var sharedAppId: Int {get}
+    var sharedGreeting: String {get}
+    var sharedInformations: [GFShareInformation] {get}
 }
 
 // MARK: - GameConfig implementation for PreView
@@ -113,4 +117,8 @@ class PreviewConfig: GameConfig {
     let adUnitIdRewarded: String? = nil
     let adUnitIdInterstitial: String? = nil
     let adNonCosumableId: String? = nil
+
+    let sharedAppId: Int = 0
+    let sharedGreeting: String = ""
+    let sharedInformations = [GFShareInformation]()
 }

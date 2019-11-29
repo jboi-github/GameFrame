@@ -9,6 +9,7 @@
 import SwiftUI
 import StoreKit
 import Combine
+import LinkPresentation
 
 // TODO: Test with sandbox user
 // TODO: Purchase Simple purchase
@@ -39,11 +40,13 @@ public class GameFrame: NSObject {
     public static var gameCenter: GFGameCenter {GameFrame.instance.gameCenterImpl}
     public static var inApp: GFInApp {GameFrame.instance.inAppImpl}
     public static var adMob: GFAdMob {GameFrame.instance.adMobImpl}
+    public static var share: GFShare {GameFrame.instance.shareImpl}
 
     internal private(set) var coreDataImpl: GFCoreDataCloudKit!
     internal private(set) var gameCenterImpl: GFGameCenter!
     internal private(set) var inAppImpl: GFInApp!
     internal private(set) var adMobImpl: GFAdMob!
+    internal private(set) var shareImpl: GFShare!
 
     /**
      Create the shared instance of GameFrame and does the setup of a scene for `SceneDelegate`
@@ -59,6 +62,9 @@ public class GameFrame: NSObject {
         adUnitIdRewarded: String?,
         adUnitIdInterstitial: String?,
         adNonCosumableId: String?,
+        appId: Int,
+        infos: [GFShareInformation],
+        greeting: String?,
         makeContentView: () -> Label)
     {
         // Use a UIHostingController as window root view controller.
@@ -70,7 +76,10 @@ public class GameFrame: NSObject {
             adUnitIdBanner: adUnitIdBanner,
             adUnitIdRewarded: adUnitIdRewarded,
             adUnitIdInterstitial: adUnitIdInterstitial,
-            adNonCosumableId: adNonCosumableId)
+            adNonCosumableId: adNonCosumableId,
+            appId: appId,
+            infos: infos,
+            greeting: greeting)
 
         // Connect changes in nonConsumable for non-ads-purchases to GFAdMob
         waitForCoreData = coreData.$hasFetchedLocally.first().sink(receiveCompletion: {_ in
@@ -96,7 +105,10 @@ public class GameFrame: NSObject {
         adUnitIdBanner: String?,
         adUnitIdRewarded: String?,
         adUnitIdInterstitial: String?,
-        adNonCosumableId: String?)
+        adNonCosumableId: String?,
+        appId: Int,
+        infos: [GFShareInformation],
+        greeting: String?)
     {
         log()
         self.window = window
@@ -108,6 +120,7 @@ public class GameFrame: NSObject {
             window, adUnitIdBanner: adUnitIdBanner,
             adUnitIdRewarded: adUnitIdRewarded,
             adUnitIdInterstitial: adUnitIdInterstitial)
+        self.shareImpl = GFShare(window, appId: appId, infos: infos, greeting: greeting)
     }
 
     // MARK: - Public functions
@@ -152,62 +165,8 @@ public class GameFrame: NSObject {
      */
     public func resume() {}
     
-    /**
-     Colletcts available information and shows system view to share with others.
-     
-     Applications to share with are defined by the player.
-     - Parameter greeting: optional to define a greeting, that is used as subject, if sharing as email or is the first line a text.
-     - Parameter url: Optional String that contains a URL to be used in the message
-     - Parameter format: String to define how to format an achievement. e.g. "%.1f" to format to one digit precision.
-     */
-    public func showShare(greeting: String? = nil, url urlString: String? = nil, format: String) {
-        // Put items in the list
-        var items = [Any]()
-        if let urlString = urlString, let url = URL(string: urlString) {items.append(url)}
-        if let greeting = greeting {items.append(ShareSubject(greeting: greeting))}
-
-        items.append(contentsOf: scores.map({"\($0.key): \($0.value.current) / \($0.value.highest)"}))
-        items.append(contentsOf:
-            achievements.map({"\($0.key): \($0.value.current.format(format)) / \($0.value.highest.format(format))"}))
-        items.append(contentsOf: consumables.map({"\($0.key): \($0.value.available)"}))
-        items.append(contentsOf: nonConsumables.map({"\($0.key): \($0.value.isOpened ? "✅" : "❌")"}))
-
-        // Create and show view
-        let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
-        window?.rootViewController?.present(ac, animated: true)
-    }
-    
-    /**
-     Get screenshot of a rectangle of the current window as UIImage.
-     */
-    public func getScreenhot(bounds: CGRect) -> UIImage? {
-        return UIGraphicsImageRenderer(bounds: bounds).image {
-            window?.layer.render(in: $0.cgContext)
-        }
-    }
-    
     // MARK: - Internal handling
     private let window: UIWindow?
     private static var adAssignements: AnyCancellable? = nil
     private static var waitForCoreData: AnyCancellable? = nil
-}
-
-private class ShareSubject: NSObject, UIActivityItemSource {
-    private let greeting: String
-    
-    fileprivate init(greeting: String) {
-        self.greeting = greeting
-    }
-    
-    func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any {
-        return greeting
-    }
-    
-    func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivity.ActivityType?) -> Any? {
-        return greeting
-    }
-    
-    func activityViewController(_ activityViewController: UIActivityViewController, subjectForActivityType activityType: UIActivity.ActivityType?) -> String {
-        return greeting
-    }
 }
