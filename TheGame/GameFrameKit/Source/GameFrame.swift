@@ -10,6 +10,7 @@ import SwiftUI
 import StoreKit
 import Combine
 import LinkPresentation
+import AVFoundation
 
 // TODO: Test with sandbox user
 // TODO: Purchase Simple purchase
@@ -121,6 +122,15 @@ public class GameFrame: NSObject {
             adUnitIdRewarded: adUnitIdRewarded,
             adUnitIdInterstitial: adUnitIdInterstitial)
         self.shareImpl = GFShare(window, appId: appId, infos: infos, greeting: greeting)
+        
+        // Mix Audio Signals with existing sound like background music
+        let avSession = AVAudioSession.sharedInstance()
+        do {
+            try avSession.setCategory(.ambient, mode: .default, options: .mixWithOthers)
+            try avSession.setActive(true)
+        } catch {
+            log(error)
+        }
     }
 
     // MARK: - Public functions

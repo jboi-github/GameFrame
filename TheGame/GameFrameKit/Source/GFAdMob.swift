@@ -25,9 +25,8 @@ public class GFAdMob: NSObject, ObservableObject {
         adUnitIdInterstitial = _adUnitIdInterstitial
         super.init()
         
-        guard let window = window else {return}
-        gadAdSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(window.frame.width)
-        bannerSize = gadAdSize!.size
+        if window == nil {return}
+        setBannerSize()
 
         delegater = Delegater(parent: self)
         prepareReward()
@@ -77,6 +76,12 @@ public class GFAdMob: NSObject, ObservableObject {
     fileprivate var gadAdSize: GADAdSize? = nil
     
     // MARK: For Banner
+    fileprivate func setBannerSize() {
+        guard let window = window else {return}
+        
+        gadAdSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(window.frame.width)
+        bannerSize = gadAdSize!.size
+    }
     
     // MARK: For Rewards
     private let adUnitIdRewarded: String?
@@ -153,7 +158,16 @@ public struct GFBannerView: UIViewControllerRepresentable {
         return viewController
     }
 
-    public func updateUIViewController(_ uiViewController: UIViewController, context: Context) {log()}
+    public func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+        log()
+        GameFrame.instance.adMobImpl.setBannerSize()
+
+        if GameFrame.instance.adMobImpl.wasBought {return}
+        guard let gadAdSize = GameFrame.instance.adMobImpl.gadAdSize else {return}
+        guard let view = uiViewController.view.subviews.first as? GADBannerView else {return}
+        view.adSize = gadAdSize
+        view.load(GADRequest())
+}
 }
 
 private class Delegater: NSObject, GADBannerViewDelegate, GADRewardedAdDelegate, GADInterstitialDelegate {

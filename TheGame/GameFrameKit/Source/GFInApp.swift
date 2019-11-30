@@ -90,13 +90,15 @@ public class GFInApp: NSObject, ObservableObject {
      */
     public enum Purchasable {
         /// Product affects consumables with quantity amount of units, e.g. product is to buy 20 coffee mugs, then "coffee mug" is the consumable and 20 the quantity
-        case Consumable(id: String, quantity: Int)
+        case Consumable(id: String, quantity: Int, canPrebook: Bool)
         /// Non-Consumable affected by product.
-        case NonConsumable(id: String)
+        case NonConsumable(id: String, canPrebook: Bool)
         
         fileprivate func buy(isPrebook: Bool, quantity purchasedQuantity: Int = 1) {
             switch self {
-            case let .Consumable(id: id, quantity: quantity):
+            case let .Consumable(id: id, quantity: quantity, canPrebook: canPrebook):
+                if isPrebook && !canPrebook {return}
+                
                 let consumable = GameFrame.coreData.getConsumable(id)
                 
                 if isPrebook {
@@ -105,7 +107,9 @@ public class GFInApp: NSObject, ObservableObject {
                     consumable.buy(quantity * purchasedQuantity)
                 }
                 
-            case let .NonConsumable(id: id):
+            case let .NonConsumable(id: id, canPrebook: canPrebook):
+                if isPrebook && !canPrebook {return}
+                
                 let nonConsumable = GameFrame.coreData.getNonConsumable(id)
                 
                 if isPrebook {
@@ -118,11 +122,11 @@ public class GFInApp: NSObject, ObservableObject {
         
         fileprivate func rollback() {
             switch self {
-            case let .Consumable(id: id, quantity: _):
+            case let .Consumable(id: id, quantity: _, canPrebook: _):
                 let consumable = GameFrame.coreData.getConsumable(id)
                 consumable.rollback()
                 
-            case let .NonConsumable(id: id):
+            case let .NonConsumable(id: id, canPrebook: _):
                 let nonConsumable = GameFrame.coreData.getNonConsumable(id)
                 nonConsumable.rollback()
             }
@@ -130,7 +134,7 @@ public class GFInApp: NSObject, ObservableObject {
         
         fileprivate var isConsumable: Bool {
             switch self {
-            case .Consumable(id: _, quantity: _):
+            case .Consumable(id: _, quantity: _, canPrebook: _):
                 return true
                 
             default:
@@ -175,11 +179,11 @@ public class GFInApp: NSObject, ObservableObject {
         
         purchasables.forEach {
             switch $0 {
-            case let .Consumable(id: id, quantity: _):
+            case let .Consumable(id: id, quantity: _, canPrebook: _):
                 var products = consumableToProducts.getAndAddIfNotExisting(key: id, closure: {_ in []})
                 products.append(product)
                 consumableToProducts[id] = products
-            case let .NonConsumable(id: id):
+            case let .NonConsumable(id: id, canPrebook: _):
                 var products = nonConsumableToProducts.getAndAddIfNotExisting(key: id, closure: {_ in []})
                 products.append(product)
                 nonConsumableToProducts[id] = products

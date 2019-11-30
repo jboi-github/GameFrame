@@ -36,15 +36,14 @@ struct TheGameMainBannerEmptyModifier: ViewModifier {
 }
 
 struct TheGameNavigationItemModifier: ButtonStyle {
-    var parent: String
-    var isDisabled: Bool
-    var row: Int
-    var col: Int
+    let parent: String
+    let isDisabled: Bool
+    let item: Navigation
 
     func makeBody(configuration: Self.Configuration) -> some View {
         VStack {
             // Make the play button big
-            if parent == "OffLevel" && row == 3 && col == 0 {
+            if parent == "OffLevel" && isPlay(item) {
                 Image(systemName: "play.circle")
                     .resizable().scaledToFit()
                     .foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
@@ -54,6 +53,20 @@ struct TheGameNavigationItemModifier: ButtonStyle {
                     .foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
                     .padding()
             }
+        }
+    }
+    
+    private func isPlay(_ item: Navigation) -> Bool {
+        switch item {
+        case let .Links(link: link):
+            switch link {
+            case .Play:
+                return true
+            default:
+                return false
+            }
+        default:
+            return false
         }
     }
 }
@@ -106,13 +119,13 @@ class TheGameSkin: GameSkin {
     func getMainBannerEmptyModifier() -> some ViewModifier {TheGameMainBannerEmptyModifier()}
 
     // Get a big play-button
-    func getNavigationItemModifier(parent: String, isDisabled: Bool, row: Int, col: Int) -> some ButtonStyle {
-         TheGameNavigationItemModifier(parent: parent, isDisabled: isDisabled, row: row, col: col)
+    func getNavigationItemModifier(parent: String, isDisabled: Bool, item: Navigation) -> some ButtonStyle {
+        TheGameNavigationItemModifier(parent: parent, isDisabled: isDisabled, item: item)
     }
     
     // Remove navigation bar on all Navigation Views
     func getOffLevelModifier() -> some ViewModifier {TheGamePrimaryViewModifier()}
     func getSettingsModifier() -> some ViewModifier {TheGameSecondaryViewModifier(title: "Settings")}
-    func getInLevelModifier() -> some ViewModifier {TheGameNoNavigationModifier(title: "The Game")}
     func getStoreModifier() -> some ViewModifier {TheGameSecondaryViewModifier(title: "Store")}
+    func getInLevelModifier() -> some ViewModifier {TheGameNoNavigationModifier(title: "The Game")}
 }

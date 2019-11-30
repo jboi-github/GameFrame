@@ -26,6 +26,8 @@ struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
         
         var body: some View {
             ZStack {
+                // Spread to available display
+                VStack{Spacer(); HStack{Spacer()}}
                 EmptyView()
                     .modifier(skin.getInLevelGameZoneModifier(
                         gameFrame,
@@ -34,19 +36,21 @@ struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
                 VStack {
                     NavigationArea<C, S>(
                         parent: "InLevel",
-                        items: config.inLevelNavigation,
-                        bounds: self.gameFrame,
+                        items: config.inLevelNavigation(frame: gameFrame),
+                        bounds: gameFrame,
                         isOverlayed: isOverlayed)
                         .modifier(skin.getInLevelNavigationModifier())
-                        .framePreference($navigationFrame)
-                    InformationArea<S>(parent: "InLevel", items: config.inLevelInformation)
+                        .getFrame($navigationFrame)
+                    InformationArea<S>(
+                        parent: "InLevel",
+                        items: config.inLevelInformation(frame: gameFrame))
                         .modifier(skin.getInLevelInformationModifier())
-                        .framePreference($informationFrame)
+                        .getFrame($informationFrame)
                     Spacer()
                 }
             }
             .modifier(skin.getInLevelGameModifier(isOverlayed: isOverlayed))
-            .framePreference($gameFrame)
+            .getFrame($gameFrame)
             .onAppear {
                 GameUI.instance.presentationMode = self.presentationMode
                 if !self.isOverlayed {GameUI.instance.resume()}

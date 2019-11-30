@@ -69,28 +69,20 @@ struct WaitAlert<S>: View  where S: GameSkin {
     }
 }
 
-struct FramePreferenceKey: PreferenceKey {
-    static var defaultValue: CGRect = .zero
-    
-    static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
-        log(value)
-        value = nextValue()
-        log(value)
+extension View {
+    func debug(_ msg: Any?...) -> some View {
+        log(msg)
+        return self
     }
     
-    typealias Value = CGRect
-}
-
-extension View {
-    func framePreference(_ frame: Binding<CGRect>) -> some View {
+    func getFrame(_ frame: Binding<CGRect>) -> some View {
         self
         .background(
             GeometryReader {
-                proxy in
+                proxy -> AnyView in
                 
-                Color.clear
-                    .preference(key: FramePreferenceKey.self, value: proxy.frame(in: .global))
-                    .onPreferenceChange(FramePreferenceKey.self) {frame.wrappedValue = $0}
+                DispatchQueue.main.async {frame.wrappedValue = proxy.frame(in: .global)}
+                return AnyView(EmptyView())
             }
         )
     }

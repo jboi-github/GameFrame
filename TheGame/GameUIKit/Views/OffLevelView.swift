@@ -9,24 +9,36 @@
 import SwiftUI
 
 struct OffLevelView<C, S>: View where C: GameConfig, S: GameSkin {
+    @State var startsInLevel: Bool
+    @State private var gameFrame: CGRect = .zero
     @EnvironmentObject private var config: C
     @EnvironmentObject private var skin: S
     
     var body: some View {
         VStack {
-            NavigationArea<C, S>(parent: "OffLevel", items: config.offLevelNavigation)
-                .modifier(skin.getOffLevelNavigationModifier())
-             InformationArea<S>(parent: "OffLevel", items: config.offLevelInformation)
-                .modifier(skin.getOffLevelInformationModifier())
+            HStack{Spacer()}
+            NavigationLink(destination: InLevelView<C, S>(), isActive: $startsInLevel) {EmptyView()}
+            
+            if !startsInLevel {
+                NavigationArea<C, S>(
+                    parent: "OffLevel",
+                    items: config.offLevelNavigation(frame: gameFrame))
+                    .modifier(skin.getOffLevelNavigationModifier())
+                 InformationArea<S>(
+                    parent: "OffLevel",
+                    items: config.offLevelInformation(frame: gameFrame))
+                    .modifier(skin.getOffLevelInformationModifier())
+            }
             Spacer()
         }
         .modifier(skin.getOffLevelModifier())
+        .getFrame($gameFrame)
     }
 }
 
 struct OffLevel_Previews: PreviewProvider {
     static var previews: some View {
-        OffLevelView<PreviewConfig, PreviewSkin>()
+        OffLevelView<PreviewConfig, PreviewSkin>(startsInLevel: false)
         .environmentObject(PreviewConfig())
         .environmentObject(PreviewSkin())
     }

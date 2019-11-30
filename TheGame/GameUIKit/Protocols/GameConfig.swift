@@ -16,46 +16,51 @@ import SwiftUI
  */
 public protocol GameConfig: ObservableObject {
     /**
+     Set to true, to start Game in Off-Level. The player has to press the play-button to start the game. This is useful for arcade games and whenever timing
+     is important. If no timing is necessary like in chess, sudoku etc., then this set this to false for easiest player experience.
+     */
+    var startsOffLevel: Bool {get}
+    /**
      Set information items to be shown while the player is off level.
      
      The two dimensional array is layed out to rows and columns. Each row can have different number of columns.
      */
-    var offLevelInformation: [[Information]] {get}
+    func offLevelInformation(frame: CGRect) -> [[Information]]
     
     /**
      Set navigation items to be shown while the player is off level.
      
      The two dimensional array is layed out to rows and columns. Each row can have different number of columns.
      */
-    var offLevelNavigation: [[Navigation]] {get}
+    func offLevelNavigation(frame: CGRect) -> [[Navigation]]
     
     /**
      Set information items to be shown while the player is in level. The information is shown as overlay to your game view.
      
      The two dimensional array is layed out to rows and columns. Each row can have different number of columns.
      */
-    var inLevelInformation: [[Information]] {get}
+    func inLevelInformation(frame: CGRect) -> [[Information]]
     
     /**
      Set navigation items to be shown while the player is in level. The navigation is shown as overlay to your game view.
      
      The two dimensional array is layed out to rows and columns. Each row can have different number of columns.
      */
-    var inLevelNavigation: [[Navigation]] {get}
+    func inLevelNavigation(frame: CGRect) -> [[Navigation]]
 
     /**
      Set information items to be shown while the player is in settings.
      
      The two dimensional array is layed out to rows and columns. Each row can have different number of columns.
      */
-    var settingsInformation: [[Information]] {get}
+    func settingsInformation(frame: CGRect) -> [[Information]]
     
     /**
      Set navigation items to be shown while the player is in settings.
      
      The two dimensional array is layed out to rows and columns. Each row can have different number of columns.
      */
-    var settingsNavigation: [[Navigation]] {get}
+    func settingsNavigation(frame: CGRect) -> [[Navigation]]
     
     /**
      Define which products affect which consumable after a purchase.
@@ -105,12 +110,14 @@ public protocol GameConfig: ObservableObject {
 import GameFrameKit
 
 class PreviewConfig: GameConfig {
-    let offLevelInformation = [[Information]]()
-    let offLevelNavigation = [[Navigation]]()
-    let inLevelInformation = [[Information]]()
-    let inLevelNavigation = [[Navigation]]()
-    let settingsInformation = [[Information]]()
-    let settingsNavigation = [[Navigation]]()
+    let startsOffLevel: Bool = true
+    
+    func offLevelInformation(frame: CGRect) -> [[Information]] {return [[Information]]()}
+    func offLevelNavigation(frame: CGRect) -> [[Navigation]] {return [[Navigation]]()}
+    func inLevelInformation(frame: CGRect) -> [[Information]] {return [[Information]]()}
+    func inLevelNavigation(frame: CGRect) -> [[Navigation]] {return [[Navigation]]()}
+    func settingsInformation(frame: CGRect) -> [[Information]] {return [[Information]]()}
+    func settingsNavigation(frame: CGRect) -> [[Navigation]] {return [[Navigation]]()}
 
     let purchasables = [String: [GFInApp.Purchasable]]()
     let adUnitIdBanner: String? = nil

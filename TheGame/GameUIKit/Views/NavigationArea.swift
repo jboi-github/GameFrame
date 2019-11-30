@@ -34,7 +34,6 @@ struct NavigationArea<C, S>: View where C: GameConfig, S: GameSkin {
                         
                         Item(
                             parent: self.parent,
-                            row: row, col: col,
                             item: self.items[row][col],
                             isOverlayed: self.isOverlayed,
                             bounds: self.bounds)
@@ -47,8 +46,6 @@ struct NavigationArea<C, S>: View where C: GameConfig, S: GameSkin {
     
     private struct Item: View {
         let parent: String
-        let row: Int
-        let col: Int
         let item: Navigation
         let isOverlayed: Bool
         let bounds: CGRect?
@@ -61,7 +58,7 @@ struct NavigationArea<C, S>: View where C: GameConfig, S: GameSkin {
         var body: some View {
             asView(item, bounds: bounds)
                 .disabled(isDisabled(item))
-                .buttonStyle(skin.getNavigationItemModifier(parent: parent, isDisabled: isDisabled(item), row: row, col: col))
+                .buttonStyle(skin.getNavigationItemModifier(parent: parent, isDisabled: isDisabled(item), item: item))
         }
 
         private func asView(_ item: Navigation, bounds: CGRect?) -> some View {

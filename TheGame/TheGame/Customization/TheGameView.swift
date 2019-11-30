@@ -68,9 +68,10 @@ struct TheGameView: View {
     // Make an offer to player, if points are in range. If not, die directly
     private func makeOfferOrDie(consumableId: String, quantity: Int) {
         let range = 0.8*Double(points.highest)..<Double(points.highest)
-        if range.contains(Double(points.current)) {
-            GameUI.instance.makeOffer(consumableId: consumableId, quantity: quantity)
-        } else {
+        
+        if !range.contains(Double(points.current)) {
+            GameUI.instance.gameOver()
+        } else if !GameUI.instance.makeOffer(consumableId: consumableId, quantity: quantity) {
             GameUI.instance.gameOver()
         }
     }

@@ -43,11 +43,45 @@ public extension Text {
 }
 
 // MARK: - Modifier Implementations for Identity Skin
-struct MainBannerModifier: ViewModifier {
-    var width: CGFloat
-    var height: CGFloat
-    
+struct IdentityViewModifier: ViewModifier {
     func body(content: Content) -> some View {content}
+}
+
+struct IdentityImageModifier: ImageModifier {
+    func body(image: Image) -> some View {image}
+}
+
+struct IdentityTextModifier: TextModifier {
+    func body(text: Text) -> some View {text}
+}
+
+struct PaddingModifier: ViewModifier {
+    func body(content: Content) -> some View {content.padding()}
+}
+
+struct OverlayedModifier: ViewModifier {
+    let isOverlayed: Bool
+    
+    func body(content: Content) -> some View {
+        content.padding().blur(radius: isOverlayed ? 5.0 : 0.0)
+    }
+}
+
+struct ButtonModifier: ButtonStyle {
+    let isDisabled: Bool
+
+    func makeBody(configuration: Self.Configuration) -> some View {
+        configuration.label.foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
+    }
+}
+
+struct OverlayModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .padding()
+            .background(Color.secondary.colorInvert())
+            .padding()
+    }
 }
 
 struct MainBannerEmptyModifier: ViewModifier {
@@ -56,126 +90,12 @@ struct MainBannerEmptyModifier: ViewModifier {
     }
 }
 
-struct OffLevelModifier: ViewModifier {
-    func body(content: Content) -> some View {content.padding()}
-}
-
-struct OffLevelNavigationModifier: ViewModifier {
-    func body(content: Content) -> some View {content}
-}
-
-struct OffLevelInformationModifier: ViewModifier {
-    func body(content: Content) -> some View {content}
-}
-
-struct InLevelModifier: ViewModifier {
-    func body(content: Content) -> some View {content}
-}
-
-struct InLevelGameModifier: ViewModifier {
-    let isOverlayed: Bool
-    
-    func body(content: Content) -> some View {
-        content.padding().blur(radius: isOverlayed ? 5.0 : 0.0)
-    }
-}
-
-struct InLevelNavigationModifier: ViewModifier {
-    func body(content: Content) -> some View {content}
-}
-
-struct InLevelInformationModifier: ViewModifier {
-    func body(content: Content) -> some View {content}
-}
-
-struct SettingsModifier: ViewModifier {
-    func body(content: Content) -> some View {content.padding()}
-}
-
-struct SettingsNavigationModifier: ViewModifier {
-    func body(content: Content) -> some View {content}
-}
-
-struct SettingsInformationModifier: ViewModifier {
-    func body(content: Content) -> some View {content}
-}
-
-struct StoreModifier: ViewModifier {
-    func body(content: Content) -> some View {content}
-}
-
-struct StoreEmptyModifier: TextModifier {
-    func body(text: Text) -> some View {text}
-}
-
-struct StoreNavigationModifier: ViewModifier {
-    func body(content: Content) -> some View {content}
-}
-
-struct StoreProductsModifier: ViewModifier {
-    let isOverlayed: Bool
-    
-    func body(content: Content) -> some View {
-        content.padding().blur(radius: isOverlayed ? 5.0 : 0.0)
-    }
-}
-
 struct StoreProductModifier: ViewModifier {
-    var id: String
+    let id: String
 
     func body(content: Content) -> some View {
         content.padding(.vertical, nil)
     }
-}
-
-struct StoreProductButtonModifier: ButtonStyle {
-    var id: String
-    var isDisabled: Bool
-    
-    func makeBody(configuration: Self.Configuration) -> some View {
-        return configuration.label
-            .foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
-    }
-}
-
-struct StoreProductTitleModifier: TextModifier {
-    var id: String
-    
-    func body(text: Text) -> some View {text}
-}
-
-struct StoreProductDescriptionModifier: TextModifier {
-    var id: String
-    
-    func body(text: Text) -> some View {text}
-}
-
-struct StoreProductQuantityModifier: TextModifier {
-    var id: String
-    
-    func body(text: Text) -> some View {text}
-}
-
-struct StoreProductStepperModifier: ButtonStyle {
-    var id: String
-    var isDisabled: Bool
-
-    func makeBody(configuration: Self.Configuration) -> some View {
-        return configuration.label
-            .foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
-    }
-}
-
-struct StoreProductCartModifier: ImageModifier {
-    var id: String
-    
-    func body(image: Image) -> some View {image}
-}
-
-struct StoreProductPriceModifier: TextModifier {
-    var id: String
-    
-    func body(text: Text) -> some View {text}
 }
 
 struct OfferModifier: ViewModifier {
@@ -183,109 +103,8 @@ struct OfferModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-        .padding()
-        .background(Color.secondary.colorInvert())
-        .blur(radius: isOverlayed ? 5.0 : 0.0)
-    }
-}
-
-struct OfferNavigationModifier: ViewModifier {
-    func body(content: Content) -> some View {content}
-}
-
-struct OfferProductsModifier: ViewModifier {
-    func body(content: Content) -> some View {content}
-}
-
-struct OfferProductModifier: ButtonStyle {
-    var id: String
-    var isDisabled: Bool
-
-   func makeBody(configuration: Self.Configuration) -> some View {
-        configuration.label.foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
-    }
-}
-
-struct OfferProductTitleModifier: TextModifier {
-    var id: String
-
-    func body(text: Text) -> some View {text}
-}
-
-struct OfferProductDescriptionModifier: TextModifier {
-    var id: String
-
-    func body(text: Text) -> some View {text}
-}
-
-struct OfferProductCartModifier: ImageModifier {
-    var id: String
-
-    func body(image: Image) -> some View {image}
-}
-
-struct OfferProductPriceModifier: TextModifier {
-    var id: String
-
-    func body(text: Text) -> some View {text}
-}
-
-struct InformationItemModifier: TextModifier {
-    var parent: String
-    var id: String
-
-    func body(text: Text) -> some View {text}
-}
-
-struct InformationNonConsumableModifier: ViewModifier {
-    var parent: String
-    var id: String
-
-    func body(content: Content) -> some View {content}
-}
-
-struct InformationRowModifier: ViewModifier {
-    var parent: String
-    var row: Int
-
-    func body(content: Content) -> some View {content}
-}
-
-struct NavigationItemModifier: ButtonStyle {
-    var parent: String
-    var isDisabled: Bool
-    var row: Int
-    var col: Int
-
-    func makeBody(configuration: Self.Configuration) -> some View {
-        configuration.label
-            .foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
-            .padding()
-    }
-}
-
-struct NavigationRowModifier: ViewModifier {
-    var parent: String
-    var row: Int
-
-    func body(content: Content) -> some View {content}
-}
-
-struct WaitModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-        .padding()
-    }
-}
-
-struct ErrorMessageModifier: TextModifier {
-    func body(text: Text) -> some View {text}
-}
-
-struct ErrorModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .background(Color.secondary.colorInvert())
+            .modifier(OverlayedModifier(isOverlayed: isOverlayed))
+            .modifier(OverlayModifier())
     }
 }
 
@@ -296,6 +115,7 @@ struct ErrorModifier: ViewModifier {
  2. Write your own modifier and call it in the overridden function
  */
 public protocol GameSkin: ObservableObject {
+    associatedtype MainModifierType: ViewModifier
     associatedtype MainBannerModifierType: ViewModifier
     associatedtype MainBannerEmptyModifierType: ViewModifier
     associatedtype OffLevelModifierType: ViewModifier
@@ -339,6 +159,7 @@ public protocol GameSkin: ObservableObject {
     associatedtype ErrorMessageModifierType: TextModifier
     associatedtype ErrorModifierType: ViewModifier
     
+    func getMainModifier() -> MainModifierType
     func getMainBannerModifier(width: CGFloat, height: CGFloat) -> MainBannerModifierType
     func getMainBannerEmptyModifier() -> MainBannerEmptyModifierType
     func getOffLevelModifier() -> OffLevelModifierType
@@ -376,7 +197,7 @@ public protocol GameSkin: ObservableObject {
     func getInformationItemModifier(parent: String, id: String) -> InformationItemModifierType
     func getInformationNonConsumableModifier(parent: String, id: String) -> InformationNonConsumableModifierType
     func getInformationRowModifier(parent: String, row: Int) -> InformationRowModifierType
-    func getNavigationItemModifier(parent: String, isDisabled: Bool, row: Int, col: Int) -> NavigationItemModifierType
+    func getNavigationItemModifier(parent: String, isDisabled: Bool, item: Navigation) -> NavigationItemModifierType
     func getNavigationRowModifier(parent: String, row: Int) -> NavigationRowModifierType
     func getWaitModifier() -> WaitModifierType
     func getErrorMessageModifier() -> ErrorMessageModifierType
@@ -384,125 +205,128 @@ public protocol GameSkin: ObservableObject {
 }
 
 public extension GameSkin {
+       func getMainModifier() -> some ViewModifier {
+           IdentityViewModifier()
+      }
       func getMainBannerModifier(width: CGFloat, height: CGFloat) -> some ViewModifier {
-          MainBannerModifier(width: width, height: height)
+          IdentityViewModifier()
      }
       func getMainBannerEmptyModifier() -> some ViewModifier {
           MainBannerEmptyModifier()
      }
       func getOffLevelModifier() -> some ViewModifier {
-          OffLevelModifier()
+          PaddingModifier()
      }
       func getOffLevelNavigationModifier() -> some ViewModifier {
-          OffLevelNavigationModifier()
+          IdentityViewModifier()
      }
       func getOffLevelInformationModifier() -> some ViewModifier {
-          OffLevelInformationModifier()
+          IdentityViewModifier()
      }
     func getInLevelModifier() -> some ViewModifier {
-        InLevelModifier()
+        IdentityViewModifier()
      }
       func getInLevelGameModifier(isOverlayed: Bool) -> some ViewModifier {
-          InLevelGameModifier(isOverlayed: isOverlayed)
+          OverlayedModifier(isOverlayed: isOverlayed)
        }
       func getInLevelNavigationModifier() -> some ViewModifier {
-          InLevelNavigationModifier()
+          IdentityViewModifier()
      }
       func getInLevelInformationModifier() -> some ViewModifier {
-          InLevelInformationModifier()
+          IdentityViewModifier()
      }
       func getSettingsModifier() -> some ViewModifier {
-          SettingsModifier()
+          PaddingModifier()
      }
       func getSettingsNavigationModifier() -> some ViewModifier {
-          SettingsNavigationModifier()
+          IdentityViewModifier()
      }
       func getSettingsInformationModifier() -> some ViewModifier {
-          SettingsInformationModifier()
+          IdentityViewModifier()
      }
      func getStoreModifier() -> some ViewModifier {
-         StoreModifier()
+         IdentityViewModifier()
     }
      func getStoreEmptyModifier() -> some TextModifier {
-         StoreEmptyModifier()
+         IdentityTextModifier()
     }
      func getStoreNavigationModifier() -> some ViewModifier {
-         StoreNavigationModifier()
+         IdentityViewModifier()
     }
      func getStoreProductsModifier(isOverlayed: Bool) -> some ViewModifier {
-         StoreProductsModifier(isOverlayed: isOverlayed)
+         OverlayedModifier(isOverlayed: isOverlayed)
     }
       func getStoreProductModifier(id: String) -> some ViewModifier {
           StoreProductModifier(id: id)
      }
       func getStoreProductButtonModifier(id: String, isDisabled: Bool) -> some ButtonStyle {
-          StoreProductButtonModifier(id: id, isDisabled: isDisabled)
+          ButtonModifier(isDisabled: isDisabled)
      }
     func getStoreProductTitleModifier(id: String) -> some TextModifier {
-        StoreProductTitleModifier(id: id)
+        IdentityTextModifier()
     }
      func getStoreProductDescriptionModifier(id: String) -> some TextModifier {
-         StoreProductDescriptionModifier(id: id)
+         IdentityTextModifier()
     }
      func getStoreProductQuantityModifier(id: String) -> some TextModifier {
-         StoreProductQuantityModifier(id: id)
+         IdentityTextModifier()
     }
      func getStoreProductStepperModifier(id: String, isDisabled: Bool) -> some ButtonStyle {
-        StoreProductStepperModifier(id: id, isDisabled: isDisabled)
+        ButtonModifier(isDisabled: isDisabled)
     }
      func getStoreProductCartModifier(id: String) -> some ImageModifier {
-         StoreProductCartModifier(id: id)
+         IdentityImageModifier()
     }
      func getStoreProductPriceModifier(id: String) -> some TextModifier {
-         StoreProductPriceModifier(id: id)
+         IdentityTextModifier()
     }
       func getOfferModifier(isOverlayed: Bool) -> some ViewModifier {
         OfferModifier(isOverlayed: isOverlayed)
     }
      func getOfferNavigationModifier() -> some ViewModifier {
-         OfferNavigationModifier()
+         IdentityViewModifier()
     }
      func getOfferProductsModifier() -> some ViewModifier {
-         OfferProductsModifier()
+         IdentityViewModifier()
     }
      func getOfferProductModifier(id: String, isDisabled: Bool) -> some ButtonStyle {
-         OfferProductModifier(id: id, isDisabled: isDisabled)
+         ButtonModifier(isDisabled: isDisabled)
     }
      func getOfferProductTitleModifier(id: String) -> some TextModifier {
-         OfferProductTitleModifier(id: id)
+         IdentityTextModifier()
     }
      func getOfferProductDescriptionModifier(id: String) -> some TextModifier {
-         OfferProductDescriptionModifier(id: id)
+         IdentityTextModifier()
     }
      func getOfferProductCartModifier(id: String) -> some ImageModifier {
-         OfferProductCartModifier(id: id)
+         IdentityImageModifier()
     }
      func getOfferProductPriceModifier(id: String) -> some TextModifier {
-         OfferProductPriceModifier(id: id)
+         IdentityTextModifier()
     }
      func getInformationItemModifier(parent: String, id: String) -> some TextModifier {
-         InformationItemModifier(parent: parent, id: id)
+         IdentityTextModifier()
     }
       func getInformationNonConsumableModifier(parent: String, id: String) -> some ViewModifier {
-          InformationNonConsumableModifier(parent: parent, id: id)
+          IdentityViewModifier()
      }
       func getInformationRowModifier(parent: String, row: Int) -> some ViewModifier {
-          InformationRowModifier(parent: parent, row: row)
+          IdentityViewModifier()
      }
-    func getNavigationItemModifier(parent: String, isDisabled: Bool, row: Int, col: Int) -> some ButtonStyle {
-         NavigationItemModifier(parent: parent, isDisabled: isDisabled, row: row, col: col)
+    func getNavigationItemModifier(parent: String, isDisabled: Bool, item: Navigation) -> some ButtonStyle {
+        ButtonModifier(isDisabled: isDisabled)
     }
       func getNavigationRowModifier(parent: String, row: Int) -> some ViewModifier {
-          NavigationRowModifier(parent: parent, row: row)
+          IdentityViewModifier()
      }
      func getWaitModifier() -> some ViewModifier {
-         WaitModifier()
+         PaddingModifier()
     }
      func getErrorMessageModifier() -> some TextModifier {
-         ErrorMessageModifier()
+         IdentityTextModifier()
     }
      func getErrorModifier() -> some ViewModifier {
-         ErrorModifier()
+         OverlayModifier()
     }
 }
 
