@@ -17,6 +17,8 @@ struct SettingsView<C, S>: View where C: GameConfig, S: GameSkin {
 
     var body: some View {
         ZStack {
+            // Spread to available display
+            VStack{Spacer(); HStack{Spacer()}}
             EmptyView()
                 .modifier(skin.getSettingsSpaceModifier(
                     gameFrame,
@@ -25,17 +27,19 @@ struct SettingsView<C, S>: View where C: GameConfig, S: GameSkin {
             VStack {
                 NavigationArea<C, S>(
                     parent: "Settings",
-                    items: config.settingsNavigation)
+                    items: config.settingsNavigation(frame: gameFrame))
                     .modifier(skin.getSettingsNavigationModifier())
-                    .framePreference( $navigationFrame)
-                InformationArea<S>(parent: "Settings", items: config.settingsInformation)
+                    .getFrame($navigationFrame)
+                InformationArea<S>(
+                    parent: "Settings",
+                    items: config.settingsInformation(frame: gameFrame))
                     .modifier(skin.getSettingsInformationModifier())
-                    .framePreference($informationFrame)
+                    .getFrame($informationFrame)
                 Spacer()
             }
         }
         .modifier(skin.getSettingsModifier())
-        .framePreference($gameFrame)
+        .getFrame($gameFrame)
     }
 }
 

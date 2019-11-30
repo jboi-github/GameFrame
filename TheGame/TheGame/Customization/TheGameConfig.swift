@@ -12,63 +12,106 @@ import GameFrameKit
 import SwiftUI
 
 class TheGameConfig: GameConfig {
-    let offLevelInformation: [[Information]] = [
-        [
-            .Achievement(id: "Medals", format: "%.1f"),
-            .NonConsumable(id: "weaponB", opened: Image(systemName: "location"), closed: Image(systemName: "location.slash")),
-            .NonConsumable(id: "weaponC", opened: Image(systemName: "location.fill"), closed: nil)
-        ], [
-            .Score(id: "Points"),
-            .Consumable(id: "Bullets")
-        ]]
+    func offLevelInformation(frame: CGRect) -> [[Information]] {
+        if frame.width < frame.height {
+            return [[
+                .Achievement(id: "Medals", format: "%.1f"),
+                .NonConsumable(id: "weaponB", opened: Image(systemName: "location"), closed: Image(systemName: "location.slash")),
+                .NonConsumable(id: "weaponC", opened: Image(systemName: "location.fill"), closed: nil)
+            ], [
+                .Score(id: "Points"),
+                .Consumable(id: "Bullets")
+            ]]
+        } else {
+            return [[
+                .Achievement(id: "Medals", format: "%.1f"),
+                .NonConsumable(id: "weaponB", opened: Image(systemName: "location"), closed: Image(systemName: "location.slash")),
+                .NonConsumable(id: "weaponC", opened: Image(systemName: "location.fill"), closed: nil),
+                .Score(id: "Points"),
+                .Consumable(id: "Bullets")
+            ]]
+        }
+    }
     
-    let offLevelNavigation: [[Navigation]] = [
-        [
-            .Links(.Store(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])),
-            .Buttons(.Reward(consumableId: "Bullets", quantity: 100))
-        ], [
-            .Buttons(.GameCenter()),
-            .Buttons(.Share()),
-            .Buttons(.Like(appId: 1293516048)) // TODO: Replace with real value from AppStore
-        ], [
-            .Generics(.Url("https://www.apple.com")),
-            .Links(.Settings())
-        ], [
-            .Links(.Play())
-        ]
-    ]
+    func offLevelNavigation(frame: CGRect) -> [[Navigation]] {
+        log(frame, frame.width < frame.height)
+        if frame.width < frame.height {
+            return [[
+                .Links(.Store(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])),
+                .Buttons(.Reward(consumableId: "Bullets", quantity: 100))
+            ], [
+                .Buttons(.GameCenter()),
+                .Buttons(.Share()),
+                .Buttons(.Like(appId: 1293516048)) // TODO: Replace with real value from AppStore
+            ], [
+                .Generics(.Url("https://www.apple.com")),
+                .Links(.Settings())
+            ], [
+                .Links(.Play())
+            ]]
+        } else {
+            return [[
+                .Links(.Store(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])),
+                .Buttons(.Reward(consumableId: "Bullets", quantity: 100)),
+                .Buttons(.GameCenter()),
+                .Buttons(.Share()),
+                .Buttons(.Like(appId: 1293516048)), // TODO: Replace with real value from AppStore
+                .Generics(.Url("https://www.apple.com")),
+                .Links(.Settings())
+            ], [
+                .Links(.Play())
+            ]]
+        }
+    }
     
-    let inLevelInformation: [[Information]] = [[
+    func inLevelInformation(frame: CGRect) -> [[Information]] {
+        [[
             .Score(id: "Points")
         ], [
             .Achievement(id: "Medals", format: "%.1f"),
             .Consumable(id: "Bullets")
         ]]
+    }
     
-    let inLevelNavigation: [[Navigation]] = [
-        [
-            .Links(.Store(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])),
-            .Buttons(.Reward(consumableId: "Bullets", quantity: 100))
-        ], [
-            .Buttons(.Share()),
-            .Links(.Back())
-        ]
-    ]
+    func inLevelNavigation(frame: CGRect) -> [[Navigation]] {
+        if frame.width < frame.height {
+            return [
+                [
+                    .Links(.Store(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])),
+                    .Buttons(.Reward(consumableId: "Bullets", quantity: 100))
+                ], [
+                    .Buttons(.Share()),
+                    .Links(.Back())
+                ]
+            ]
+        } else {
+            return [
+                [
+                    .Links(.Store(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])),
+                    .Buttons(.Reward(consumableId: "Bullets", quantity: 100)),
+                    .Buttons(.Share()),
+                    .Links(.Back())
+                ]
+            ]
+        }
+    }
     
-    let settingsInformation: [[Information]] = [[
+    func settingsInformation(frame: CGRect) -> [[Information]] {
+        [[
             .Achievement(id: "Medals", format: "%.1f"),
             .Consumable(id: "Bullets")
         ]]
+    }
     
-    let settingsNavigation: [[Navigation]] = [
-        [
+    func settingsNavigation(frame: CGRect) -> [[Navigation]] {
+        [[
             .Links(.Store(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])),
             .Buttons(.Reward(consumableId: "Bullets", quantity: 100))
         ], [
             .Buttons(.SystemSettings()),
             .Links(.Back())
-        ]
-    ]
+        ]]
+    }
 
     let purchasables: [String: [GFInApp.Purchasable]] = [
         "bulletsS": [.Consumable(id: "Bullets", quantity: 200)],

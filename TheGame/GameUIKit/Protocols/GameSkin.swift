@@ -44,8 +44,8 @@ public extension Text {
 
 // MARK: - Modifier Implementations for Identity Skin
 struct MainBannerModifier: ViewModifier {
-    var width: CGFloat
-    var height: CGFloat
+    let width: CGFloat
+    let height: CGFloat
     
     func body(content: Content) -> some View {content}
 }
@@ -121,7 +121,7 @@ struct StoreProductsModifier: ViewModifier {
 }
 
 struct StoreProductModifier: ViewModifier {
-    var id: String
+    let id: String
 
     func body(content: Content) -> some View {
         content.padding(.vertical, nil)
@@ -129,8 +129,8 @@ struct StoreProductModifier: ViewModifier {
 }
 
 struct StoreProductButtonModifier: ButtonStyle {
-    var id: String
-    var isDisabled: Bool
+    let id: String
+    let isDisabled: Bool
     
     func makeBody(configuration: Self.Configuration) -> some View {
         return configuration.label
@@ -139,26 +139,26 @@ struct StoreProductButtonModifier: ButtonStyle {
 }
 
 struct StoreProductTitleModifier: TextModifier {
-    var id: String
+    let id: String
     
     func body(text: Text) -> some View {text}
 }
 
 struct StoreProductDescriptionModifier: TextModifier {
-    var id: String
+    let id: String
     
     func body(text: Text) -> some View {text}
 }
 
 struct StoreProductQuantityModifier: TextModifier {
-    var id: String
+    let id: String
     
     func body(text: Text) -> some View {text}
 }
 
 struct StoreProductStepperModifier: ButtonStyle {
-    var id: String
-    var isDisabled: Bool
+    let id: String
+    let isDisabled: Bool
 
     func makeBody(configuration: Self.Configuration) -> some View {
         return configuration.label
@@ -167,13 +167,13 @@ struct StoreProductStepperModifier: ButtonStyle {
 }
 
 struct StoreProductCartModifier: ImageModifier {
-    var id: String
+    let id: String
     
     func body(image: Image) -> some View {image}
 }
 
 struct StoreProductPriceModifier: TextModifier {
-    var id: String
+    let id: String
     
     func body(text: Text) -> some View {text}
 }
@@ -198,8 +198,8 @@ struct OfferProductsModifier: ViewModifier {
 }
 
 struct OfferProductModifier: ButtonStyle {
-    var id: String
-    var isDisabled: Bool
+    let id: String
+    let isDisabled: Bool
 
    func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label.foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
@@ -207,55 +207,54 @@ struct OfferProductModifier: ButtonStyle {
 }
 
 struct OfferProductTitleModifier: TextModifier {
-    var id: String
+    let id: String
 
     func body(text: Text) -> some View {text}
 }
 
 struct OfferProductDescriptionModifier: TextModifier {
-    var id: String
+    let id: String
 
     func body(text: Text) -> some View {text}
 }
 
 struct OfferProductCartModifier: ImageModifier {
-    var id: String
+    let id: String
 
     func body(image: Image) -> some View {image}
 }
 
 struct OfferProductPriceModifier: TextModifier {
-    var id: String
+    let id: String
 
     func body(text: Text) -> some View {text}
 }
 
 struct InformationItemModifier: TextModifier {
-    var parent: String
-    var id: String
+    let parent: String
+    let id: String
 
     func body(text: Text) -> some View {text}
 }
 
 struct InformationNonConsumableModifier: ViewModifier {
-    var parent: String
-    var id: String
+    let parent: String
+    let id: String
 
     func body(content: Content) -> some View {content}
 }
 
 struct InformationRowModifier: ViewModifier {
-    var parent: String
-    var row: Int
+    let parent: String
+    let row: Int
 
     func body(content: Content) -> some View {content}
 }
 
 struct NavigationItemModifier: ButtonStyle {
-    var parent: String
-    var isDisabled: Bool
-    var row: Int
-    var col: Int
+    let parent: String
+    let isDisabled: Bool
+    let item: Navigation
 
     func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
@@ -265,8 +264,8 @@ struct NavigationItemModifier: ButtonStyle {
 }
 
 struct NavigationRowModifier: ViewModifier {
-    var parent: String
-    var row: Int
+    let parent: String
+    let row: Int
 
     func body(content: Content) -> some View {content}
 }
@@ -376,7 +375,7 @@ public protocol GameSkin: ObservableObject {
     func getInformationItemModifier(parent: String, id: String) -> InformationItemModifierType
     func getInformationNonConsumableModifier(parent: String, id: String) -> InformationNonConsumableModifierType
     func getInformationRowModifier(parent: String, row: Int) -> InformationRowModifierType
-    func getNavigationItemModifier(parent: String, isDisabled: Bool, row: Int, col: Int) -> NavigationItemModifierType
+    func getNavigationItemModifier(parent: String, isDisabled: Bool, item: Navigation) -> NavigationItemModifierType
     func getNavigationRowModifier(parent: String, row: Int) -> NavigationRowModifierType
     func getWaitModifier() -> WaitModifierType
     func getErrorMessageModifier() -> ErrorMessageModifierType
@@ -489,8 +488,8 @@ public extension GameSkin {
       func getInformationRowModifier(parent: String, row: Int) -> some ViewModifier {
           InformationRowModifier(parent: parent, row: row)
      }
-    func getNavigationItemModifier(parent: String, isDisabled: Bool, row: Int, col: Int) -> some ButtonStyle {
-         NavigationItemModifier(parent: parent, isDisabled: isDisabled, row: row, col: col)
+    func getNavigationItemModifier(parent: String, isDisabled: Bool, item: Navigation) -> some ButtonStyle {
+         NavigationItemModifier(parent: parent, isDisabled: isDisabled, item: item)
     }
       func getNavigationRowModifier(parent: String, row: Int) -> some ViewModifier {
           NavigationRowModifier(parent: parent, row: row)

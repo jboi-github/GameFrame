@@ -77,11 +77,16 @@ public class GameUI: NSObject, ObservableObject  {
          - quantity: Number of consumables to be earned when a rewarded video is played. Has no effect to in-app purchases.
          - consumableId: Id of the consumable to offer to the player. All products, related to the consumable, are offered with a quantity of 1 item.
      */
-    public func makeOffer(consumableId: String, quantity: Int) {
+    public func makeOffer(consumableId: String, quantity: Int) -> Bool {
         log(consumableId, quantity)
-        guard gameDelegate.keepOffer() else {return}
+        guard gameDelegate.keepOffer() else {return false}
+        if GameFrame.inApp.getProducts(consumableIds: [consumableId], nonConsumableIds: [String]()).isEmpty &&  !GameFrame.adMob.rewardAvailable {
+            
+            return false
+        }
         
         offer = (consumableId: consumableId, quantity: quantity)
+        return true
     }
 
     /**

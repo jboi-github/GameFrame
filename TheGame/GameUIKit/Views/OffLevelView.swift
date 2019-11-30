@@ -9,18 +9,25 @@
 import SwiftUI
 
 struct OffLevelView<C, S>: View where C: GameConfig, S: GameSkin {
+    @State private var gameFrame: CGRect = .zero
     @EnvironmentObject private var config: C
     @EnvironmentObject private var skin: S
     
     var body: some View {
         VStack {
-            NavigationArea<C, S>(parent: "OffLevel", items: config.offLevelNavigation)
+            HStack{Spacer()}
+            NavigationArea<C, S>(
+                parent: "OffLevel",
+                items: config.offLevelNavigation(frame: gameFrame))
                 .modifier(skin.getOffLevelNavigationModifier())
-             InformationArea<S>(parent: "OffLevel", items: config.offLevelInformation)
+             InformationArea<S>(
+                parent: "OffLevel",
+                items: config.offLevelInformation(frame: gameFrame))
                 .modifier(skin.getOffLevelInformationModifier())
             Spacer()
         }
         .modifier(skin.getOffLevelModifier())
+        .getFrame($gameFrame)
     }
 }
 
