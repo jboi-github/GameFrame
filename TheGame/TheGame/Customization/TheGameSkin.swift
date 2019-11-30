@@ -96,7 +96,6 @@ struct TheGameNoNavigationModifier: ViewModifier {
         content
             .navigationBarTitle(Text(title), displayMode: .inline)
             .navigationBarBackButtonHidden(true)
-            .transition(AnyTransition.scale)
     }
 }
 
@@ -127,6 +126,6 @@ class TheGameSkin: GameSkin {
     // Remove navigation bar on all Navigation Views
     func getOffLevelModifier() -> some ViewModifier {TheGamePrimaryViewModifier()}
     func getSettingsModifier() -> some ViewModifier {TheGameSecondaryViewModifier(title: "Settings")}
-    func getInLevelModifier() -> some ViewModifier {TheGameNoNavigationModifier(title: "The Game")}
     func getStoreModifier() -> some ViewModifier {TheGameSecondaryViewModifier(title: "Store")}
+    func getInLevelModifier() -> some ViewModifier {TheGameNoNavigationModifier(title: "The Game")}
 }

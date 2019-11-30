@@ -12,6 +12,8 @@ import GameFrameKit
 import SwiftUI
 
 class TheGameConfig: GameConfig {
+    let startsOffLevel: Bool = false
+    
     func offLevelInformation(frame: CGRect) -> [[Information]] {
         if frame.width < frame.height {
             return [[
@@ -25,16 +27,15 @@ class TheGameConfig: GameConfig {
         } else {
             return [[
                 .Achievement(id: "Medals", format: "%.1f"),
-                .NonConsumable(id: "weaponB", opened: Image(systemName: "location"), closed: Image(systemName: "location.slash")),
-                .NonConsumable(id: "weaponC", opened: Image(systemName: "location.fill"), closed: nil),
                 .Score(id: "Points"),
-                .Consumable(id: "Bullets")
+                .Consumable(id: "Bullets"),
+                .NonConsumable(id: "weaponB", opened: Image(systemName: "location"), closed: Image(systemName: "location.slash")),
+                .NonConsumable(id: "weaponC", opened: Image(systemName: "location.fill"), closed: nil)
             ]]
         }
     }
     
     func offLevelNavigation(frame: CGRect) -> [[Navigation]] {
-        log(frame, frame.width < frame.height)
         if frame.width < frame.height {
             return [[
                 .Links(.Store(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])),
@@ -114,12 +115,12 @@ class TheGameConfig: GameConfig {
     }
 
     let purchasables: [String: [GFInApp.Purchasable]] = [
-        "bulletsS": [.Consumable(id: "Bullets", quantity: 200)],
-        "bulletsM": [.Consumable(id: "Bullets", quantity: 1000)],
-        "bulletsL": [.Consumable(id: "Bullets", quantity: 2000)],
-        "Lives": [.Consumable(id: "Lives", quantity: 1)],
-        "weaponB": [.NonConsumable(id: "weaponB")],
-        "weaponC": [.NonConsumable(id: "weaponC")]]
+        "bulletsS": [.Consumable(id: "Bullets", quantity: 200, canPrebook: true)],
+        "bulletsM": [.Consumable(id: "Bullets", quantity: 1000, canPrebook: true)],
+        "bulletsL": [.Consumable(id: "Bullets", quantity: 2000, canPrebook: false)],
+        "Lives": [.Consumable(id: "Lives", quantity: 1, canPrebook: false)],
+        "weaponB": [.NonConsumable(id: "weaponB", canPrebook: true)],
+        "weaponC": [.NonConsumable(id: "weaponC", canPrebook: true)]]
     
     let adUnitIdBanner: String? = "ca-app-pub-3940256099942544/2934735716" // TODO: Replace with id from Google AdMob
     let adUnitIdRewarded: String? = "ca-app-pub-3940256099942544/1712485313" // TODO: Replace with id from AppStore

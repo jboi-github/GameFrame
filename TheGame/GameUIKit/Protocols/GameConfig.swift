@@ -16,6 +16,11 @@ import SwiftUI
  */
 public protocol GameConfig: ObservableObject {
     /**
+     Set to true, to start Game in Off-Level. The player has to press the play-button to start the game. This is useful for arcade games and whenever timing
+     is important. If no timing is necessary like in chess, sudoku etc., then this set this to false for easiest player experience.
+     */
+    var startsOffLevel: Bool {get}
+    /**
      Set information items to be shown while the player is off level.
      
      The two dimensional array is layed out to rows and columns. Each row can have different number of columns.
@@ -105,6 +110,8 @@ public protocol GameConfig: ObservableObject {
 import GameFrameKit
 
 class PreviewConfig: GameConfig {
+    let startsOffLevel: Bool = true
+    
     func offLevelInformation(frame: CGRect) -> [[Information]] {return [[Information]]()}
     func offLevelNavigation(frame: CGRect) -> [[Navigation]] {return [[Navigation]]()}
     func inLevelInformation(frame: CGRect) -> [[Information]] {return [[Information]]()}

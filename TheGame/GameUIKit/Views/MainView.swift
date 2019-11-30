@@ -10,9 +10,10 @@ import SwiftUI
 import GameFrameKit
 
 struct MainView<C, S>: View where C: GameConfig, S: GameSkin {
+    @State private var startsInLevel: Bool = false
     @EnvironmentObject private var config: C
     @EnvironmentObject private var skin: S
-
+    
     private struct Banner: View {
         @ObservedObject private var adMob = GameFrame.adMob
         @EnvironmentObject private var skin: S
@@ -32,12 +33,12 @@ struct MainView<C, S>: View where C: GameConfig, S: GameSkin {
     
     var body: some View {
         VStack {
-            // TODO: Take care of startsOffLevel
             NavigationView {
-                OffLevelView<C, S>()
+                OffLevelView<C, S>(startsInLevel: !config.startsOffLevel)
             }
             Banner()
         }
+        .modifier(skin.getMainModifier())
     }
 }
 
