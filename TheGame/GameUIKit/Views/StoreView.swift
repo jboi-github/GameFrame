@@ -72,30 +72,34 @@ struct StoreView<C, S>: View where C: GameConfig, S: GameSkin {
         var body: some View {
             let products = GameFrame.inApp.getProducts(consumableIds: consumableIds, nonConsumableIds: nonConsumableIds)
             
-            return VStack {
-                NavigationArea<C, S>(
-                    parent: "Store",
-                    items: [[.Buttons(.Restore()), .Links(.Back())]],
-                    isOverlayed: isOverlayed)
-                    .modifier(skin.getStoreNavigationModifier())
-                Spacer()
-                if products.isEmpty {
-                    Text("No products available or store not available")
-                        .modifier(skin.getStoreEmptyModifier())
-                } else {
-                    GeometryReader {
-                        proxy in
-                        
-                        ScrollView {
-                            ForEach(0..<products.count, id: \.self) {
-                                id in
-                                
-                                ProductRow(product: products[id], isOverlayed: self.isOverlayed, proxy: proxy)
+            return ZStack {
+                VStack {
+                    Spacer()
+                    if products.isEmpty {
+                        Text("No products available or store not available")
+                            .modifier(skin.getStoreEmptyModifier())
+                    } else {
+                        GeometryReader {
+                            proxy in
+                            
+                            ScrollView {
+                                ForEach(0..<products.count, id: \.self) {
+                                    id in
+                                    
+                                    ProductRow(product: products[id], isOverlayed: self.isOverlayed, proxy: proxy)
+                                }
                             }
                         }
                     }
+                    Spacer()
                 }
-                Spacer()
+                NavigationLayer<C, S>(
+                    parent: "Store",
+                    items: [[.Buttons(.Restore()), .Links(.Back())]],
+                    navbarItem: .Buttons(.Restore()),
+                    isOverlayed: isOverlayed)
+                    .modifier(skin.getStoreNavigationModifier())
+
             }
             .modifier(skin.getStoreProductsModifier(isOverlayed: isOverlayed))
         }

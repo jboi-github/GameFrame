@@ -20,16 +20,18 @@ struct OffLevelView<C, S>: View where C: GameConfig, S: GameSkin {
             NavigationLink(destination: InLevelView<C, S>(), isActive: $startsInLevel) {EmptyView()}
             
             if !startsInLevel {
-                NavigationArea<C, S>(
-                    parent: "OffLevel",
-                    items: config.offLevelNavigation(frame: gameFrame))
-                    .modifier(skin.getOffLevelNavigationModifier())
-                 InformationArea<S>(
-                    parent: "OffLevel",
-                    items: config.offLevelInformation(frame: gameFrame))
-                    .modifier(skin.getOffLevelInformationModifier())
+                ZStack {
+                    NavigationLayer<C, S>(
+                        parent: "OffLevel",
+                        items: config.offLevelNavigation(frame: gameFrame),
+                        navbarItem: config.offLevelNavigationBar)
+                        .modifier(skin.getOffLevelNavigationModifier())
+                    InformationLayer<S>(
+                        parent: "OffLevel",
+                        items: config.offLevelInformation(frame: gameFrame))
+                        .modifier(skin.getOffLevelInformationModifier())
+                }
             }
-            Spacer()
         }
         .modifier(skin.getOffLevelModifier())
         .getFrame($gameFrame)

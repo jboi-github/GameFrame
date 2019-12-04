@@ -134,4 +134,9 @@ class TheGameConfig: GameConfig {
         .Score("Points") {"My best: \($0.highest)"},
         .NonConsumable("weaponC") {$0.isOpened ? "Got the coolest weapon!" : "Struggeling to get weaponC. Can you help?"}
     ]
+        
+    let offLevelNavigationBar: Navigation? = nil
+    let inLevelNavigationBar: Navigation? = .Buttons(.Share())
+    let storeNavigationBar: Navigation? = .Buttons(.Restore())
+    let settingsNavigationBar: Navigation? = .Buttons(.SystemSettings())
 }
