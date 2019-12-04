@@ -5,6 +5,7 @@
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>The Game wants to save a screenshot to your photos</string>
 	<key>CFBundleDisplayName</key>
+	<string>The Game</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
