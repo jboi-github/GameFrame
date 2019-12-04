@@ -9,16 +9,23 @@
 import SwiftUI
 import GameFrameKit
 
-struct NavigationArea<C, S>: View where C: GameConfig, S: GameSkin {
+struct NavigationLayer<C, S>: View where C: GameConfig, S: GameSkin {
     let parent: String
     let items: [[Navigation]]
+    let navbarItem: Navigation?
     let isOverlayed: Bool
     let bounds: CGRect?
     @EnvironmentObject private var skin: S
     
-    init(parent: String, items: [[Navigation]], bounds: CGRect? = nil, isOverlayed: Bool = false) {
+    init(parent: String,
+         items: [[Navigation]],
+         navbarItem: Navigation? = nil,
+         bounds: CGRect? = nil,
+         isOverlayed: Bool = false)
+    {
         self.parent = parent
         self.items = items
+        self.navbarItem = navbarItem
         self.bounds = bounds
         self.isOverlayed = isOverlayed
     }
@@ -42,6 +49,13 @@ struct NavigationArea<C, S>: View where C: GameConfig, S: GameSkin {
                 .modifier(self.skin.getNavigationRowModifier(parent: self.parent, row: row))
             }
         }
+        .navigationBarItems(
+            trailing: navbarItem != nil ?
+                AnyView(Item(parent: parent,
+                    item: navbarItem!,
+                    isOverlayed: isOverlayed,
+                    bounds: bounds)) :
+                AnyView(EmptyView()))
     }
     
     private struct Item: View {
@@ -135,9 +149,9 @@ struct NavigationArea<C, S>: View where C: GameConfig, S: GameSkin {
     }
 }
 
-struct NavigationArea_Previews: PreviewProvider {
+struct NavigationLayer_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationArea<PreviewConfig, PreviewSkin>(
+        NavigationLayer<PreviewConfig, PreviewSkin>(
             parent: "Preview",
             items: [[
                 .Generics(.Url("https://www.apple.com")),

@@ -103,6 +103,42 @@ public protocol GameConfig: ObservableObject {
     var sharedAppId: Int {get}
     var sharedGreeting: String {get}
     var sharedInformations: [GFShareInformation] {get}
+    
+    /**
+     Add navigation item to navigation bar (trailing) in OffLevel.
+     
+     If your skin hides the navigationbar, ensure that the navigation item is available anywhere on the display.
+     
+     - warning: As of XCode 11.2.1, iOS 13.2 and Swift 5.2, putting a link to the navigation bar causes the app to crash.
+     */
+    var offLevelNavigationBar: Navigation? {get}
+    
+    /**
+     Add navigation item to navigation bar (trailing) in InLevel.
+     
+     If your skin hides the navigationbar, ensure that the navigation item is available anywhere on the display.
+     
+     - warning: As of XCode 11.2.1, iOS 13.2 and Swift 5.2, putting a link to the navigation bar causes the app to crash.
+     */
+    var inLevelNavigationBar: Navigation? {get}
+    
+    /**
+     Add navigation item to navigation bar (trailing) in store.
+     
+     If your skin hides the navigationbar, ensure that the navigation item is available anywhere on the display.
+     
+     - warning: As of XCode 11.2.1, iOS 13.2 and Swift 5.2, putting a link to the navigation bar causes the app to crash.
+     */
+    var storeNavigationBar: Navigation? {get}
+    
+    /**
+     Add navigation item to navigation bar (trailing) in settings.
+     
+     If your skin hides the navigationbar, ensure that the navigation item is available anywhere on the display.
+     
+     - warning: As of XCode 11.2.1, iOS 13.2 and Swift 5.2, putting a link to the navigation bar causes the app to crash.
+     */
+    var settingsNavigationBar: Navigation? {get}
 }
 
 // MARK: - GameConfig implementation for PreView
@@ -128,4 +164,9 @@ class PreviewConfig: GameConfig {
     let sharedAppId: Int = 0
     let sharedGreeting: String = ""
     let sharedInformations = [GFShareInformation]()
+    
+    let offLevelNavigationBar: Navigation? = .Generics(.Url("https://www.apple.com"))
+    let inLevelNavigationBar: Navigation? = .Generics(.Url("https://www.apple.com"))
+    let storeNavigationBar: Navigation? = .Generics(.Url("https://www.apple.com"))
+    let settingsNavigationBar: Navigation? = .Generics(.Url("https://www.apple.com"))
 }

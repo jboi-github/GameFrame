@@ -9,6 +9,21 @@ Implementing all this features is necessary to earn money with the App but often
 I read all the documents, ran through deploying Apps based on the extracted code and bundled it then in this FrameWork.
 
 ## What it implements
+The FrameWork is designed to support on two levels: The Model with the **GameFrameKit** and for the UI with **GameUIKit**.
+### **GameFrameKit** does the low-level work behind the scenes.
+It implements four object-types:
+    - **Scores** are integers to count things. Examples are points, energy etc. The correspond to GameCenter-Leaderboards.
+    - **Achievements** are defined as float number where 1.0 means, that the achievement was achieved one time. They correspond to GameCenter Achievements
+    - **Consumables** are things the player consumes. Examples are bullets, fuel etc. They correspond to AppStore consumables.
+    - **NonConsumables** are one time triggers, that a player can buy or earn. Examples are weapons, unlocked levels or the removal of advertisements. NonConsumables correspond to the same objects in the AppStore. **GameFrameKit** defines a special NonConsumable so that the player can buy removal of advertisements
+    With this four types it enables to:
+    - Synchronize all objects to local storage (**CoreData**) as well as to the **iCloud**. The player gets all objects synchronized across all devices, that are connected with the same Apple-Id
+    - Synchronize all scores and achievements with the corresponding objects in **GameCenter**
+    - Implement a **Share** Button, so that the player can share game experience with others via social media channels. It automatically fills AppName, logo, a screenshot, a message body with a greeting and formatted text around the obejcts, that you define.
+    - It enables banners, rewarded videos and interstitials via AdMob.
+    - InApp purchases
+    - Audio, Reviews
+    
 The idea is simple. Four types of objects define the status of your game:
 1. **Scores**: Integer numbers to count things like points, energy or whatever your game needs. Usually the player earns these things during game play. A score can be linked to a GameCenter Leaderboard by giving the **GameFrame**-Score the same ID as the Leaderboard in GameCenter has. In this case, if the player is logged in to GameCenter, scores are automatically reported when player leaves a level, the game or switches to another app. The score is locally saved in the same cases and synchronized with iCloud, if the player is logged in with an Apple-Id.
 2. **Achievements**: Float numbers to measure achievements like gold medals, levels etc. Usually the player earns these things during game play. An achievement can be linked to a GameCenter Achievements by giving the **GameFrame**-Achievement the same ID as the Achievement in GameCenter has. In this case, if the player is logged in to GameCenter, achievements are automatically reported when player leaves a level, the game or switches to another app. The achievement is locally saved in the same cases and synchronized with iCloud, if the player is logged in with an Apple-Id.

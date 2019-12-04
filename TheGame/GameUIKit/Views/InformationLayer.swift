@@ -12,7 +12,7 @@ import GameFrameKit
 /**
  Information items to be used in configuration of the game. Each reflects an information.
 */
-struct InformationArea<S>: View where S: GameSkin {
+struct InformationLayer<S>: View where S: GameSkin {
     let parent: String
     let items: [[Information]]
     @EnvironmentObject private var skin: S
@@ -140,9 +140,9 @@ struct InformationArea<S>: View where S: GameSkin {
     }
 }
 
-struct InformationArea_Previews: PreviewProvider {
+struct InformationLayer_Previews: PreviewProvider {
     static var previews: some View {
-        InformationArea<PreviewSkin>(
+        InformationLayer<PreviewSkin>(
             parent: "Preview",
             items: [
                 [

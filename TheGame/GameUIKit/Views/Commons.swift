@@ -54,7 +54,7 @@ struct ErrorAlert<C, S>: View  where C: GameConfig, S: GameSkin {
         VStack {
             Text("\(GameFrame.inApp.error?.localizedDescription ?? "OK")")
             .modifier(skin.getErrorMessageModifier())
-            NavigationArea<C, S>(parent: "Error", items: [[.Buttons(.ErrorBack())]])
+            NavigationLayer<C, S>(parent: "Error", items: [[.Buttons(.ErrorBack())]])
         }
         .modifier(skin.getErrorModifier())
     }

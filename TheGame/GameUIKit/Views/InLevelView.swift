@@ -33,21 +33,19 @@ struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
                         gameFrame,
                         informationFrame: informationFrame,
                         navigationFrame: navigationFrame))
-                VStack {
-                    NavigationArea<C, S>(
-                        parent: "InLevel",
-                        items: config.inLevelNavigation(frame: gameFrame),
-                        bounds: gameFrame,
-                        isOverlayed: isOverlayed)
-                        .modifier(skin.getInLevelNavigationModifier())
-                        .getFrame($navigationFrame)
-                    InformationArea<S>(
-                        parent: "InLevel",
-                        items: config.inLevelInformation(frame: gameFrame))
-                        .modifier(skin.getInLevelInformationModifier())
-                        .getFrame($informationFrame)
-                    Spacer()
-                }
+                NavigationLayer<C, S>(
+                    parent: "InLevel",
+                    items: config.inLevelNavigation(frame: gameFrame),
+                    navbarItem: config.inLevelNavigationBar,
+                    bounds: gameFrame,
+                    isOverlayed: isOverlayed)
+                    .modifier(skin.getInLevelNavigationModifier())
+                    .getFrame($navigationFrame)
+                InformationLayer<S>(
+                    parent: "InLevel",
+                    items: config.inLevelInformation(frame: gameFrame))
+                    .modifier(skin.getInLevelInformationModifier())
+                    .getFrame($informationFrame)
             }
             .modifier(skin.getInLevelGameModifier(isOverlayed: isOverlayed))
             .getFrame($gameFrame)
@@ -113,7 +111,7 @@ struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
                         ProductRow(product: products[$0], isOverlayed: self.isOverlayed)
                     }
                     .modifier(skin.getOfferProductsModifier())
-                    NavigationArea<C, S>(parent: "Offer",
+                    NavigationLayer<C, S>(parent: "Offer",
                         items: [[
                             .Buttons(.OfferBack()),
                             .Buttons(.Reward(consumableId: consumableId, quantity: rewardQuantity))
