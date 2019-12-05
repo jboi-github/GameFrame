@@ -5,83 +5,48 @@ All your iOS game needs. Apart from the game.
 
 **GameFrame** is a FrameWork, that implements all the nitty-gritty code-snippets for InApp purchases, GameCenter, synchronization of CoreData and iCloud, advertisements, player reviews and more. You can simply add it to your project and design and develop your game idea.
 
-Implementing all this features is necessary to earn money with the App but often not the first priority. Learning how it works means to read a lot of documentation - often ending in a few lines of code for each.
+Implementing all the named features is necessary to earn money with the App but often not the first priority. Learning how it works means to read a lot of documentation - often ending in a few lines of code for each.
 I read all the documents, ran through deploying Apps based on the extracted code and bundled it then in this FrameWork.
 
-## What it implements
-The FrameWork is designed to support on two levels: The Model with the **GameFrameKit** and for the UI with **GameUIKit**.
-### **GameFrameKit** does the low-level work behind the scenes.
-It implements four object-types:
-    - **Scores** are integers to count things. Examples are points, energy etc. The correspond to GameCenter-Leaderboards.
-    - **Achievements** are defined as float number where 1.0 means, that the achievement was achieved one time. They correspond to GameCenter Achievements
-    - **Consumables** are things the player consumes. Examples are bullets, fuel etc. They correspond to AppStore consumables.
-    - **NonConsumables** are one time triggers, that a player can buy or earn. Examples are weapons, unlocked levels or the removal of advertisements. NonConsumables correspond to the same objects in the AppStore. **GameFrameKit** defines a special NonConsumable so that the player can buy removal of advertisements
-    With this four types it enables to:
-    - Synchronize all objects to local storage (**CoreData**) as well as to the **iCloud**. The player gets all objects synchronized across all devices, that are connected with the same Apple-Id
-    - Synchronize all scores and achievements with the corresponding objects in **GameCenter**
-    - Implement a **Share** Button, so that the player can share game experience with others via social media channels. It automatically fills AppName, logo, a screenshot, a message body with a greeting and formatted text around the obejcts, that you define.
-    - It enables banners, rewarded videos and interstitials via AdMob.
-    - InApp purchases
-    - Audio, Reviews
-    
-The idea is simple. Four types of objects define the status of your game:
-1. **Scores**: Integer numbers to count things like points, energy or whatever your game needs. Usually the player earns these things during game play. A score can be linked to a GameCenter Leaderboard by giving the **GameFrame**-Score the same ID as the Leaderboard in GameCenter has. In this case, if the player is logged in to GameCenter, scores are automatically reported when player leaves a level, the game or switches to another app. The score is locally saved in the same cases and synchronized with iCloud, if the player is logged in with an Apple-Id.
-2. **Achievements**: Float numbers to measure achievements like gold medals, levels etc. Usually the player earns these things during game play. An achievement can be linked to a GameCenter Achievements by giving the **GameFrame**-Achievement the same ID as the Achievement in GameCenter has. In this case, if the player is logged in to GameCenter, achievements are automatically reported when player leaves a level, the game or switches to another app. The achievement is locally saved in the same cases and synchronized with iCloud, if the player is logged in with an Apple-Id.
-3. **NonConsumables**: Products in the store for in-app purchases. Examples are unlocking a level, stop advertisements, etc. NonConsumables can be linked to the app store by giving the **GameFrame**-NonConsumable the same ID as the NonConsumable product in the Apple Store has. NonConsumables can be bought one time.
-4. **Consumables**: Products in the store for in-app purchases. Examples are collectable goods, bullets, a number of hints and anything that can be earned or bought and will be consumed during gameplay. **GameFrame** allows consumables to be purchased in store, earned by game play or earned by rewarded videos. It also allows to configure for non-linear pricing (decoy-effect). For example, you have a consumable, say 'bullets' and offer a product to buy them as in-app purchase. You have a product for 10 bullets at 0.99$, one product for 50 bullets at 2.99$ and 100 bullets for 5.99$. **GameFrame** can handle this situation.
+## What you get
+**GameFrame** follows a simple information model and provides configurable-standard navigations for easy user experience. Additionally it provides two ways to earn money with your game: (1) by adding products, purchasable via in-ap purchases and (2) via adertisements with banners, interstitials and rewarded videos.
 
-With this four objects, you get:
-- Automatic saving locally and synchronized with iCloud. Synchronized, means uploaded to iCloud and automatically downloaded and merged with current play, when changes happened on another device, which is logged in with the same Apple-Id
-- Show screen when requested and avialable:
-  - GameCenter: Either the GameCenter itself or login screen to it as provided by Apple
-  - Review and Feedback alert: You can ask Apple to show their review alert and additionally have the external URL for use with a user interaction like a button, to directly link to the review page in the AppStore.
-  - A BannerView is provided for Banner advertisements. An interstitial can be shown at end of a level if available. A rewarded video can be shown with a reward - usually earnings for a consumable - given on success.
-  - Any external links are possible, like calling Facebook, Instagram or the settings app on the iPhone/iPad. Allows to link to your community pages in social networks.
-- For in-app purchases:
-  - The list for available consumables or non-consumables, depending on age of the player, country, network conditions and what you configured is given back
-  - Just call `buy` or `restore` in **GameFrame** and it handles all the rest for you until the purchase is done and reflected in one of th objects
-  - If the purchase is deferred, e.g. an authorized person has to approve the purchase and the spent money, **GameFrame** acts like the purchase was succesful and is able to rollback, if the purchase fails later. This works only for one active purchase at a time to minimize possible misuse.
-- Everything, that can be shown in views or allow interaction to the player has observable variables for SwiftUI. This allows to hide or disable buttons, when the player disables for example GameCenter or there's no rewarded video loaded at the moment etc.
+### Information
+There're four kinds of information items that are defined in `GameFrameKit`.
 
-## How to use in your project
+**GameFrame** defines `Achievement` and `Score` as explained in [GameCenter Programming Guide](https://developer.apple.com/documentation/gamekit) where a **GameFrame** `Achievement` relates to a GameCenter Achievement and a **GameFrame** `Score` relates to a GameCenter Leaderboard.
+
+For In-App purchases, **GameFrame** defines `Consumable` and `NonConsumable` in the way, they're described in [StoreKit In-App Purchase](https://developer.apple.com/documentation/storekit/in-app_purchase)
+
+These items are maintained, reported and interacted throughout the game in many differnt ways. The following picture illustrates how they relate and interact with different serices on iOS.
+![illustrate information interaction with iOS services](./images/information.png)
+
+### Navigation
+**GameFrame** and the `GameUIKit` provide a standard UX and flow through the various screens of a game. The also provide a number of buttons with predefined behaviour, that can be used in the game to include all the recurring features, that let a game get viral.
+![Overview of navigation items and how they interact](./images/navigation.png)
+
+## What you have to add to make it *your* game
+The idea is, that you can focus on the game itself. Its logic, design and spirit. But let's start right away.
+1. Download, compile and run: Download this project, open it with XCode, build and run it. See, what you get. Try to press the buttons and navigate through "The Game", which is a ficitve game. Well, it has four buttons that change the values of information items. But its purpose is, to show how to work with **GameFrame**.
+2. Have a short look at, what you got: **GameFrame** and the downloaded project conssist of three modules:
+  * `GameFrameKit`: Lowest level. Implements the information items and handling in GameCenter, StoreKit, AdMob, CoreData, iCloud.
+  * `GameUIKit`: Defines the navigation and players experience in the game.
+  * `TheGame` finally is the test and sample implementation of a game, based on **GameFrame**. Use this as your starting point and reference on how to work with **GameFrame**
+3. Change "The Game" to make it yours. There're different touch points, where you customize or define your game.
+
+| Name | Description | Defintion | Example |
+|--------|--------|--------|--------|
+| Skin | Colors, fonts, transitions, animations and positioning of elements. All the look. It consits of about 40 functions, that can be overridden and which return `ViewModifier`. Modifiers are used everywhere in `GameUIKit` and have a default implementation. As you can see in the example, you need to override only the ones that you need | [GameSkin.swift](./TheGame/GameUIKit/Protocols/GameSkin.swift) | [TheGameSkin.swift](./TheGame/TheGame/Customization/TheGameSkin.swift) |
+| Configuration | Defines aspects what navigation and information items are presented to the player during the game and with the share button. You also place your AdMob-Ids in the configuration and if the player should explicitely press a play-button to start the game (useful for Arcade games and games with timing) or if, the game starts right away without extra button to press (useful for puzzles or games like chess) | [GameConfig.swift](./TheGame/GameUIKit/Protocols/GameConfig.swift) | [TheGameConfig.swift](./TheGame/TheGame/Customization/TheGameConfig.swift) |
+| Delegate | This is, where **GameFrame** asks your game for logic. You define here, what to do when a level starts or ends, when the player leaves the app or comes back. You also define if an adHoc offer should be displayed to the player, etc. | [GameDelegate.swift](./TheGame/GameUIKit/Protocols/GameDelegate.swift) | [TheGameDelegate.swift](./TheGame/TheGame/Customization/TheGameDelegate.swift) |
+| GameZoneView | Here's your game! The view is implemented as an `EmptyView` with a `ViewModifier`. Define, what view should be shown in the modifier `getInLevelGameZoneModifier(...)` which gets the sizes of the view and the sizes of the overlaying information and navigation, you define in `GameConfig` | - | [TheGameView.swift](./TheGame/TheGame/Customization/TheGameView.swift) /  [TheGameSkin.swift@getInLevelGameZoneModifier(...)](./TheGame/TheGame/Customization/TheGameSkin.swift) |
+| SettingsView | One more view you can add. The modifier is `getSettingsSpaceModifier(...)` and is part of the settings, that the user can see. It is meant for game specific settings like choosing an avatar or a game difficulty | - | [TheGameSettingsView.swift](./TheGame/TheGame/Customization/TheGameSettingsView.swift) /  [TheGameSkin.swift@getSettingsSpaceModifier(...)](./TheGame/TheGame/Customization/TheGameSkin.swift) |
 
 ## Checklist to setup a project with full featured **GameFrame**
-- [ ] Clone the **GameFrame** repository.
-- [ ] Under "GameFrameKit" open the `GameFrameKit` project in XCode and build it (Cmd-B)
-- [ ] Create a new project for your App, give it a name and ensure the following features:
-  - [ ] Check "Use CoreData" and "Use CloudKit"
-  - [ ] Find a place in your folder structure, ensure that "Don't add to any project or workspace" is selected
-  - [ ] In the project setting, "Signing&Capabilities" add:
-    - [ ] "iCloud", check "CloudKit" and create a new container or check an existing one. This will also add the "Push Notifications" capability
-    - [ ] "In-App Purchase"
-    - [ ] "Game Center"
-    - [ ] "Background Modes", here check the "Remote Notifications" to get notified on changes in iCloud-Data, when changed on other devices of your player.
-  - [ ] Drag and drop in XCode, from the window that has the **GameFrame** project open, the **GameFrame** product `GameFrameKit.framework` into the XCode window that has your project open, somewhere on top of your project-groups.
-  - [ ] In the Xcode Project Navigator, click on your project and then select the target. In the "General" tab scroll down to "Frameworks, Libraries and Embedded Content" and ensure, that `GameFrameKit.framework` is set to "Embed & Sign"
-- [ ] Make changes to `AppDelegate.swift` and `SceneDelegate.swift`. For all changes, check the same two files in "TheGame" folders to get an example.
-  - [ ] In `AppDelegate.swift` delete the function `saveContext()` and the variable `persistentContainer`
-  - [ ] In `SceneDelegate.swift`
-    1. Add the `import GameFrame` at the beginning.
-    2. In the function `scene( ... willConnectTo: ...)` delete the code in it and replace it with a simple first call to **GameFrame**: `GameFrame.createSharedInstance(scene, consumablesConfig: [:], adUnitIdBanner: nil, adUnitIdRewarded: nil, adUnitIdInterstitial: nil) {ContentView()}`
-    3. In the function `sceneDidEnterBackground` delete the call to `saveContext`
-    - [ ] In your `info.plist` add your AppID for Google AdMob as described in [Update Your `info.plist`](https://developers.google.com/admob/ios/quick-start#update_your_infoplist)
-- [ ] To use **GameFrame** in Previews add a line in the view file (e.g. `ContentView.swift`). In the file scroll down to the Preview Provider `<View-Name>_Previews` and add the call to **GameFrame** ricgt before the view is created. Use the `createSharedInstanceForPreview` which has less attributes and is lacks all the external windows features like GameCenter and AdMob.
-  - Check TheGame implementation to see how it works, e.g. here in [`ContenView.swift`](./TheGame/TheGame/ContentView.swift)
-  - Remark: SwiftUI PreView is still buggy. So please don't blame me, if it shows it's famous "try again"/"Diagnostics" buttons.
-- [ ] Build your App and run it. Nothing should happen other than, that it works.  
-- [ ] Close the XCode window, where you have built the `GameFrameKit.framework` project.
-  
-  ### Congratulations! Your're done with the setup and start using **GameFrame**
-  What's next:
-  - [Work with Scores, Achievements, Consumables and NonConsumables](./documents/objects.md)
-  - [Link Scores and Achievements to GameCenter](./documents/gameCenter.md)
-  - [Link Consumables and NonConsumables for in-app purchases](./documents/inApps.md)
-  - [Get players reviews and feedback](./documents/reviews.md)
-  - [Connect to Social Media](./documents/externalLinks.md)
-  - [A Button to your App Settings](./documents/settings.md)
-  - [Add advertisement banners to your App](./documents/banners.md)
-  - [Add advertisement interstitials to your App](./documents/interstitials.md)
-  - [Add rewarded videos to your App](./documents/rewardedVideos.md)
+This is a list of things, I came across during developing games - and always forget. It's surely not complete. After you installed and started to develop your game you have to interact with these things:
+- [ ] [iTunesConnect](https://itunesconnect.apple.com/login) is the place to register your App with Apple, define products for in-app purchases, leaderboards and achievements for the GameCenter. Inform **GameFrame** about the defined information items in the `GameConfig`file to associate in-app products with corresponding `consumable`and `nonConsumable`. for Leaderboards and Achievements make sure, you use the same ID for the item in GameCenter as for the item in **GameFrame**
+- [ ] [Google AdMob](https://developers.google.com/admob/ios/quick-start) to create an account and register your App with banners, interstitials and rewarded videos. You get an ID for each. Put these ID's into the `info.plist` and the `GameConfig`
+- [ ] For [info.plist](./TheGame/TheGame/info.plist) I'd recommend two more entries: `Bundle display name` to give your game a nice name and `Privacy - Photo Library Additions Usage Description` to enable, that during sharing, when the player chooses to save the screenshot, he/she is asked for permission - instead of the app crashing.
 
 ## Checklist to deploy ready implemented App
 You're ready to go? Did all the implementation? It's tested? It's profiled and performance tuned?
@@ -98,5 +63,5 @@ Here's a list of things, that probably need to be done now before deployment.
 - [ ] Deploy
 
 ## More good readings
-At least some, that I like and helped me. 
+At least some, that I like and helped me.
 - [40 secrets to make money with in-app-purchases](https://www.raywenderlich.com/2700-40-secrets-to-making-money-with-in-app-purchases)

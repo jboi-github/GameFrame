@@ -24,17 +24,17 @@ struct SettingsView<C, S>: View where C: GameConfig, S: GameSkin {
                     gameFrame,
                     informationFrame: informationFrame,
                     navigationFrame: navigationFrame))
+            InformationLayer<S>(
+                parent: "Settings",
+                items: config.settingsInformation(frame: gameFrame))
+                .modifier(skin.getSettingsInformationModifier())
+                .getFrame($informationFrame)
             NavigationLayer<C, S>(
                 parent: "Settings",
                 items: config.settingsNavigation(frame: gameFrame),
                 navbarItem: config.settingsNavigationBar)
                 .modifier(skin.getSettingsNavigationModifier())
                 .getFrame($navigationFrame)
-            InformationLayer<S>(
-                parent: "Settings",
-                items: config.settingsInformation(frame: gameFrame))
-                .modifier(skin.getSettingsInformationModifier())
-                .getFrame($informationFrame)
         }
         .modifier(skin.getSettingsModifier())
         .getFrame($gameFrame)

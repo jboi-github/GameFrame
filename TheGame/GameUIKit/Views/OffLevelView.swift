@@ -21,15 +21,15 @@ struct OffLevelView<C, S>: View where C: GameConfig, S: GameSkin {
             
             if !startsInLevel {
                 ZStack {
+                    InformationLayer<S>(
+                        parent: "OffLevel",
+                        items: config.offLevelInformation(frame: gameFrame))
+                        .modifier(skin.getOffLevelInformationModifier())
                     NavigationLayer<C, S>(
                         parent: "OffLevel",
                         items: config.offLevelNavigation(frame: gameFrame),
                         navbarItem: config.offLevelNavigationBar)
                         .modifier(skin.getOffLevelNavigationModifier())
-                    InformationLayer<S>(
-                        parent: "OffLevel",
-                        items: config.offLevelInformation(frame: gameFrame))
-                        .modifier(skin.getOffLevelInformationModifier())
                 }
             }
         }
