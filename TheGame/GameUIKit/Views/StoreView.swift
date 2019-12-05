@@ -99,7 +99,6 @@ struct StoreView<C, S>: View where C: GameConfig, S: GameSkin {
                     navbarItem: .Buttons(.Restore()),
                     isOverlayed: isOverlayed)
                     .modifier(skin.getStoreNavigationModifier())
-
             }
             .modifier(skin.getStoreProductsModifier(isOverlayed: isOverlayed))
         }

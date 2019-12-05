@@ -33,6 +33,11 @@ struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
                         gameFrame,
                         informationFrame: informationFrame,
                         navigationFrame: navigationFrame))
+                InformationLayer<S>(
+                    parent: "InLevel",
+                    items: config.inLevelInformation(frame: gameFrame))
+                    .modifier(skin.getInLevelInformationModifier())
+                    .getFrame($informationFrame)
                 NavigationLayer<C, S>(
                     parent: "InLevel",
                     items: config.inLevelNavigation(frame: gameFrame),
@@ -41,11 +46,6 @@ struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
                     isOverlayed: isOverlayed)
                     .modifier(skin.getInLevelNavigationModifier())
                     .getFrame($navigationFrame)
-                InformationLayer<S>(
-                    parent: "InLevel",
-                    items: config.inLevelInformation(frame: gameFrame))
-                    .modifier(skin.getInLevelInformationModifier())
-                    .getFrame($informationFrame)
             }
             .modifier(skin.getInLevelGameModifier(isOverlayed: isOverlayed))
             .getFrame($gameFrame)
