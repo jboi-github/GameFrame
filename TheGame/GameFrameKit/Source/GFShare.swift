@@ -54,17 +54,23 @@ public class GFShare: NSObject {
      - Parameter bounds: Frame of the screenshot, that will be appended
      */
     public func show(bounds: CGRect?) {
+        // Build the information items
+        let screenshot = bounds != nil ? getScreenhot(bounds: bounds!) : nil
+        let imageUrl = screenshot != nil ? urlForImage(image: screenshot!) : nil
+        let shareItemSource = ShareItemSource(greeting: greeting, appName: appName, imageUrl: imageUrl)
+        let infoStrings = infos.map {$0.asString()}
+
+        // Put into activity items
         var items = [Any]()
-        items.append(ShareItemSource(greeting: greeting, appName: appName))
-        for info in infos {items.append(info.asString())}
-        if let bounds = bounds, let screenshot = getScreenhot(bounds: bounds) {
-            log(screenshot.size)
+        items.append(shareItemSource)
+        items.append(contentsOf: infoStrings)
+        if let screenshot = screenshot {
             items.append(screenshot)
-        } else if let logo = getLogo() {
-            log(logo.size)
+        } else if let logo = logo {
             items.append(logo)
         }
         if let url = url {items.append(url)}
+        //if let imageUrl = imageUrl {items.append(imageUrl)}
         
         // Create and show view
         let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
@@ -94,15 +100,31 @@ public class GFShare: NSObject {
             window?.layer.render(in: $0.cgContext)
         }
     }
+    
+    private func urlForImage(image: UIImage) -> URL? {
+        guard let data = image.pngData() else {return nil}
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("screenshot.png", isDirectory: false)
+        log(url)
+        
+        do {
+            try data.write(to: url)
+            log()
+        } catch {
+            guard check(error) else {return nil}
+        }
+        return url
+    }
 }
 
 private class ShareItemSource: NSObject, UIActivityItemSource {
     private let greeting: String
     private let appName: String
+    private let imageUrl: URL?
 
-    fileprivate init(greeting: String, appName: String) {
+    fileprivate init(greeting: String, appName: String, imageUrl: URL?) {
         self.greeting = greeting
         self.appName = appName
+        self.imageUrl = imageUrl
     }
     
     func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any {
@@ -120,7 +142,12 @@ private class ShareItemSource: NSObject, UIActivityItemSource {
     func activityViewControllerLinkMetadata(_ activityViewController: UIActivityViewController) -> LPLinkMetadata? {
         let metadata = LPLinkMetadata()
         metadata.title = appName
-        // Providing url's here means to remove the default behaviour to use the AppIcon
+        //metadata.iconProvider = NSItemProvider(contentsOf: imageUrl)
+        //metadata.imageProvider = NSItemProvider(contentsOf: imageUrl)
+        //metadata.url = imageUrl
+        //metadata.originalURL = imageUrl
+        
+        // Providing url and originalUrl here means to remove the default behaviour to use the AppIcon
         return metadata
     }
 }

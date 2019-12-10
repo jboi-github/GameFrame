@@ -12,7 +12,7 @@ import GameFrameKit
 /**
  Information items to be used in configuration of the game. Each reflects an information.
 */
-struct InformationLayer<S>: View where S: GameSkin {
+struct InformationLayer<S>: View where S: Skin {
     let parent: String
     let items: [[Information]]
     @EnvironmentObject private var skin: S
@@ -29,12 +29,12 @@ struct InformationLayer<S>: View where S: GameSkin {
                         Item<S>(parent: self.parent, row: row, col: col, item: self.items[row][col])
                     }
                 }
-                .modifier(self.skin.getInformationRowModifier(parent: self.parent, row: row))
+                .build(self.skin, .Commons(.InformationRow(parent: self.parent, row: row)))
             }
         }
     }
     
-    private struct Item<S>: View where S: GameSkin {
+    private struct Item<S>: View where S: Skin {
         let parent: String
         let row: Int
         let col: Int
@@ -54,7 +54,7 @@ struct InformationLayer<S>: View where S: GameSkin {
             }
         }
         
-        private struct AchievementView<S>: View where S: GameSkin {
+        private struct AchievementView<S>: View where S: Skin {
             let parent: String
             let id: String
             let format: String
@@ -70,11 +70,11 @@ struct InformationLayer<S>: View where S: GameSkin {
             
             var body: some View {
                 Text("\(achievement.current.format(format))")
-                    .modifier(skin.getInformationItemModifier(parent: parent, id: id))
+                    .build(skin, .InformationItem(parent: parent, id: id))
             }
         }
         
-        private struct ScoreView<S>: View where S: GameSkin {
+        private struct ScoreView<S>: View where S: Skin {
             let parent: String
             let id: String
             @ObservedObject private var score: GFScore
@@ -88,11 +88,11 @@ struct InformationLayer<S>: View where S: GameSkin {
             
             var body: some View {
                 Text("\(score.current) / \(score.highest)")
-                    .modifier(skin.getInformationItemModifier(parent: parent, id: id))
+                    .build(skin, .InformationItem(parent: parent, id: id))
             }
         }
         
-        private struct ConsumableView<S>: View where S: GameSkin {
+        private struct ConsumableView<S>: View where S: Skin {
             let parent: String
             let id: String
             @ObservedObject private var consumable: GFConsumable
@@ -106,11 +106,11 @@ struct InformationLayer<S>: View where S: GameSkin {
             
             var body: some View {
                 Text("\(consumable.available)")
-                    .modifier(skin.getInformationItemModifier(parent: parent, id: id))
+                    .build(skin, .InformationItem(parent: parent, id: id))
             }
         }
 
-        private struct NonConsumableView<S>: View where S: GameSkin {
+        private struct NonConsumableView<S>: View where S: Skin {
             let parent: String
             let id: String
             let opened: Image
@@ -134,7 +134,7 @@ struct InformationLayer<S>: View where S: GameSkin {
                         closed!
                     }
                 }
-                .modifier(skin.getInformationNonConsumableModifier(parent: parent, id: id))
+                .build(skin, .Commons(.InformationNonConsumable(parent: parent, id: id)))
             }
         }
     }

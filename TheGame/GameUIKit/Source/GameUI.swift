@@ -44,7 +44,7 @@ public class GameUI: NSObject, ObservableObject  {
      */
     public static func createSharedInstance<C, S>(
         scene: UIScene, gameConfig: C, gameDelegate: GameDelegate, gameSkin: S, startsOffLevel: Bool)
-        where C: GameConfig, S: GameSkin
+        where C: GameConfig, S: Skin
     {
         if instance != nil {return}
         
@@ -60,7 +60,7 @@ public class GameUI: NSObject, ObservableObject  {
             infos: gameConfig.sharedInformations,
             greeting: gameConfig.sharedGreeting) {
             
-                return MainView<C, S>()
+                return MainView<C,S>()
                     .environmentObject(gameSkin)
                     .environmentObject(gameConfig)
         }

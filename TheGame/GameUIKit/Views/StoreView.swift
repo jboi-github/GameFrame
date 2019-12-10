@@ -10,7 +10,7 @@ import SwiftUI
 import GameFrameKit
 import StoreKit
 
-struct StoreView<C, S>: View where C: GameConfig, S: GameSkin {
+struct StoreView<C, S>: View where C: GameConfig, S: Skin {
     let consumableIds: [String]
     let nonConsumableIds: [String]
     @ObservedObject private var inApp = GameFrame.inApp
@@ -33,9 +33,9 @@ struct StoreView<C, S>: View where C: GameConfig, S: GameSkin {
                 HStack {
                     VStack {
                         Text("\(product.localizedTitle)")
-                            .modifier(skin.getStoreProductTitleModifier(id: product.productIdentifier))
+                            .build(skin, .StoreProductTitle(id: product.productIdentifier))
                         Text("\(product.localizedDescription)")
-                            .modifier(skin.getStoreProductDescriptionModifier(id: product.productIdentifier))
+                            .build(skin, .StoreProductDescription(id: product.productIdentifier))
                     }
                     Spacer()
                     if proxy.size.width > proxy.size.height && product.isPurelyConsumable {
@@ -44,28 +44,28 @@ struct StoreView<C, S>: View where C: GameConfig, S: GameSkin {
                                 Spacer()
                                 Spacer()
                                 Text("\(quantity)")
-                                    .modifier(skin.getStoreProductQuantityModifier(id: product.productIdentifier))
+                                    .build(skin, .StoreProductQuantity(id: product.productIdentifier))
                             }
                         }
                         .disabled(isOverlayed)
-                        .buttonStyle(skin.getStoreProductStepperModifier(id: product.productIdentifier, isDisabled: false))
+                        .buttonStyle(SkinButtonStyle(skin: skin, item: .StoreProductStepper(id: product.productIdentifier, isDisabled: false)))
                     }
                     Button(action: {
                         GameFrame.inApp.buy(product: self.product, quantity: self.quantity)
                     }) {
                         VStack {
                             Image(systemName: "cart")
-                                .modifier(skin.getStoreProductCartModifier(id: product.productIdentifier))
+                                .build(skin, .StoreProductCart(id: product.productIdentifier))
                             Text("\(product.localizedPrice(quantity: 1))")
-                                .modifier(skin.getStoreProductPriceModifier(id: product.productIdentifier))
+                                .build(skin, .StoreProductPrice(id: product.productIdentifier))
                         }
                     }
                     .disabled(isOverlayed)
-                    .buttonStyle(skin.getStoreProductButtonModifier(
+                    .buttonStyle(SkinButtonStyle(skin: skin, item: .StoreProductButton(
                         id: product.productIdentifier,
-                        isDisabled: isOverlayed))
+                        isDisabled: isOverlayed)))
                 }
-                .modifier(skin.getStoreProductModifier(id: product.productIdentifier))
+                .build(skin, .Store(.Product(id: product.productIdentifier)))
             }
         }
 
@@ -77,16 +77,14 @@ struct StoreView<C, S>: View where C: GameConfig, S: GameSkin {
                     Spacer()
                     if products.isEmpty {
                         Text("No products available or store not available")
-                            .modifier(skin.getStoreEmptyModifier())
+                            .build(skin, .StoreEmpty)
                     } else {
                         GeometryReader {
                             proxy in
                             
                             ScrollView {
                                 ForEach(0..<products.count, id: \.self) {
-                                    id in
-                                    
-                                    ProductRow(product: products[id], isOverlayed: self.isOverlayed, proxy: proxy)
+                                    ProductRow(product: products[$0], isOverlayed: self.isOverlayed, proxy: proxy)
                                 }
                             }
                         }
@@ -98,9 +96,9 @@ struct StoreView<C, S>: View where C: GameConfig, S: GameSkin {
                     items: [[.Buttons(.Restore()), .Links(.Back())]],
                     navbarItem: .Buttons(.Restore()),
                     isOverlayed: isOverlayed)
-                    .modifier(skin.getStoreNavigationModifier())
+                    .build(skin, .Store(.Navigation))
             }
-            .modifier(skin.getStoreProductsModifier(isOverlayed: isOverlayed))
+            .build(skin, .Store(.Products(isOverlayed: isOverlayed)))
         }
     }
 
@@ -126,7 +124,7 @@ struct StoreView<C, S>: View where C: GameConfig, S: GameSkin {
                     isOverlayed: false)
             }
         }
-        .modifier(skin.getStoreModifier())
+        .build(skin, .Store(.Main))
     }
 }
 

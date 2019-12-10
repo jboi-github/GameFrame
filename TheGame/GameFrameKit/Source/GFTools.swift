@@ -10,6 +10,7 @@ import Foundation
 import CoreData
 import UIKit
 import StoreKit
+import SwiftUI
 
 /**
  Get value from dictionary if key already exists. If key does not exist, use closure to create value, put it into dictionary and return it.

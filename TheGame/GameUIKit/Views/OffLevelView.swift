@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct OffLevelView<C, S>: View where C: GameConfig, S: GameSkin {
+struct OffLevelView<C, S>: View where C: GameConfig, S: Skin {
     @State var startsInLevel: Bool
     @State private var gameFrame: CGRect = .zero
     @EnvironmentObject private var config: C
@@ -24,16 +24,16 @@ struct OffLevelView<C, S>: View where C: GameConfig, S: GameSkin {
                     InformationLayer<S>(
                         parent: "OffLevel",
                         items: config.offLevelInformation(frame: gameFrame))
-                        .modifier(skin.getOffLevelInformationModifier())
+                        .build(skin, .OffLevel(.Information))
                     NavigationLayer<C, S>(
                         parent: "OffLevel",
                         items: config.offLevelNavigation(frame: gameFrame),
                         navbarItem: config.offLevelNavigationBar)
-                        .modifier(skin.getOffLevelNavigationModifier())
+                        .build(skin, .OffLevel(.Navigation))
                 }
             }
         }
-        .modifier(skin.getOffLevelModifier())
+        .build(skin, .OffLevel(.Main))
         .getFrame($gameFrame)
     }
 }

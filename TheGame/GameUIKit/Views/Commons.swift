@@ -47,25 +47,25 @@ struct BlurView: UIViewRepresentable {
     func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<BlurView>) {}
 }
 
-struct ErrorAlert<C, S>: View  where C: GameConfig, S: GameSkin {
+struct ErrorAlert<C, S>: View  where C: GameConfig, S: Skin {
     @EnvironmentObject private var skin: S
     
     var body: some View {
         VStack {
             Text("\(GameFrame.inApp.error?.localizedDescription ?? "OK")")
-            .modifier(skin.getErrorMessageModifier())
+                .build(skin, .ErrorMessage)
             NavigationLayer<C, S>(parent: "Error", items: [[.Buttons(.ErrorBack())]])
         }
-        .modifier(skin.getErrorModifier())
+        .build(skin, .Commons(.Error))
     }
 }
 
-struct WaitAlert<S>: View  where S: GameSkin {
+struct WaitAlert<S>: View  where S: Skin {
     @EnvironmentObject private var skin: S
     
     var body: some View {
         ActivityIndicator(isAnimating: true, style: .large)
-            .modifier(skin.getWaitModifier())
+            .build(skin, .Commons(.Wait))
     }
 }
 

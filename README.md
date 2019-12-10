@@ -9,7 +9,7 @@ Implementing all the named features is necessary to earn money with the App but 
 I read all the documents, ran through deploying Apps based on the extracted code and bundled it then in this FrameWork.
 
 ## What you get
-**GameFrame** follows a simple information model and provides configurable-standard navigations for easy user experience. Additionally it provides two ways to earn money with your game: (1) by adding products, purchasable via in-ap purchases and (2) via adertisements with banners, interstitials and rewarded videos.
+**GameFrame** follows a simple information model and provides configurable-standard navigations for easy user experience. Additionally it provides two ways to earn money with your game: (1) by adding products, purchasable via in-ap purchases and (2) via advertisements with banners, interstitials and rewarded videos.
 
 ### Information
 There're four kinds of information items that are defined in `GameFrameKit`.
@@ -18,7 +18,7 @@ There're four kinds of information items that are defined in `GameFrameKit`.
 
 For In-App purchases, **GameFrame** defines `Consumable` and `NonConsumable` in the way, they're described in [StoreKit In-App Purchase](https://developer.apple.com/documentation/storekit/in-app_purchase)
 
-These items are maintained, reported and interacted throughout the game in many differnt ways. The following picture illustrates how they relate and interact with different serices on iOS.
+These items are maintained, reported and interacted throughout the game in many differnt ways. The following picture illustrates how they relate and interact with different services on iOS.
 ![illustrate information interaction with iOS services](./images/information.png)
 
 ### Navigation
@@ -27,7 +27,7 @@ These items are maintained, reported and interacted throughout the game in many 
 
 ## What you have to add to make it *your* game
 The idea is, that you can focus on the game itself. Its logic, design and spirit. But let's start right away.
-1. Download, compile and run: Download this project, open it with XCode, build and run it. See, what you get. Try to press the buttons and navigate through "The Game", which is a ficitve game. Well, it has four buttons that change the values of information items. But its purpose is, to show how to work with **GameFrame**.
+1. Download, compile and run: Download this project, open it with XCode, build and run it. See, what you get. Try to press the buttons and navigate through "The Game", which is a ficitve game. Well, it has four buttons that change the values of information items. Its purpose is, to show how to work with **GameFrame**.
 2. Have a short look at, what you got: **GameFrame** and the downloaded project conssist of three modules:
   * `GameFrameKit`: Lowest level. Implements the information items and handling in GameCenter, StoreKit, AdMob, CoreData, iCloud.
   * `GameUIKit`: Defines the navigation and players experience in the game.
@@ -53,7 +53,7 @@ You're ready to go? Did all the implementation? It's tested? It's profiled and p
 
 Then, let's go!
 
-Here's a list of things, that probably need to be done now before deployment. 
+Here's a list of things, that probably need to be done now before deployment.
 - [ ] In `AppDelegate.swift`, function `application(...didFinishLaunchingWithOptions...)` add the line `maxLogLevel = 0` to save performance and do not write log-messages (not even generating them)
 - [ ] In your call to `GameFrame.createSharedInstance()` (probably in `SceneDelegate.swift`) change the `adUnitIdXXXXX` parameters to the values, that Google has provided to you for banners, interstitials and rewarded videos.
 - [ ] In the iCloud-Dashboard deploy the schema of your Container to production
@@ -65,3 +65,4 @@ Here's a list of things, that probably need to be done now before deployment.
 ## More good readings
 At least some, that I like and helped me.
 - [40 secrets to make money with in-app-purchases](https://www.raywenderlich.com/2700-40-secrets-to-making-money-with-in-app-purchases)
+- [How to Make an App Like Instagram?] (https://erminesoft.com/how-to-make-a-photo-sharing-app-like-instagram/) has a lot of tipps and tricks to make any kind of App. Baseline: If you dont take it serious, you have no chance. If you take it serious, you might get a chance.

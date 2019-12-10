@@ -9,7 +9,7 @@
 import SwiftUI
 import GameFrameKit
 
-struct NavigationLayer<C, S>: View where C: GameConfig, S: GameSkin {
+struct NavigationLayer<C, S>: View where C: GameConfig, S: Skin {
     let parent: String
     let items: [[Navigation]]
     let navbarItem: Navigation?
@@ -46,7 +46,7 @@ struct NavigationLayer<C, S>: View where C: GameConfig, S: GameSkin {
                             bounds: self.bounds)
                     }
                 }
-                .modifier(self.skin.getNavigationRowModifier(parent: self.parent, row: row))
+                .build(self.skin, .Commons(.NavigationRow(parent: self.parent, row: row)))
             }
         }
         .navigationBarItems(
@@ -72,7 +72,7 @@ struct NavigationLayer<C, S>: View where C: GameConfig, S: GameSkin {
         var body: some View {
             asView(item, bounds: bounds)
                 .disabled(isDisabled(item))
-                .buttonStyle(skin.getNavigationItemModifier(parent: parent, isDisabled: isDisabled(item), item: item))
+                .buttonStyle(SkinButtonStyle(skin: skin, item: .NavigationItem(parent: parent, isDisabled: isDisabled(item), item: item)))
         }
 
         private func asView(_ item: Navigation, bounds: CGRect?) -> some View {

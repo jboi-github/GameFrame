@@ -9,7 +9,7 @@
 import SwiftUI
 import GameFrameKit
 
-struct MainView<C, S>: View where C: GameConfig, S: GameSkin {
+struct MainView<C, S>: View where C: GameConfig, S: Skin {
     @State private var startsInLevel: Bool = false
     @EnvironmentObject private var config: C
     @EnvironmentObject private var skin: S
@@ -19,15 +19,12 @@ struct MainView<C, S>: View where C: GameConfig, S: GameSkin {
         @EnvironmentObject private var skin: S
         
         var body: some View {
-            ZStack {
-                GFBannerView() // Must be shown, otherwise AdMob doe not start to load anything
-                if !adMob.bannerAvailable {
-                    EmptyView()
-                        .modifier(skin.getMainBannerEmptyModifier())
-                }
-            }
-            .frame(width: adMob.bannerSize.width, height: adMob.bannerSize.height)
-            .modifier(skin.getMainBannerModifier(width: adMob.bannerSize.width, height: adMob.bannerSize.height))
+            GFBannerView() // Must be shown, otherwise AdMob doe not start to load anything
+                .frame(width: adMob.bannerSize.width, height: adMob.bannerSize.height)
+                .build(skin, .Main(.Banner(
+                    width: adMob.bannerSize.width,
+                    height: adMob.bannerSize.height,
+                    available: adMob.bannerAvailable)))
         }
     }
     
@@ -38,7 +35,7 @@ struct MainView<C, S>: View where C: GameConfig, S: GameSkin {
             }
             Banner()
         }
-        .modifier(skin.getMainModifier())
+        .build(skin, .Main(.Main))
     }
 }
 

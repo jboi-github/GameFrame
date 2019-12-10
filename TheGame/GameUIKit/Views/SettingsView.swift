@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct SettingsView<C, S>: View where C: GameConfig, S: GameSkin {
+struct SettingsView<C, S>: View where C: GameConfig, S: Skin {
     @State private var gameFrame: CGRect = .zero
     @State private var informationFrame: CGRect = .zero
     @State private var navigationFrame: CGRect = .zero
@@ -20,23 +20,23 @@ struct SettingsView<C, S>: View where C: GameConfig, S: GameSkin {
             // Spread to available display
             VStack{Spacer(); HStack{Spacer()}}
             EmptyView()
-                .modifier(skin.getSettingsSpaceModifier(
+                .build(skin, .Settings(.Space(
                     gameFrame,
                     informationFrame: informationFrame,
-                    navigationFrame: navigationFrame))
+                    navigationFrame: navigationFrame)))
             InformationLayer<S>(
                 parent: "Settings",
                 items: config.settingsInformation(frame: gameFrame))
-                .modifier(skin.getSettingsInformationModifier())
+                .build(skin, .Settings(.Information))
                 .getFrame($informationFrame)
             NavigationLayer<C, S>(
                 parent: "Settings",
                 items: config.settingsNavigation(frame: gameFrame),
                 navbarItem: config.settingsNavigationBar)
-                .modifier(skin.getSettingsNavigationModifier())
+                .build(skin, .Settings(.Navigation))
                 .getFrame($navigationFrame)
         }
-        .modifier(skin.getSettingsModifier())
+        .build(skin, .Settings(.Main))
         .getFrame($gameFrame)
     }
 }

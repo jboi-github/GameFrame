@@ -10,7 +10,7 @@ import SwiftUI
 import GameFrameKit
 import StoreKit
 
-struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
+struct InLevelView<C, S>: View where C: GameConfig, S: Skin {
     @ObservedObject var gameUI = GameUI.instance
     @EnvironmentObject private var skin: S
 
@@ -29,14 +29,14 @@ struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
                 // Spread to available display
                 VStack{Spacer(); HStack{Spacer()}}
                 EmptyView()
-                    .modifier(skin.getInLevelGameZoneModifier(
+                    .build(skin, .InLevel(.GameZone(
                         gameFrame,
                         informationFrame: informationFrame,
-                        navigationFrame: navigationFrame))
+                        navigationFrame: navigationFrame)))
                 InformationLayer<S>(
                     parent: "InLevel",
                     items: config.inLevelInformation(frame: gameFrame))
-                    .modifier(skin.getInLevelInformationModifier())
+                    .build(skin, .InLevel(.Information))
                     .getFrame($informationFrame)
                 NavigationLayer<C, S>(
                     parent: "InLevel",
@@ -44,10 +44,10 @@ struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
                     navbarItem: config.inLevelNavigationBar,
                     bounds: gameFrame,
                     isOverlayed: isOverlayed)
-                    .modifier(skin.getInLevelNavigationModifier())
+                    .build(skin, .InLevel(.Navigation))
                     .getFrame($navigationFrame)
             }
-            .modifier(skin.getInLevelGameModifier(isOverlayed: isOverlayed))
+            .build(skin, .InLevel(.Game(isOverlayed: isOverlayed)))
             .getFrame($gameFrame)
             .onAppear {
                 GameUI.instance.presentationMode = self.presentationMode
@@ -77,23 +77,23 @@ struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
                     HStack {
                         VStack {
                             Text("\(product.localizedTitle)")
-                                .modifier(skin.getOfferProductTitleModifier(id: product.productIdentifier))
+                                .build(skin, .OfferProductTitle(id: product.productIdentifier))
                             Text("\(product.localizedDescription)")
-                                .modifier(skin.getOfferProductDescriptionModifier(id: product.productIdentifier))
+                                .build(skin, .OfferProductDescription(id: product.productIdentifier))
                         }
                         Spacer()
                         VStack {
                             Image(systemName: "cart")
-                                .modifier(skin.getOfferProductCartModifier(id: product.productIdentifier))
+                                .build(skin, .OfferProductCart(id: product.productIdentifier))
                             Text("\(product.localizedPrice(quantity: 1))")
-                                .modifier(skin.getOfferProductPriceModifier(id: product.productIdentifier))
+                                .build(skin, .OfferProductPrice(id: product.productIdentifier))
                         }
                     }
                 }
                 .disabled(isOverlayed)
-                .buttonStyle(skin.getOfferProductModifier(
+                .buttonStyle(SkinButtonStyle(skin: skin, item: .OfferProduct(
                     id: product.productIdentifier,
-                    isDisabled: isOverlayed))
+                    isDisabled: isOverlayed)))
             }
         }
         
@@ -110,16 +110,16 @@ struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
                     ForEach(0..<products.count, id: \.self) {
                         ProductRow(product: products[$0], isOverlayed: self.isOverlayed)
                     }
-                    .modifier(skin.getOfferProductsModifier())
+                    .build(skin, .Offer(.Products))
                     NavigationLayer<C, S>(parent: "Offer",
                         items: [[
                             .Buttons(.OfferBack()),
                             .Buttons(.Reward(consumableId: consumableId, quantity: rewardQuantity))
                         ]],
                         isOverlayed: isOverlayed)
-                    .modifier(skin.getOfferNavigationModifier())
+                        .build(skin, .Offer(.Navigation))
                 }
-                .modifier(skin.getOfferModifier(isOverlayed: isOverlayed))
+                .build(skin, .Offer(.Main(isOverlayed: isOverlayed)))
                 .onAppear {
                     guard !self.isOverlayed else {return}
                     
@@ -167,7 +167,7 @@ struct InLevelView<C, S>: View where C: GameConfig, S: GameSkin {
                 GameView(isOverlayed: false)
             }
         }
-        .modifier(skin.getInLevelModifier())
+        .build(skin, .InLevel(.Main))
     }
 }
 
