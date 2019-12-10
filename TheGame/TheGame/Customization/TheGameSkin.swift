@@ -10,53 +10,21 @@ import SwiftUI
 import GameFrameKit
 import GameUIKit
 
-// MARK: The GameZone View
 /**
  Central Modifier for all views in The Game
  */
-struct TheGameViewModifier: ViewModifier {
-    let item: SkinItem.SkinItemView
-    
-    func body(content: Content) -> some View {
-        switch item {
-        case let .InLevel(item: inLevelItem):
-            switch inLevelItem {
-            case .GameZone:
-                return AnyView(TheGameView().background(Color.yellow))
-            default:
-                return AnyView(content)
-            }
-        case let .Settings(item: settingsItem):
-            switch settingsItem {
-            case .Space:
-                return AnyView(TheGameSettingsView().background(Color.yellow))
-            default:
-                return AnyView(content)
-            }
-        case let .Main(item: mainItem):
-            switch mainItem {
-            case let .Banner(width: width, height: height, available: available):
-                return AnyView(
-                    VStack {
-                        if !available {
-                            Text("Thank you for playing The Game")
-                            .frame(width: width, height: height)
-                            .foregroundColor(.secondary)
-                            .background(Color.primary.colorInvert()) // Ensure opaque background
-                        }
-                    }
-                )
-            default:
-                return AnyView(content)
-            }
-        default:
-            return AnyView(content)
-        }
-    }
-}
-
-// MARK: - A Skin that delegates to standard skin implementation
 class TheGameSkin: SimpleSkin {
+    init() {
+        super.init(
+            offLevelTitle: "The Game",
+            primaryColor: UIColor.lightGray,
+            secondaryColor: UIColor.systemRed,
+            accentColor: UIColor.systemRed,
+            primaryInvertColor: UIColor.darkGray,
+            secondaryInvertColor: UIColor.lightGray,
+            accentInvertColor: UIColor.systemGreen)
+    }
+    
     override public func build(_ item: SkinItem.SkinItemView, view: AnyView) -> AnyView {
         switch item {
         case let .InLevel(item: inLevelItem):
@@ -77,12 +45,13 @@ class TheGameSkin: SimpleSkin {
             switch mainItem {
             case let .Banner(width: width, height: height, available: available):
                 return AnyView(
-                    VStack {
+                    ZStack {
+                        view
                         if !available {
                             Text("Thank you for playing The Game")
                             .frame(width: width, height: height)
-                            .foregroundColor(.secondary)
-                            .background(Color.primary.colorInvert()) // Ensure opaque background
+                            .foregroundColor(Color(.lightGray))
+                            .background(Color(.darkGray)) // Ensure opaque background
                         }
                     }
                 )
