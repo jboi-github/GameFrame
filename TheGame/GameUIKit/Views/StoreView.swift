@@ -10,17 +10,15 @@ import SwiftUI
 import GameFrameKit
 import StoreKit
 
-struct StoreView<C, S>: View where C: GameConfig, S: GameSkin {
-    let consumableIds: [String]
-    let nonConsumableIds: [String]
+struct StoreView<C, S>: View where C: GameConfig, S: Skin {
     @ObservedObject private var inApp = GameFrame.inApp
+    @EnvironmentObject private var config: C
     @EnvironmentObject private var skin: S
 
     private struct ProductsView: View {
-        let consumableIds: [String]
-        let nonConsumableIds: [String]
         let isOverlayed: Bool
         @EnvironmentObject private var skin: S
+        @EnvironmentObject private var config: C
 
         private struct ProductRow: View {
             let product: SKProduct
@@ -33,9 +31,9 @@ struct StoreView<C, S>: View where C: GameConfig, S: GameSkin {
                 HStack {
                     VStack {
                         Text("\(product.localizedTitle)")
-                            .modifier(skin.getStoreProductTitleModifier(id: product.productIdentifier))
+                            .build(skin, .StoreProductTitle(id: product.productIdentifier))
                         Text("\(product.localizedDescription)")
-                            .modifier(skin.getStoreProductDescriptionModifier(id: product.productIdentifier))
+                            .build(skin, .StoreProductDescription(id: product.productIdentifier))
                     }
                     Spacer()
                     if proxy.size.width > proxy.size.height && product.isPurelyConsumable {
@@ -44,63 +42,71 @@ struct StoreView<C, S>: View where C: GameConfig, S: GameSkin {
                                 Spacer()
                                 Spacer()
                                 Text("\(quantity)")
-                                    .modifier(skin.getStoreProductQuantityModifier(id: product.productIdentifier))
+                                    .build(skin, .StoreProductQuantity(id: product.productIdentifier))
                             }
                         }
                         .disabled(isOverlayed)
-                        .buttonStyle(skin.getStoreProductStepperModifier(id: product.productIdentifier, isDisabled: false))
+                        .buttonStyle(SkinButtonStyle(skin: skin, item: .StoreProductStepper(id: product.productIdentifier, isDisabled: false)))
                     }
                     Button(action: {
                         GameFrame.inApp.buy(product: self.product, quantity: self.quantity)
                     }) {
                         VStack {
                             Image(systemName: "cart")
-                                .modifier(skin.getStoreProductCartModifier(id: product.productIdentifier))
+                                .build(skin, .StoreProductCart(id: product.productIdentifier))
                             Text("\(product.localizedPrice(quantity: 1))")
-                                .modifier(skin.getStoreProductPriceModifier(id: product.productIdentifier))
+                                .build(skin, .StoreProductPrice(id: product.productIdentifier))
                         }
                     }
                     .disabled(isOverlayed)
-                    .buttonStyle(skin.getStoreProductButtonModifier(
+                    .buttonStyle(SkinButtonStyle(skin: skin, item: .StoreProductButton(
                         id: product.productIdentifier,
-                        isDisabled: isOverlayed))
+                        isDisabled: isOverlayed)))
                 }
-                .modifier(skin.getStoreProductModifier(id: product.productIdentifier))
+                .build(skin, .Store(.Product(id: product.productIdentifier)))
             }
         }
 
         var body: some View {
-            let products = GameFrame.inApp.getProducts(consumableIds: consumableIds, nonConsumableIds: nonConsumableIds)
+            let products = GameFrame.inApp.getProducts(config.storePurchasables)
+            var items: [Navigation] = [.Buttons(.Restore()), .Links(.Back())]
+            if let id = config.storeRewardConsumableId {
+                items.insert(.Buttons(.Reward(consumableId: id, quantity: config.storeRewardQuantity)), at: 1)
+            }
             
-            return ZStack {
-                VStack {
-                    Spacer()
-                    if products.isEmpty {
-                        Text("No products available or store not available")
-                            .modifier(skin.getStoreEmptyModifier())
-                    } else {
-                        GeometryReader {
-                            proxy in
-                            
-                            ScrollView {
-                                ForEach(0..<products.count, id: \.self) {
-                                    id in
-                                    
-                                    ProductRow(product: products[id], isOverlayed: self.isOverlayed, proxy: proxy)
+            return VStack {
+                NavigationBar<S>(
+                    parent: "Store",
+                    title: config.storeNavigationBarTitle,
+                    item1: items.count > 2 ? items[1] : nil,
+                    item2: .Buttons(.Restore()),
+                    isOverlayed: isOverlayed)
+                ZStack {
+                    VStack {
+                        Spacer()
+                        if products.isEmpty {
+                            Text("No products available or store not available")
+                                .build(skin, .StoreEmpty)
+                        } else {
+                            GeometryReader {
+                                proxy in
+                                
+                                ScrollView {
+                                    ForEach(0..<products.count, id: \.self) {
+                                        ProductRow(product: products[$0], isOverlayed: self.isOverlayed, proxy: proxy)
+                                    }
                                 }
                             }
                         }
+                        Spacer()
                     }
-                    Spacer()
+                    NavigationLayer<C, S>(
+                        parent: "Store",
+                        items: [items],
+                        isOverlayed: isOverlayed)
                 }
-                NavigationLayer<C, S>(
-                    parent: "Store",
-                    items: [[.Buttons(.Restore()), .Links(.Back())]],
-                    navbarItem: .Buttons(.Restore()),
-                    isOverlayed: isOverlayed)
-                    .modifier(skin.getStoreNavigationModifier())
             }
-            .modifier(skin.getStoreProductsModifier(isOverlayed: isOverlayed))
+            .build(skin, .Store(.Products(isOverlayed: isOverlayed)))
         }
     }
 
@@ -108,35 +114,22 @@ struct StoreView<C, S>: View where C: GameConfig, S: GameSkin {
         // TODO: Workaround as of XCode 11.2. When reading one published var of an ObservablObject multiple times, the App crashes
         ZStack {
             if inApp.purchasing {
-                ProductsView(
-                    consumableIds: consumableIds,
-                    nonConsumableIds: nonConsumableIds,
-                    isOverlayed: true)
+                ProductsView(isOverlayed: true)
                 WaitAlert<S>()
             } else if inApp.error != nil {
-                ProductsView(
-                    consumableIds: consumableIds,
-                    nonConsumableIds: nonConsumableIds,
-                    isOverlayed: true)
+                ProductsView(isOverlayed: true)
                 ErrorAlert<C, S>()
             } else {
-                ProductsView(
-                    consumableIds: consumableIds,
-                    nonConsumableIds: nonConsumableIds,
-                    isOverlayed: false)
+                ProductsView(isOverlayed: false)
             }
         }
-        .modifier(skin.getStoreModifier())
+        .build(skin, .Store(.Main))
     }
 }
 
 struct StoreView_Previews: PreviewProvider {
-    @Environment(\.presentationMode) static var presentationMode
-    
     static var previews: some View {
-        StoreView<PreviewConfig, PreviewSkin>(
-            consumableIds: ["Bullets"],
-            nonConsumableIds: ["weaponB", "weaponC"])
+        StoreView<PreviewConfig, PreviewSkin>()
         .environmentObject(PreviewSkin())
     }
 }

@@ -10,122 +10,55 @@ import SwiftUI
 import GameFrameKit
 import GameUIKit
 
-// MARK: The GameZone View
-struct TheGameZoneModifier: ViewModifier {
-    let selfFrame: CGRect
-    let informationFrame: CGRect
-    let navigationFrame: CGRect
-
-    func body(content: Content) -> some View {TheGameView().background(Color.yellow)}
-}
-
-struct TheGameSettingsSpaceModifier: ViewModifier {
-    let selfFrame: CGRect
-    let informationFrame: CGRect
-    let navigationFrame: CGRect
-
-    func body(content: Content) -> some View {TheGameSettingsView().background(Color.yellow)}
-}
-
-struct TheGameMainBannerEmptyModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        Text("Thank you for playing The Game")
-            .foregroundColor(.secondary)
-            .background(Color.primary.colorInvert()) // Ensure opaque background
-    }
-}
-
-struct TheGameNavigationItemModifier: ButtonStyle {
-    let parent: String
-    let isDisabled: Bool
-    let item: Navigation
-
-    func makeBody(configuration: Self.Configuration) -> some View {
-        VStack {
-            // Make the play button big
-            if parent == "OffLevel" && isPlay(item) {
-                Image(systemName: "play.circle")
-                    .resizable().scaledToFit()
-                    .foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
-                    .padding()
-            } else {
-                configuration.label
-                    .foregroundColor(isDisabled ? Color.secondary : Color.accentColor)
-                    .padding()
-            }
-        }
+/**
+ Central Modifier for all views in The Game
+ */
+class TheGameSkin: SimpleSkin {
+    init() {
+        super.init(
+            primaryColor: UIColor.lightGray,
+            secondaryColor: UIColor.systemRed,
+            accentColor: UIColor.systemRed,
+            primaryInvertColor: UIColor.darkGray,
+            secondaryInvertColor: UIColor.lightGray,
+            accentInvertColor: UIColor.systemGreen)
     }
     
-    private func isPlay(_ item: Navigation) -> Bool {
+    override public func build(_ item: SkinItem.SkinItemView, view: AnyView) -> AnyView {
         switch item {
-        case let .Links(link: link):
-            switch link {
-            case .Play:
-                return true
+        case let .InLevel(item: inLevelItem):
+            switch inLevelItem {
+            case .GameZone:
+                return AnyView(TheGameView().background(Color.yellow))
             default:
-                return false
+                return super.build(item, view: view)
+            }
+        case let .Settings(item: settingsItem):
+            switch settingsItem {
+            case .Space:
+                return AnyView(TheGameSettingsView().background(Color.yellow))
+            default:
+                return super.build(item, view: view)
+            }
+        case let .Main(item: mainItem):
+            switch mainItem {
+            case let .Banner(width: width, height: height, available: available):
+                return AnyView(
+                    ZStack {
+                        view
+                        if !available {
+                            Text("Thank you for playing The Game")
+                            .frame(width: width, height: height)
+                            .foregroundColor(Color(.lightGray))
+                            .background(Color(.darkGray)) // Ensure opaque background
+                        }
+                    }
+                )
+            default:
+                return super.build(item, view: view)
             }
         default:
-            return false
+            return super.build(item, view: view)
         }
     }
-}
-
-struct TheGamePrimaryViewModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .navigationBarTitle("The Game", displayMode: .large)
-            .navigationBarBackButtonHidden(false)
-    }
-}
-
-struct TheGameSecondaryViewModifier: ViewModifier {
-    let title: String
-    
-    func body(content: Content) -> some View {
-        content
-            .navigationBarTitle(Text(title), displayMode: .inline)
-            .navigationBarBackButtonHidden(false)
-    }
-}
-
-struct TheGameNoNavigationModifier: ViewModifier {
-    let title: String
-    
-    func body(content: Content) -> some View {
-        content
-            .navigationBarTitle(Text(title), displayMode: .inline)
-            .navigationBarBackButtonHidden(true)
-    }
-}
-
-// MARK: - A Skin that delegates to standard skin implementation
-class TheGameSkin: GameSkin {
-    // Add The Game Gamezone
-    func getInLevelGameZoneModifier(_ selfFrame: CGRect, informationFrame: CGRect, navigationFrame: CGRect)
-        -> some ViewModifier
-    {
-        TheGameZoneModifier(selfFrame: selfFrame, informationFrame: informationFrame, navigationFrame: navigationFrame)
-    }
-    
-    // Add The Game settings
-    func getSettingsSpaceModifier(_ selfFrame: CGRect, informationFrame: CGRect, navigationFrame: CGRect)
-        -> some ViewModifier
-    {
-        TheGameSettingsSpaceModifier(selfFrame: selfFrame, informationFrame: informationFrame, navigationFrame: navigationFrame)
-    }
-    
-    // Add placeholder, when no banner available
-    func getMainBannerEmptyModifier() -> some ViewModifier {TheGameMainBannerEmptyModifier()}
-
-    // Get a big play-button
-    func getNavigationItemModifier(parent: String, isDisabled: Bool, item: Navigation) -> some ButtonStyle {
-        TheGameNavigationItemModifier(parent: parent, isDisabled: isDisabled, item: item)
-    }
-    
-    // Remove navigation bar on all Navigation Views
-    func getOffLevelModifier() -> some ViewModifier {TheGamePrimaryViewModifier()}
-    func getSettingsModifier() -> some ViewModifier {TheGameSecondaryViewModifier(title: "Settings")}
-    func getStoreModifier() -> some ViewModifier {TheGameSecondaryViewModifier(title: "Store")}
-    func getInLevelModifier() -> some ViewModifier {TheGameNoNavigationModifier(title: "The Game")}
 }

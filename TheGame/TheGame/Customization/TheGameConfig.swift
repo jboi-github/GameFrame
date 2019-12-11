@@ -35,10 +35,15 @@ class TheGameConfig: GameConfig {
         }
     }
     
+    // Just title
+    var offLevelNavigationBarTitle: String = "The Game"
+    var offLevelNavigationBarButton1: Navigation? = nil
+    var offLevelNavigationBarButton2: Navigation? = nil
+
     func offLevelNavigation(frame: CGRect) -> [[Navigation]] {
         if frame.width < frame.height {
             return [[
-                .Links(.Store(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])),
+                .Links(.Store()),
                 .Buttons(.Reward(consumableId: "Bullets", quantity: 100))
             ], [
                 .Buttons(.GameCenter()),
@@ -52,7 +57,7 @@ class TheGameConfig: GameConfig {
             ]]
         } else {
             return [[
-                .Links(.Store(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])),
+                .Links(.Store()),
                 .Buttons(.Reward(consumableId: "Bullets", quantity: 100)),
                 .Buttons(.GameCenter()),
                 .Buttons(.Share()),
@@ -74,24 +79,29 @@ class TheGameConfig: GameConfig {
         ]]
     }
     
+    // Entirely hidden
+    var inLevelNavigationBarTitle: String = ""
+    var inLevelNavigationBarButton1: Navigation? = nil
+    var inLevelNavigationBarButton2: Navigation? = nil
+
     func inLevelNavigation(frame: CGRect) -> [[Navigation]] {
         if frame.width < frame.height {
             return [
                 [
-                    .Links(.Store(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])),
+                    .Links(.Back()),
                     .Buttons(.Reward(consumableId: "Bullets", quantity: 100))
                 ], [
                     .Buttons(.Share()),
-                    .Links(.Back())
+                    .Links(.Store())
                 ]
             ]
         } else {
             return [
                 [
-                    .Links(.Store(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])),
+                    .Links(.Back()),
+                    .Links(.Store()),
                     .Buttons(.Reward(consumableId: "Bullets", quantity: 100)),
-                    .Buttons(.Share()),
-                    .Links(.Back())
+                    .Buttons(.Share())
                 ]
             ]
         }
@@ -104,15 +114,11 @@ class TheGameConfig: GameConfig {
         ]]
     }
     
-    func settingsNavigation(frame: CGRect) -> [[Navigation]] {
-        [[
-            .Links(.Store(consumableIds: ["Bullets"], nonConsumableIds: ["weaponB", "weaponC"])),
-            .Buttons(.Reward(consumableId: "Bullets", quantity: 100))
-        ], [
-            .Buttons(.SystemSettings()),
-            .Links(.Back())
-        ]]
-    }
+    // Only Navigation Bar
+    var settingsNavigationBarTitle: String = "Settings"
+    var settingsNavigationBarButton1: Navigation? = .Buttons(.SystemSettings())
+    var settingsNavigationBarButton2: Navigation? = .Links(.Store())
+    func settingsNavigation(frame: CGRect) -> [[Navigation]] {return [[Navigation]]()}
 
     let purchasables: [String: [GFInApp.Purchasable]] = [
         "bulletsS": [.Consumable(id: "Bullets", quantity: 200, canPrebook: true)],
@@ -121,7 +127,17 @@ class TheGameConfig: GameConfig {
         "Lives": [.Consumable(id: "Lives", quantity: 1, canPrebook: false)],
         "weaponB": [.NonConsumable(id: "weaponB", canPrebook: true)],
         "weaponC": [.NonConsumable(id: "weaponC", canPrebook: true)]]
-    
+    var storePurchasables: [GFInApp.Purchasable] = [
+        .Consumable(id: "Bullets", quantity: 200),
+        .Consumable(id: "Bullets", quantity: 1000),
+        .Consumable(id: "Bullets", quantity: 2000),
+        .NonConsumable(id: "weaponB"),
+        .NonConsumable(id: "weaponC")
+    ]
+    var storeNavigationBarTitle: String = "Store"
+    var storeRewardConsumableId: String? = "Bullets"
+    var storeRewardQuantity: Int = 100
+
     let adUnitIdBanner: String? = "ca-app-pub-3940256099942544/2934735716" // TODO: Replace with id from Google AdMob
     let adUnitIdRewarded: String? = "ca-app-pub-3940256099942544/1712485313" // TODO: Replace with id from AppStore
     let adUnitIdInterstitial: String? = "ca-app-pub-3940256099942544/4411468910" // TODO: Replace with id from AppStore
@@ -134,9 +150,4 @@ class TheGameConfig: GameConfig {
         .Score("Points") {"My best: \($0.highest)"},
         .NonConsumable("weaponC") {$0.isOpened ? "Got the coolest weapon!" : "Struggeling to get weaponC. Can you help?"}
     ]
-        
-    let offLevelNavigationBar: Navigation? = nil
-    let inLevelNavigationBar: Navigation? = .Buttons(.Share())
-    let storeNavigationBar: Navigation? = .Buttons(.Restore())
-    let settingsNavigationBar: Navigation? = .Buttons(.SystemSettings())
 }

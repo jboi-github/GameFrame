@@ -15,11 +15,13 @@ import SwiftUI
  Implement this protocol to define how to navigate through your app and what information to show where and when.
  */
 public protocol GameConfig: ObservableObject {
+    // MARK: OffLevel-Configuration
     /**
      Set to true, to start Game in Off-Level. The player has to press the play-button to start the game. This is useful for arcade games and whenever timing
      is important. If no timing is necessary like in chess, sudoku etc., then this set this to false for easiest player experience.
      */
     var startsOffLevel: Bool {get}
+    
     /**
      Set information items to be shown while the player is off level.
      
@@ -28,12 +30,37 @@ public protocol GameConfig: ObservableObject {
     func offLevelInformation(frame: CGRect) -> [[Information]]
     
     /**
+     Title of the navigation bar.
+     
+     For the sake of flexibility, both navigation panes are alwas built. To hide the navigation bar use the corresponding skin modifier.
+     Nevertheless, games should have only one navigation available.
+     Usually games, that have a minimalistic approach for the skin should let the player navigate by navigation bar.
+     Games, that make heavy changes of the skin and build there own UX, probably want to use the navigation layer.
+     */
+    var offLevelNavigationBarTitle: String {get} // TODO: Should be localized
+    
+    /**
+     First of two possible buttons in the navigation bar. If nil it's not shown.
+     
+     If only one of the two buttons is shown, it's shown as almost trailing, regardless which one was set.
+     */
+    var offLevelNavigationBarButton1: Navigation? {get}
+    
+    /**
+     Second of two possible buttons in the navigation bar. If nil it's not shown.
+     
+     If only one of the two buttons is shown, it's shown as almost trailing, regardless which one was set.
+     */
+    var offLevelNavigationBarButton2: Navigation? {get}
+
+    /**
      Set navigation items to be shown while the player is off level.
      
      The two dimensional array is layed out to rows and columns. Each row can have different number of columns.
      */
     func offLevelNavigation(frame: CGRect) -> [[Navigation]]
     
+    // MARK: InLevel-Configuration
     /**
      Set information items to be shown while the player is in level. The information is shown as overlay to your game view.
      
@@ -42,12 +69,37 @@ public protocol GameConfig: ObservableObject {
     func inLevelInformation(frame: CGRect) -> [[Information]]
     
     /**
+     Title of the navigation bar.
+     
+     For the sake of flexibility, both navigation panes are alwas built. To hide the navigation bar use the corresponding skin modifier.
+     Nevertheless, games should have only one navigation available.
+     Usually games, that have a minimalistic approach for the skin should let the player navigate by navigation bar.
+     Games, that make heavy changes of the skin and build there own UX, probably want to use the navigation layer.
+     */
+    var inLevelNavigationBarTitle: String {get} // TODO: Should be localized
+    
+    /**
+     First of two possible buttons in the navigation bar. If nil it's not shown.
+     
+     If only one of the two buttons is shown, it's shown as almost trailing, regardless which one was set.
+     */
+    var inLevelNavigationBarButton1: Navigation? {get}
+    
+    /**
+     Second of two possible buttons in the navigation bar. If nil it's not shown.
+     
+     If only one of the two buttons is shown, it's shown as almost trailing, regardless which one was set.
+     */
+    var inLevelNavigationBarButton2: Navigation? {get}
+
+    /**
      Set navigation items to be shown while the player is in level. The navigation is shown as overlay to your game view.
      
      The two dimensional array is layed out to rows and columns. Each row can have different number of columns.
      */
     func inLevelNavigation(frame: CGRect) -> [[Navigation]]
 
+    // MARK: Settings-Configuration
     /**
      Set information items to be shown while the player is in settings.
      
@@ -56,26 +108,90 @@ public protocol GameConfig: ObservableObject {
     func settingsInformation(frame: CGRect) -> [[Information]]
     
     /**
+     Title of the navigation bar.
+     
+     For the sake of flexibility, both navigation panes are alwas built. To hide the navigation bar use the corresponding skin modifier.
+     Nevertheless, games should have only one navigation available.
+     Usually games, that have a minimalistic approach for the skin should let the player navigate by navigation bar.
+     Games, that make heavy changes of the skin and build there own UX, probably want to use the navigation layer.
+     */
+    var settingsNavigationBarTitle: String {get} // TODO: Should be localized
+    
+    /**
+     First of two possible buttons in the navigation bar. If nil it's not shown.
+     
+     If only one of the two buttons is shown, it's shown as almost trailing, regardless which one was set.
+     */
+    var settingsNavigationBarButton1: Navigation? {get}
+    
+    /**
+     Second of two possible buttons in the navigation bar. If nil it's not shown.
+     
+     If only one of the two buttons is shown, it's shown as almost trailing, regardless which one was set.
+     */
+    var settingsNavigationBarButton2: Navigation? {get}
+
+    /**
      Set navigation items to be shown while the player is in settings.
      
      The two dimensional array is layed out to rows and columns. Each row can have different number of columns.
      */
     func settingsNavigation(frame: CGRect) -> [[Navigation]]
     
+    // MARK: Store and Offer-Configuration
     /**
      Define which products affect which consumable after a purchase.
      
      This dictionary uses product-identifier as defined when setup products for in-app store as key.
      The value is the `Consumable` or `NonConsumable` that is affected and the amount, that is bought with each purchase.
      
-     **Example**: You have a product for in-app purchases of `Get1000Bullets` and a consumable `Bullets`. With this, you define by
+     - **Example 1**: You have a product for in-app purchases of `Get1000Bullets` and a consumable `Bullets`. With this, you define by
      
-        `["Get1000Bullets": .Consumable(id: "Bullets", quantity: 1000)]`
+        `["Get1000Bullets": [.Consumable(id: "Bullets", quantity: 1000)]]`
      
-     to add 1000 bullets when the corrsponding product was bought one time.
+        to add 1000 bullets when the corrsponding product was bought one time.
+     - **Example 2**: You have a product for in-app purchases of `GetWeaponBundle`, non-consumable `bigWeapon` and a consumable `Bullets`.
+        With this, you define by
+     
+        `["GetWeaponBundle": [.NonConsumable(id: "bigWeapon"), .Consumable(id: "Bullets", quantity: 1000)]]`
+     
+        to unlock the `bigWeapon` and add 1000 bullets when the corrsponding product was bought one time.
      */
     var purchasables: [String: [GFInApp.Purchasable]] {get}
     
+    /**
+     Consumables and non-consumables to be shown in store.
+     
+     The store will only show products, that are listed here and have a configured product
+     via `purchasables`and are currently vailable by Apple in the local store of the player.
+     */
+    var storePurchasables: [GFInApp.Purchasable] {get}
+
+    /**
+     Title of the navigation bar.
+     
+     For the sake of flexibility, both navigation panes are alwas built. To hide the navigation bar use the corresponding skin modifier.
+     Nevertheless, games should have only one navigation available.
+     Usually games, that have a minimalistic approach for the skin should let the player navigate by navigation bar.
+     Games, that make heavy changes of the skin and build there own UX, probably want to use the navigation layer.
+     */
+    var storeNavigationBarTitle: String {get} // TODO: Should be localized
+    
+    /**
+     Consumable to be earned, when the player watches a rewarded video in store.
+     
+     If nil, the button for rewarded videos is not shown in store.
+     */
+    var storeRewardConsumableId: String? {get}
+    
+    /**
+     Quantity of the consumable to be earned, when the player watches a rewarded video in store.
+     
+     Ignored, when `storeRewardConsumableId` is nil.
+     */
+    var storeRewardQuantity: Int {get}
+    
+    // MARK: Advertisement-Configuration
     /**
      Ad Unit ID for banner as given by Google AdMob
      */
@@ -94,68 +210,65 @@ public protocol GameConfig: ObservableObject {
     /**
      Id for a non-consumable to stop advertisements.
      
-     If player earned or bought this, no more advertiesements (banner and interstitials) are shown. Rewarded videos are still available.
+     If player earned or bought this, no more advertisements (banner and interstitials) are shown. Rewarded videos are still available.
      You can setuop a corresponding product in the app-store for the user and let him buy it in the store. In order to achieve this, you also need to map
      the product as `purchasable`
      */
     var adNonCosumableId: String? {get}
     
+    // MARK: Share-Configuration
+    /**
+     AppId as given in the App-Store and iTunesConnect
+     */
     var sharedAppId: Int {get}
-    var sharedGreeting: String {get}
+    
+    /**
+     Greeting to be used when sharing.
+     
+     When sharing via email, the greeting is used as subject. In the Share-Metadata it is used as subline.
+     */
+    var sharedGreeting: String {get} // TODO: Should be possible to localize
+    
+    /**
+     Information like Achievements, Scores, Consumables and non-consumables to be shared.
+     */
     var sharedInformations: [GFShareInformation] {get}
-    
-    /**
-     Add navigation item to navigation bar (trailing) in OffLevel.
-     
-     If your skin hides the navigationbar, ensure that the navigation item is available anywhere on the display.
-     
-     - warning: As of XCode 11.2.1, iOS 13.2 and Swift 5.2, putting a link to the navigation bar causes the app to crash.
-     */
-    var offLevelNavigationBar: Navigation? {get}
-    
-    /**
-     Add navigation item to navigation bar (trailing) in InLevel.
-     
-     If your skin hides the navigationbar, ensure that the navigation item is available anywhere on the display.
-     
-     - warning: As of XCode 11.2.1, iOS 13.2 and Swift 5.2, putting a link to the navigation bar causes the app to crash.
-     */
-    var inLevelNavigationBar: Navigation? {get}
-    
-    /**
-     Add navigation item to navigation bar (trailing) in store.
-     
-     If your skin hides the navigationbar, ensure that the navigation item is available anywhere on the display.
-     
-     - warning: As of XCode 11.2.1, iOS 13.2 and Swift 5.2, putting a link to the navigation bar causes the app to crash.
-     */
-    var storeNavigationBar: Navigation? {get}
-    
-    /**
-     Add navigation item to navigation bar (trailing) in settings.
-     
-     If your skin hides the navigationbar, ensure that the navigation item is available anywhere on the display.
-     
-     - warning: As of XCode 11.2.1, iOS 13.2 and Swift 5.2, putting a link to the navigation bar causes the app to crash.
-     */
-    var settingsNavigationBar: Navigation? {get}
+}
+
+public enum NavigationLocation {
+    case Bar, Layer
 }
 
 // MARK: - GameConfig implementation for PreView
-
 import GameFrameKit
 
 class PreviewConfig: GameConfig {
     let startsOffLevel: Bool = true
     
     func offLevelInformation(frame: CGRect) -> [[Information]] {return [[Information]]()}
+    var offLevelNavigationBarTitle: String = ""
+    var offLevelNavigationBarButton1: Navigation? = nil
+    var offLevelNavigationBarButton2: Navigation? = nil
     func offLevelNavigation(frame: CGRect) -> [[Navigation]] {return [[Navigation]]()}
+
     func inLevelInformation(frame: CGRect) -> [[Information]] {return [[Information]]()}
+    var inLevelNavigationBarTitle: String = ""
+    var inLevelNavigationBarButton1: Navigation? = nil
+    var inLevelNavigationBarButton2: Navigation? = nil
     func inLevelNavigation(frame: CGRect) -> [[Navigation]] {return [[Navigation]]()}
+
     func settingsInformation(frame: CGRect) -> [[Information]] {return [[Information]]()}
+    var settingsNavigationBarTitle: String = ""
+    var settingsNavigationBarButton1: Navigation? = nil
+    var settingsNavigationBarButton2: Navigation? = nil
     func settingsNavigation(frame: CGRect) -> [[Navigation]] {return [[Navigation]]()}
 
     let purchasables = [String: [GFInApp.Purchasable]]()
+    var storePurchasables = [GFInApp.Purchasable]()
+    var storeNavigationBarTitle: String = ""
+    var storeRewardConsumableId: String? = nil
+    var storeRewardQuantity: Int = 0
+
     let adUnitIdBanner: String? = nil
     let adUnitIdRewarded: String? = nil
     let adUnitIdInterstitial: String? = nil
@@ -164,9 +277,4 @@ class PreviewConfig: GameConfig {
     let sharedAppId: Int = 0
     let sharedGreeting: String = ""
     let sharedInformations = [GFShareInformation]()
-    
-    let offLevelNavigationBar: Navigation? = .Generics(.Url("https://www.apple.com"))
-    let inLevelNavigationBar: Navigation? = .Generics(.Url("https://www.apple.com"))
-    let storeNavigationBar: Navigation? = .Generics(.Url("https://www.apple.com"))
-    let settingsNavigationBar: Navigation? = .Generics(.Url("https://www.apple.com"))
 }

@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct SettingsView<C, S>: View where C: GameConfig, S: GameSkin {
+struct SettingsView<C, S>: View where C: GameConfig, S: Skin {
     @State private var gameFrame: CGRect = .zero
     @State private var informationFrame: CGRect = .zero
     @State private var navigationFrame: CGRect = .zero
@@ -16,27 +16,32 @@ struct SettingsView<C, S>: View where C: GameConfig, S: GameSkin {
     @EnvironmentObject private var skin: S
 
     var body: some View {
-        ZStack {
-            // Spread to available display
-            VStack{Spacer(); HStack{Spacer()}}
-            EmptyView()
-                .modifier(skin.getSettingsSpaceModifier(
-                    gameFrame,
-                    informationFrame: informationFrame,
-                    navigationFrame: navigationFrame))
-            InformationLayer<S>(
+        VStack {
+            NavigationBar<S>(
                 parent: "Settings",
-                items: config.settingsInformation(frame: gameFrame))
-                .modifier(skin.getSettingsInformationModifier())
-                .getFrame($informationFrame)
-            NavigationLayer<C, S>(
-                parent: "Settings",
-                items: config.settingsNavigation(frame: gameFrame),
-                navbarItem: config.settingsNavigationBar)
-                .modifier(skin.getSettingsNavigationModifier())
-                .getFrame($navigationFrame)
+                title: config.settingsNavigationBarTitle,
+                item1: config.settingsNavigationBarButton1,
+                item2: config.settingsNavigationBarButton2,
+                bounds: gameFrame)
+            ZStack {
+                // Spread to available display
+                VStack{Spacer(); HStack{Spacer()}}
+                EmptyView()
+                    .build(skin, .Settings(.Space(
+                        gameFrame,
+                        informationFrame: informationFrame,
+                        navigationFrame: navigationFrame)))
+                InformationLayer<S>(
+                    parent: "Settings",
+                    items: config.settingsInformation(frame: gameFrame))
+                    .getFrame($informationFrame)
+                NavigationLayer<C, S>(
+                    parent: "Settings",
+                    items: config.settingsNavigation(frame: gameFrame))
+                    .getFrame($navigationFrame)
+            }
         }
-        .modifier(skin.getSettingsModifier())
+        .build(skin, .Settings(.Main))
         .getFrame($gameFrame)
     }
 }

@@ -9,8 +9,8 @@
 import SwiftUI
 import GameFrameKit
 
-struct MainView<C, S>: View where C: GameConfig, S: GameSkin {
-    @State private var startsInLevel: Bool = false
+struct MainView<C, S>: View where C: GameConfig, S: Skin {
+    @ObservedObject private var navigator = GameUI.instance.navigator
     @EnvironmentObject private var config: C
     @EnvironmentObject private var skin: S
     
@@ -19,26 +19,29 @@ struct MainView<C, S>: View where C: GameConfig, S: GameSkin {
         @EnvironmentObject private var skin: S
         
         var body: some View {
-            ZStack {
-                GFBannerView() // Must be shown, otherwise AdMob doe not start to load anything
-                if !adMob.bannerAvailable {
-                    EmptyView()
-                        .modifier(skin.getMainBannerEmptyModifier())
-                }
-            }
-            .frame(width: adMob.bannerSize.width, height: adMob.bannerSize.height)
-            .modifier(skin.getMainBannerModifier(width: adMob.bannerSize.width, height: adMob.bannerSize.height))
+            GFBannerView() // Must be shown, otherwise AdMob doe not start to load anything
+                .frame(width: adMob.bannerSize.width, height: adMob.bannerSize.height)
+                .build(skin, .Main(.Banner(
+                    width: adMob.bannerSize.width,
+                    height: adMob.bannerSize.height,
+                    available: adMob.bannerAvailable)))
         }
     }
     
     var body: some View {
         VStack {
-            NavigationView {
-                OffLevelView<C, S>(startsInLevel: !config.startsOffLevel)
+            if navigator.current == .OffLevel {
+                OffLevelView<C, S>()
+            } else if navigator.current == .InLevel {
+                InLevelView<C, S>()
+            } else if navigator.current == .Settings {
+                SettingsView<C, S>()
+            } else if navigator.current == .Store {
+                StoreView<C, S>()
             }
             Banner()
         }
-        .modifier(skin.getMainModifier())
+        .build(skin, .Main(.Main))
     }
 }
 
