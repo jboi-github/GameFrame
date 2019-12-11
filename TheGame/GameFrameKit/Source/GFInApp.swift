@@ -90,9 +90,9 @@ public class GFInApp: NSObject, ObservableObject {
      */
     public enum Purchasable {
         /// Product affects consumables with quantity amount of units, e.g. product is to buy 20 coffee mugs, then "coffee mug" is the consumable and 20 the quantity
-        case Consumable(id: String, quantity: Int, canPrebook: Bool)
+        case Consumable(id: String, quantity: Int, canPrebook: Bool = true)
         /// Non-Consumable affected by product.
-        case NonConsumable(id: String, canPrebook: Bool)
+        case NonConsumable(id: String, canPrebook: Bool = true)
         
         fileprivate func buy(isPrebook: Bool, quantity purchasedQuantity: Int = 1) {
             switch self {
@@ -149,13 +149,34 @@ public class GFInApp: NSObject, ObservableObject {
      
      The returned list contains each product only once, regardless how much cons/non-nos are impacted by a purchase.
      - Parameters:
-        - consumableIds: List of id's of consumables
-        - nonConsumableIds: List of id's of non-consumables
+        - purchasables: List of id's of consumables and non-consumables
      - returns: An array of SKProducts, where a purchase would affect the given cons/non-cons. The list is sorted by product-identifier.
      */
-    public func getProducts(consumableIds: [String], nonConsumableIds: [String]) -> [SKProduct] {
-        log(consumableIds, nonConsumableIds)
+    public func getProducts(_ purchasables: [Purchasable]) -> [SKProduct] {
+        log(purchasables)
         
+        let consumableIds = purchasables.compactMap {
+            (purchasable) -> String? in
+            
+            switch purchasable {
+            case let .Consumable(id: id, quantity: _, canPrebook: _):
+                return id
+            default:
+                return nil
+            }
+        }
+        
+        let nonConsumableIds = purchasables.compactMap {
+            (purchasable) -> String? in
+            
+            switch purchasable {
+            case let .NonConsumable(id: id, canPrebook: _):
+                return id
+            default:
+                return nil
+            }
+        }
+
         let products: Set<SKProduct> = Set()
             .union(consumableIds.flatMap {consumableToProducts[$0] ?? []})
             .union(nonConsumableIds.flatMap {nonConsumableToProducts[$0] ?? []})

@@ -32,6 +32,7 @@ struct InformationLayer<S>: View where S: Skin {
                 .build(self.skin, .Commons(.InformationRow(parent: self.parent, row: row)))
             }
         }
+        .build(skin, .Commons(.Information(parent: parent)))
     }
     
     private struct Item<S>: View where S: Skin {

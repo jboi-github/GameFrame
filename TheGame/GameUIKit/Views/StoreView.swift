@@ -11,16 +11,14 @@ import GameFrameKit
 import StoreKit
 
 struct StoreView<C, S>: View where C: GameConfig, S: Skin {
-    let consumableIds: [String]
-    let nonConsumableIds: [String]
     @ObservedObject private var inApp = GameFrame.inApp
+    @EnvironmentObject private var config: C
     @EnvironmentObject private var skin: S
 
     private struct ProductsView: View {
-        let consumableIds: [String]
-        let nonConsumableIds: [String]
         let isOverlayed: Bool
         @EnvironmentObject private var skin: S
+        @EnvironmentObject private var config: C
 
         private struct ProductRow: View {
             let product: SKProduct
@@ -70,33 +68,43 @@ struct StoreView<C, S>: View where C: GameConfig, S: Skin {
         }
 
         var body: some View {
-            let products = GameFrame.inApp.getProducts(consumableIds: consumableIds, nonConsumableIds: nonConsumableIds)
+            let products = GameFrame.inApp.getProducts(config.storePurchasables)
+            var items: [Navigation] = [.Buttons(.Restore()), .Links(.Back())]
+            if let id = config.storeRewardConsumableId {
+                items.insert(.Buttons(.Reward(consumableId: id, quantity: config.storeRewardQuantity)), at: 1)
+            }
             
-            return ZStack {
-                VStack {
-                    Spacer()
-                    if products.isEmpty {
-                        Text("No products available or store not available")
-                            .build(skin, .StoreEmpty)
-                    } else {
-                        GeometryReader {
-                            proxy in
-                            
-                            ScrollView {
-                                ForEach(0..<products.count, id: \.self) {
-                                    ProductRow(product: products[$0], isOverlayed: self.isOverlayed, proxy: proxy)
+            return VStack {
+                NavigationBar<S>(
+                    parent: "Store",
+                    title: config.storeNavigationBarTitle,
+                    item1: items.count > 2 ? items[1] : nil,
+                    item2: .Buttons(.Restore()),
+                    isOverlayed: isOverlayed)
+                ZStack {
+                    VStack {
+                        Spacer()
+                        if products.isEmpty {
+                            Text("No products available or store not available")
+                                .build(skin, .StoreEmpty)
+                        } else {
+                            GeometryReader {
+                                proxy in
+                                
+                                ScrollView {
+                                    ForEach(0..<products.count, id: \.self) {
+                                        ProductRow(product: products[$0], isOverlayed: self.isOverlayed, proxy: proxy)
+                                    }
                                 }
                             }
                         }
+                        Spacer()
                     }
-                    Spacer()
+                    NavigationLayer<C, S>(
+                        parent: "Store",
+                        items: [items],
+                        isOverlayed: isOverlayed)
                 }
-                NavigationLayer<C, S>(
-                    parent: "Store",
-                    items: [[.Buttons(.Restore()), .Links(.Back())]],
-                    navbarItem: .Buttons(.Restore()),
-                    isOverlayed: isOverlayed)
-                    .build(skin, .Store(.Navigation))
             }
             .build(skin, .Store(.Products(isOverlayed: isOverlayed)))
         }
@@ -106,22 +114,13 @@ struct StoreView<C, S>: View where C: GameConfig, S: Skin {
         // TODO: Workaround as of XCode 11.2. When reading one published var of an ObservablObject multiple times, the App crashes
         ZStack {
             if inApp.purchasing {
-                ProductsView(
-                    consumableIds: consumableIds,
-                    nonConsumableIds: nonConsumableIds,
-                    isOverlayed: true)
+                ProductsView(isOverlayed: true)
                 WaitAlert<S>()
             } else if inApp.error != nil {
-                ProductsView(
-                    consumableIds: consumableIds,
-                    nonConsumableIds: nonConsumableIds,
-                    isOverlayed: true)
+                ProductsView(isOverlayed: true)
                 ErrorAlert<C, S>()
             } else {
-                ProductsView(
-                    consumableIds: consumableIds,
-                    nonConsumableIds: nonConsumableIds,
-                    isOverlayed: false)
+                ProductsView(isOverlayed: false)
             }
         }
         .build(skin, .Store(.Main))
@@ -129,12 +128,8 @@ struct StoreView<C, S>: View where C: GameConfig, S: Skin {
 }
 
 struct StoreView_Previews: PreviewProvider {
-    @Environment(\.presentationMode) static var presentationMode
-    
     static var previews: some View {
-        StoreView<PreviewConfig, PreviewSkin>(
-            consumableIds: ["Bullets"],
-            nonConsumableIds: ["weaponB", "weaponC"])
+        StoreView<PreviewConfig, PreviewSkin>()
         .environmentObject(PreviewSkin())
     }
 }

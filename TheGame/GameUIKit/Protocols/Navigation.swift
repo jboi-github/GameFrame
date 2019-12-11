@@ -26,11 +26,11 @@ public enum Navigation {
         /// Start game or level.
         case Play(image: Image = Image(systemName: "play"))
         /// Open store with given consumables and non-consumables.
-        case Store(image: Image = Image(systemName: "cart"), consumableIds: [String], nonConsumableIds: [String])
+        case Store(image: Image = Image(systemName: "cart"))
         /// Open Settings page for this game.
         case Settings(image: Image = Image(systemName: "gear"))
         /// Go back one level in store or in-level
-        case Back(image: Image = Image(systemName: "xmark"))
+        case Back(image: Image = Image(systemName: "chevron.left"))
     }
     
     public enum Button {

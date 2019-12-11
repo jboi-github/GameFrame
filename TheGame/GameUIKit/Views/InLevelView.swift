@@ -22,40 +22,43 @@ struct InLevelView<C, S>: View where C: GameConfig, S: Skin {
         @State private var sharedImage: UIImage?
         @EnvironmentObject private var config: C
         @EnvironmentObject private var skin: S
-        @Environment(\.presentationMode) private var presentationMode
         
         var body: some View {
-            ZStack {
-                // Spread to available display
-                VStack{Spacer(); HStack{Spacer()}}
-                EmptyView()
-                    .build(skin, .InLevel(.GameZone(
-                        gameFrame,
-                        informationFrame: informationFrame,
-                        navigationFrame: navigationFrame)))
-                InformationLayer<S>(
+            VStack {
+                NavigationBar<S>(
                     parent: "InLevel",
-                    items: config.inLevelInformation(frame: gameFrame))
-                    .build(skin, .InLevel(.Information))
-                    .getFrame($informationFrame)
-                NavigationLayer<C, S>(
-                    parent: "InLevel",
-                    items: config.inLevelNavigation(frame: gameFrame),
-                    navbarItem: config.inLevelNavigationBar,
+                    title: config.inLevelNavigationBarTitle,
+                    item1: config.inLevelNavigationBarButton1,
+                    item2: config.inLevelNavigationBarButton2,
                     bounds: gameFrame,
                     isOverlayed: isOverlayed)
-                    .build(skin, .InLevel(.Navigation))
-                    .getFrame($navigationFrame)
+                ZStack {
+                    // Spread to available display
+                    VStack{Spacer(); HStack{Spacer()}}
+                    EmptyView()
+                        .build(skin, .InLevel(.GameZone(
+                            gameFrame,
+                            informationFrame: informationFrame,
+                            navigationFrame: navigationFrame)))
+                    InformationLayer<S>(
+                        parent: "InLevel",
+                        items: config.inLevelInformation(frame: gameFrame))
+                        .getFrame($informationFrame)
+                    NavigationLayer<C, S>(
+                        parent: "InLevel",
+                        items: config.inLevelNavigation(frame: gameFrame),
+                        bounds: gameFrame,
+                        isOverlayed: isOverlayed)
+                        .getFrame($navigationFrame)
+                }
             }
             .build(skin, .InLevel(.Game(isOverlayed: isOverlayed)))
             .getFrame($gameFrame)
             .onAppear {
-                GameUI.instance.presentationMode = self.presentationMode
                 if !self.isOverlayed {GameUI.instance.resume()}
             }
             .onDisappear {
                 if !self.isOverlayed {GameUI.instance.pause()}
-                GameUI.instance.presentationMode = nil
             }
         }
     }
@@ -104,7 +107,7 @@ struct InLevelView<C, S>: View where C: GameConfig, S: Skin {
             @EnvironmentObject private var skin: S
             
             var body: some View {
-                let products = GameFrame.inApp.getProducts(consumableIds: [consumableId], nonConsumableIds: [String]())
+                let products = GameFrame.inApp.getProducts([.Consumable(id: consumableId, quantity: 1)])
                 
                 return VStack {
                     ForEach(0..<products.count, id: \.self) {
@@ -117,7 +120,6 @@ struct InLevelView<C, S>: View where C: GameConfig, S: Skin {
                             .Buttons(.Reward(consumableId: consumableId, quantity: rewardQuantity))
                         ]],
                         isOverlayed: isOverlayed)
-                        .build(skin, .Offer(.Navigation))
                 }
                 .build(skin, .Offer(.Main(isOverlayed: isOverlayed)))
                 .onAppear {

@@ -31,11 +31,6 @@ import GameFrameKit
     - Content within Overlay is extra padded
 */
 open class SimpleSkin: IdentitySkin {
-    private let offLevelTitle: String
-    private let inLevelTitle: String
-    private let settingsTitle: String
-    private let storeTitle: String
-    
     private let primaryColor: UIColor
     private let secondaryColor: UIColor
     private let accentColor: UIColor
@@ -53,11 +48,6 @@ open class SimpleSkin: IdentitySkin {
     private let overlayingCornerRadius: CGFloat
 
     public init(
-        offLevelTitle: String,
-        inLevelTitle: String? = nil,
-        settingsTitle: String = "Settings",
-        storeTitle: String = "Store",
-        
         primaryColor: UIColor = UIColor.white,
         secondaryColor: UIColor = UIColor.gray,
         accentColor: UIColor = UIColor.blue,
@@ -74,10 +64,6 @@ open class SimpleSkin: IdentitySkin {
         overlayingOuterPadding: CGFloat = 32,
         overlayingCornerRadius: CGFloat = 32
     ) {
-        self.offLevelTitle = offLevelTitle
-        self.inLevelTitle = inLevelTitle ?? offLevelTitle
-        self.settingsTitle = settingsTitle
-        self.storeTitle = storeTitle
         self.primaryColor = primaryColor
         self.secondaryColor = secondaryColor
         self.accentColor = accentColor
@@ -101,6 +87,8 @@ open class SimpleSkin: IdentitySkin {
             return standardText(text, font: .headline, align: .leading)
         case .StoreProductDescription, .OfferProductDescription:
             return standardText(text, font: .subheadline, align: .leading)
+        case let .NavigationBarTitle(parent: parent):
+            return standardText(text, font: parent == "OffLevel" ? .largeTitle : .title)
         default:
             return standardText(text)
         }
@@ -128,29 +116,12 @@ open class SimpleSkin: IdentitySkin {
         case let .Main(mainItem):
             switch mainItem {
             case .Main:
-                UINavigationBar.appearance().backgroundColor = primaryInvertColor
-                UINavigationBar.appearance().tintColor = accentColor
-                UINavigationBar.appearance().barTintColor = primaryInvertColor
-                UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: accentColor]
-                UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: accentColor]
-                
-                return AnyView(view
-                    .background(Color(primaryInvertColor))
-                    .edgesIgnoringSafeArea([.horizontal, .bottom]))
-            default:
-                return view
-            }
-        case let .OffLevel(offLevelItem):
-            switch offLevelItem {
-            case .Main:
-                return navigationView(view, title: offLevelTitle, large: true, backButton: true)
+                return mainBackground(view)
             default:
                 return view
             }
         case let .InLevel(inLevelItem):
             switch inLevelItem {
-            case .Main:
-                return navigationView(view, title: inLevelTitle, large: false, backButton: false)
             case let .Game(isOverlayed: isOverlayed):
                 return overlayedView(view, isOverlayed: isOverlayed)
             default:
@@ -158,17 +129,13 @@ open class SimpleSkin: IdentitySkin {
             }
         case let .Settings(settingsItem):
             switch settingsItem {
-            case .Main:
-                return navigationView(view, title: settingsTitle, large: false, backButton: true)
             default:
                 return view
             }
         case let .Store(storeItem):
             switch storeItem {
-            case .Main:
-                return navigationView(view, title: storeTitle, large: false, backButton: true)
             case let .Products(isOverlayed: isOverlayed):
-                return overlayedView(view, isOverlayed: isOverlayed)
+                return AnyView(overlayedView(view, isOverlayed: isOverlayed).padding())
             default:
                 return view
             }
@@ -183,9 +150,17 @@ open class SimpleSkin: IdentitySkin {
             switch commonsItem {
             case .Error, .Wait:
                 return overlayingView(view)
+            case let .NavigationBar(parent: parent):
+                return hide(view, hidden: parent == "InLevel")
+            case let .NavigationLayer(parent: parent):
+                return position(hide(view, hidden: parent == "Store"), position: parent == "InLevel" ? .topLeading : nil)
+            case let .Information(parent: parent):
+                return position(view, position: parent == "InLevel" ? .topTrailing : .bottom)
             default:
                 return view
             }
+        default:
+            return view
         }
     }
     
@@ -194,6 +169,7 @@ open class SimpleSkin: IdentitySkin {
     - Title and description in store and offer have font headline and subheadline. All other fonts are body
     - All text has primary color and the default font (When I find a way to change the font app wide, I will do so)
     - Is always defined as multiline, with unlimited number of lines
+    - Navigation is set to inline.
     */
     private func standardText(_ text: Text, font: Font = .body, align: TextAlignment = .center) -> AnyView {
         let view = AnyView(text
@@ -256,17 +232,48 @@ open class SimpleSkin: IdentitySkin {
     }
 
     /**
-    - Backgrounds are default
-    - Navigation is set to inline. InLevel hides the back button
+      Backgrounds are default
      */
-    private func navigationView(_ view: AnyView, title: String, large: Bool, backButton: Bool) -> AnyView {
-        AnyView(view
-            .navigationBarTitle(Text(title), displayMode: large ? .large : .inline)
-            .navigationBarBackButtonHidden(!backButton)
+    private func mainBackground(_ view: AnyView) -> AnyView {
+        return AnyView(ZStack {
+            VStack {
+                Spacer()
+                HStack {Spacer()}
+                Spacer()
+            }
             .background(Color(primaryInvertColor))
-        )
+            .edgesIgnoringSafeArea(.all)
+            
+            view.foregroundColor(Color(primaryColor))
+        })
     }
     
+    /**
+    - InLevel hides the back button
+     */
+    private func hide(_ view: AnyView, hidden: Bool) -> AnyView {
+        hidden ? AnyView(EmptyView()) : view
+    }
+    
+    /**
+    OffLevel and Settings-Info on the bottom. InLevel-Info to top-center
+     */
+    private func position(_ view: AnyView, position: UnitPoint?) -> AnyView {
+        guard let position = position else {return view}
+        
+        return AnyView(
+            VStack {
+                if ![.top, .topLeading, .topTrailing].contains(position) {Spacer()}
+                HStack {
+                    if ![.topLeading, .leading , .bottomLeading].contains(position) {Spacer()}
+                    view
+                    if ![.topTrailing, .trailing , .bottomTrailing].contains(position) {Spacer()}
+                }
+                if ![.bottom, .bottomLeading, .bottomTrailing].contains(position) {Spacer()}
+            }
+        )
+    }
+
     /**
     - When overlayed, views are blurred
      */

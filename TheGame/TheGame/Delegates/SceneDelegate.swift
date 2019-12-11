@@ -23,8 +23,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             scene: scene,
             gameConfig: TheGameConfig(),
             gameDelegate: TheGameDelegate(),
-            gameSkin: TheGameSkin(),
-            startsOffLevel: true) 
+            gameSkin: TheGameSkin()) 
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

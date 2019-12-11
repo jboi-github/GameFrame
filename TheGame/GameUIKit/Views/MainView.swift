@@ -10,7 +10,7 @@ import SwiftUI
 import GameFrameKit
 
 struct MainView<C, S>: View where C: GameConfig, S: Skin {
-    @State private var startsInLevel: Bool = false
+    @ObservedObject private var navigator = GameUI.instance.navigator
     @EnvironmentObject private var config: C
     @EnvironmentObject private var skin: S
     
@@ -30,8 +30,14 @@ struct MainView<C, S>: View where C: GameConfig, S: Skin {
     
     var body: some View {
         VStack {
-            NavigationView {
-                OffLevelView<C, S>(startsInLevel: !config.startsOffLevel)
+            if navigator.current == .OffLevel {
+                OffLevelView<C, S>()
+            } else if navigator.current == .InLevel {
+                InLevelView<C, S>()
+            } else if navigator.current == .Settings {
+                SettingsView<C, S>()
+            } else if navigator.current == .Store {
+                StoreView<C, S>()
             }
             Banner()
         }

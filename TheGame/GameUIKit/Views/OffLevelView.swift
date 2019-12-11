@@ -9,28 +9,25 @@
 import SwiftUI
 
 struct OffLevelView<C, S>: View where C: GameConfig, S: Skin {
-    @State var startsInLevel: Bool
     @State private var gameFrame: CGRect = .zero
     @EnvironmentObject private var config: C
     @EnvironmentObject private var skin: S
     
     var body: some View {
         VStack {
-            HStack{Spacer()}
-            NavigationLink(destination: InLevelView<C, S>(), isActive: $startsInLevel) {EmptyView()}
-            
-            if !startsInLevel {
-                ZStack {
-                    InformationLayer<S>(
-                        parent: "OffLevel",
-                        items: config.offLevelInformation(frame: gameFrame))
-                        .build(skin, .OffLevel(.Information))
-                    NavigationLayer<C, S>(
-                        parent: "OffLevel",
-                        items: config.offLevelNavigation(frame: gameFrame),
-                        navbarItem: config.offLevelNavigationBar)
-                        .build(skin, .OffLevel(.Navigation))
-                }
+            NavigationBar<S>(
+                parent: "OffLevel",
+                title: config.offLevelNavigationBarTitle,
+                item1: config.offLevelNavigationBarButton1,
+                item2: config.offLevelNavigationBarButton2,
+                bounds: gameFrame)
+            ZStack {
+                InformationLayer<S>(
+                    parent: "OffLevel",
+                    items: config.offLevelInformation(frame: gameFrame))
+                NavigationLayer<C, S>(
+                    parent: "OffLevel",
+                    items: config.offLevelNavigation(frame: gameFrame))
             }
         }
         .build(skin, .OffLevel(.Main))
@@ -40,7 +37,7 @@ struct OffLevelView<C, S>: View where C: GameConfig, S: Skin {
 
 struct OffLevel_Previews: PreviewProvider {
     static var previews: some View {
-        OffLevelView<PreviewConfig, PreviewSkin>(startsInLevel: false)
+        OffLevelView<PreviewConfig, PreviewSkin>()
         .environmentObject(PreviewConfig())
         .environmentObject(PreviewSkin())
     }

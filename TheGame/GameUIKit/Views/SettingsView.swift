@@ -16,25 +16,30 @@ struct SettingsView<C, S>: View where C: GameConfig, S: Skin {
     @EnvironmentObject private var skin: S
 
     var body: some View {
-        ZStack {
-            // Spread to available display
-            VStack{Spacer(); HStack{Spacer()}}
-            EmptyView()
-                .build(skin, .Settings(.Space(
-                    gameFrame,
-                    informationFrame: informationFrame,
-                    navigationFrame: navigationFrame)))
-            InformationLayer<S>(
+        VStack {
+            NavigationBar<S>(
                 parent: "Settings",
-                items: config.settingsInformation(frame: gameFrame))
-                .build(skin, .Settings(.Information))
-                .getFrame($informationFrame)
-            NavigationLayer<C, S>(
-                parent: "Settings",
-                items: config.settingsNavigation(frame: gameFrame),
-                navbarItem: config.settingsNavigationBar)
-                .build(skin, .Settings(.Navigation))
-                .getFrame($navigationFrame)
+                title: config.settingsNavigationBarTitle,
+                item1: config.settingsNavigationBarButton1,
+                item2: config.settingsNavigationBarButton2,
+                bounds: gameFrame)
+            ZStack {
+                // Spread to available display
+                VStack{Spacer(); HStack{Spacer()}}
+                EmptyView()
+                    .build(skin, .Settings(.Space(
+                        gameFrame,
+                        informationFrame: informationFrame,
+                        navigationFrame: navigationFrame)))
+                InformationLayer<S>(
+                    parent: "Settings",
+                    items: config.settingsInformation(frame: gameFrame))
+                    .getFrame($informationFrame)
+                NavigationLayer<C, S>(
+                    parent: "Settings",
+                    items: config.settingsNavigation(frame: gameFrame))
+                    .getFrame($navigationFrame)
+            }
         }
         .build(skin, .Settings(.Main))
         .getFrame($gameFrame)

@@ -16,7 +16,6 @@ import GameUIKit
 class TheGameSkin: SimpleSkin {
     init() {
         super.init(
-            offLevelTitle: "The Game",
             primaryColor: UIColor.lightGray,
             secondaryColor: UIColor.systemRed,
             accentColor: UIColor.systemRed,

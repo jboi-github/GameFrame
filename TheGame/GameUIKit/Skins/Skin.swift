@@ -37,16 +37,12 @@ public enum SkinItem {
         /// Modifiers for OffLevel-View
         public enum SkinItemOffLevel {
             case Main
-            case Navigation
-            case Information
         }
         
         /// Modifiers for InLevel-View
         public enum SkinItemInLevel {
             case Main
             case Game(isOverlayed: Bool)
-            case Navigation
-            case Information
             case GameZone(_ gameFrame: CGRect, informationFrame: CGRect, navigationFrame: CGRect)
         }
         
@@ -54,14 +50,11 @@ public enum SkinItem {
         public enum SkinItemSettings {
             case Main
             case Space(_ gameFrame: CGRect, informationFrame: CGRect, navigationFrame: CGRect)
-            case Navigation
-            case Information
         }
         
         /// Modifiers for Store-View
         public enum SkinItemStore {
             case Main
-            case Navigation
             case Products(isOverlayed: Bool)
             case Product(id: String)
         }
@@ -69,15 +62,17 @@ public enum SkinItem {
         /// Modifiers for Offer-Overlay
         public enum SkinItemOffer {
             case Main(isOverlayed: Bool)
-            case Navigation
             case Products
         }
         
         /// Modifiers for any other view and overlay
         public enum SkinItemCommons {
+            case Information(parent: String)
             case InformationRow(parent: String, row: Int)
-            case NavigationRow(parent: String, row: Int)
             case InformationNonConsumable(parent: String, id: String)
+            case NavigationLayer(parent: String)
+            case NavigationBar(parent: String)
+            case NavigationRow(parent: String, row: Int)
             case Wait
             case Error
         }
@@ -95,6 +90,7 @@ public enum SkinItem {
         case OfferProductPrice(id: String)
         case InformationItem(parent: String, id: String)
         case ErrorMessage
+        case NavigationBarTitle(parent: String)
     }
     
     /// Modifiers for images in all views
@@ -153,4 +149,4 @@ extension Image {
     }
 }
 
-// TODO: Implement GameZone, SettingsSpace, Information Navigation and Banner-Alternative with ViewBuilder
+// TODO: Implement GameZone, SettingsSpace and Banner-Alternative with ViewBuilder into config

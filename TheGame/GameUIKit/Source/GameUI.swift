@@ -38,17 +38,14 @@ public class GameUI: NSObject, ObservableObject  {
         - gameConfig: Configuration for your game, defining which navigation items and information items are shown in the different screens.
         - gameDelegate: Minimal game logic, that is necessary by `GameFrame` to run User Experience.
         - gameSkin: Define the skin, colors and formatting of your game.
-        - startsOffLevel: Defines, if game starts with an off-level screen or directly jumps into the game. Games that use timing, likae Arcade games, should set this to `true`. Games like chess set this to `false` to ease User Experience.
-     
-     - warning: `startsOffLevel` currently only supports `true`. Behaviour with `false` is undefined.
      */
     public static func createSharedInstance<C, S>(
-        scene: UIScene, gameConfig: C, gameDelegate: GameDelegate, gameSkin: S, startsOffLevel: Bool)
+        scene: UIScene, gameConfig: C, gameDelegate: GameDelegate, gameSkin: S)
         where C: GameConfig, S: Skin
     {
         if instance != nil {return}
         
-        instance = GameUI(gameDelegate: gameDelegate)
+        instance = GameUI(gameDelegate: gameDelegate, startsOffLevel: gameConfig.startsOffLevel)
         
         GameFrame.createSharedInstance(
             scene, purchasables: gameConfig.purchasables,
@@ -80,7 +77,7 @@ public class GameUI: NSObject, ObservableObject  {
     public func makeOffer(consumableId: String, quantity: Int) -> Bool {
         log(consumableId, quantity)
         guard gameDelegate.keepOffer() else {return false}
-        if GameFrame.inApp.getProducts(consumableIds: [consumableId], nonConsumableIds: [String]()).isEmpty &&  !GameFrame.adMob.rewardAvailable {
+        if GameFrame.inApp.getProducts([.Consumable(id: consumableId, quantity: 1)]).isEmpty &&  !GameFrame.adMob.rewardAvailable {
             
             return false
         }
@@ -96,19 +93,19 @@ public class GameUI: NSObject, ObservableObject  {
      */
     public func gameOver() {
         isInLevelShadow = false
-        log(presentationMode)
-        presentationMode?.wrappedValue.dismiss()
+        navigator.pop()
     }
     
     @Published private(set) var offer: (consumableId: String, quantity: Int)? = nil
     @Published private(set) var isInLevel: Bool = false
     @Published private(set) var isResumed: Bool = false
     
-    var presentationMode: Binding<PresentationMode>?
+    let navigator: GameNavigationModel
 
     // MARK: Initialization
-    private init(gameDelegate: GameDelegate) {
+    private init(gameDelegate: GameDelegate, startsOffLevel: Bool) {
         self.gameDelegate = gameDelegate
+        self.navigator = GameNavigationModel(startsOffLevel: startsOffLevel)
         
         super.init()
         
