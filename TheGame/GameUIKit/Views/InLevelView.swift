@@ -35,7 +35,7 @@ struct InLevelView<C, S>: View where C: GameConfig, S: Skin {
                 ZStack {
                     // Spread to available display
                     VStack{Spacer(); HStack{Spacer()}}
-                    EmptyView()
+                    config.gameZone
                         .build(skin, .InLevel(.GameZone(
                             gameFrame,
                             informationFrame: informationFrame,

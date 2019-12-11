@@ -46,6 +46,8 @@ open class SimpleSkin: IdentitySkin {
     private let overlayingInnerPadding: CGFloat
     private let overlayingOuterPadding: CGFloat
     private let overlayingCornerRadius: CGFloat
+    
+    private let smoothDuration: Double
 
     public init(
         primaryColor: UIColor = UIColor.white,
@@ -62,7 +64,8 @@ open class SimpleSkin: IdentitySkin {
         overlayedBlurRadius: CGFloat = 5.0,
         overlayingInnerPadding: CGFloat = 16,
         overlayingOuterPadding: CGFloat = 32,
-        overlayingCornerRadius: CGFloat = 32
+        overlayingCornerRadius: CGFloat = 32,
+        smoothDuration: Double = 0.5
     ) {
         self.primaryColor = primaryColor
         self.secondaryColor = secondaryColor
@@ -77,6 +80,7 @@ open class SimpleSkin: IdentitySkin {
         self.overlayingInnerPadding = overlayingInnerPadding
         self.overlayingOuterPadding = overlayingOuterPadding
         self.overlayingCornerRadius = overlayingCornerRadius
+        self.smoothDuration = smoothDuration
         
         super.init()
     }
@@ -84,83 +88,101 @@ open class SimpleSkin: IdentitySkin {
     override open func build(_ item: SkinItem.SkinItemText, text: Text) -> AnyView {
         switch item {
         case .StoreProductTitle, .OfferProductTitle:
-            return standardText(text, font: .headline, align: .leading)
+            return standardText(text, font: .headline, align: .leading).anyView()
         case .StoreProductDescription, .OfferProductDescription:
-            return standardText(text, font: .subheadline, align: .leading)
+            return standardText(text, font: .subheadline, align: .leading).anyView()
         case let .NavigationBarTitle(parent: parent):
-            return standardText(text, font: parent == "OffLevel" ? .largeTitle : .title)
+            return standardText(text, font: parent == "OffLevel" ? .largeTitle : .title).anyView()
         default:
-            return standardText(text)
+            return standardText(text).anyView()
         }
     }
     
-    override open func build(_ item: SkinItem.SkinItemButton, label: AnyView, isPressed: Bool = false) -> AnyView {
+    override open func build<V>(_ item: SkinItem.SkinItemButton, label: V, isPressed: Bool = false) -> AnyView where V: View {
         switch item {
         case let .StoreProductButton(id: _, isDisabled: isDisabled):
-            return defaultButton(label, isDisabled: isDisabled, isPressed: isPressed)
+            return defaultButton(label, isDisabled: isDisabled, isPressed: isPressed).anyView()
         case let .StoreProductStepper(id: _, isDisabled: isDisabled):
-            return defaultButton(label, isDisabled: isDisabled, isPressed: isPressed)
+            return defaultButton(label, isDisabled: isDisabled, isPressed: isPressed).anyView()
         case let .OfferProduct(id: _, isDisabled: isDisabled):
-            return defaultButton(label, isDisabled: isDisabled, isPressed: isPressed)
+            return defaultButton(label, isDisabled: isDisabled, isPressed: isPressed).anyView()
         case let .NavigationItem(parent: _, isDisabled: isDisabled, item: navigation):
             if isPlayButton(navigation) {
-                return playButton(isDisabled: isDisabled, isPressed: isPressed)
+                return playButton(isDisabled: isDisabled, isPressed: isPressed).anyView()
             } else {
-                return defaultButton(label, isDisabled: isDisabled, isPressed: isPressed)
+                return defaultButton(label, isDisabled: isDisabled, isPressed: isPressed).anyView()
             }
         }
     }
     
-    override open func build(_ item: SkinItem.SkinItemView, view: AnyView) -> AnyView {
+    override open func build<V>(_ item: SkinItem.SkinItemView, view: V) -> AnyView where V: View {
         switch item {
         case let .Main(mainItem):
             switch mainItem {
             case .Main:
-                return mainBackground(view)
-            default:
                 return view
+                    .simpleSkinBackground(primary: Color(primaryColor), primaryInvert: Color(primaryInvertColor))
+                    .anyView()
+            default:
+                return view.anyView()
+            }
+        case let .OffLevel(offLevelItem):
+            switch offLevelItem {
+            case .Main:
+                return view.simpleSkinSmooth(duration: smoothDuration).anyView()
             }
         case let .InLevel(inLevelItem):
             switch inLevelItem {
+            case .Main:
+                return view.simpleSkinSmooth(duration: smoothDuration).anyView()
             case let .Game(isOverlayed: isOverlayed):
-                return overlayedView(view, isOverlayed: isOverlayed)
+                return view.simpleSkinOverlayed(isOverlayed, blurRadius: overlayedBlurRadius).anyView()
             default:
-                return view
+                return view.anyView()
             }
         case let .Settings(settingsItem):
             switch settingsItem {
+            case .Main:
+                return view.simpleSkinSmooth(duration: smoothDuration).anyView()
             default:
-                return view
+                return view.anyView()
             }
         case let .Store(storeItem):
             switch storeItem {
+            case .Main:
+                return view.simpleSkinSmooth(duration: smoothDuration).anyView()
             case let .Products(isOverlayed: isOverlayed):
-                return AnyView(overlayedView(view, isOverlayed: isOverlayed).padding())
+                return view.simpleSkinOverlayed(isOverlayed, blurRadius: overlayedBlurRadius)
+                    .padding(.horizontal)
+                    .anyView()
             default:
-                return view
+                return view.anyView()
             }
         case let .Offer(offerItem):
             switch offerItem {
             case let .Main(isOverlayed: isOverlayed):
-                return overlayedView(overlayingView(view), isOverlayed: isOverlayed)
+                return overlaying(view)
+                    .simpleSkinOverlayed(isOverlayed, blurRadius: overlayedBlurRadius)
+                    .simpleSkinSmooth(duration: smoothDuration)
+                    .anyView()
             default:
-                return view
+                return view.anyView()
             }
         case let .Commons(commonsItem):
             switch commonsItem {
             case .Error, .Wait:
-                return overlayingView(view)
+                return overlaying(view).anyView()
             case let .NavigationBar(parent: parent):
-                return hide(view, hidden: parent == "InLevel")
+                return view.simpleSkinHide(parent == "InLevel").anyView()
             case let .NavigationLayer(parent: parent):
-                return position(hide(view, hidden: parent == "Store"), position: parent == "InLevel" ? .topLeading : nil)
+                return view.simpleSkinHide(parent == "Store")
+                    .simpleSkinPosition(parent == "InLevel" ? .topLeading : nil)
+                    .anyView()
             case let .Information(parent: parent):
-                return position(view, position: parent == "InLevel" ? .topTrailing : .bottom)
+                return view.simpleSkinPosition(parent == "InLevel" ? .topTrailing : .bottom).anyView()
             default:
-                return view
+                return view.anyView()
             }
-        default:
-            return view
         }
     }
     
@@ -171,14 +193,8 @@ open class SimpleSkin: IdentitySkin {
     - Is always defined as multiline, with unlimited number of lines
     - Navigation is set to inline.
     */
-    private func standardText(_ text: Text, font: Font = .body, align: TextAlignment = .center) -> AnyView {
-        let view = AnyView(text
-            .foregroundColor(Color(primaryColor))
-            .lineLimit(nil)
-            .font(font)
-            .multilineTextAlignment(align))
-        
-        return align == .leading ? AnyView(HStack {view; Spacer()}) : view
+    private func standardText(_ text: Text, font: Font = .body, align: TextAlignment = .center) -> some View {
+        text.simpleSkinStandard(font: font, align: align, primary: Color(primaryColor))
     }
 
     /**
@@ -186,35 +202,22 @@ open class SimpleSkin: IdentitySkin {
     - Images have standard size
     - When pressed, a shodow gives the impression, that background is lowered
     */
-    private func defaultButton(_ label: AnyView, isDisabled: Bool, isPressed: Bool) -> AnyView {
-        AnyView(label
-            .padding()
-            .foregroundColor(isDisabled ? Color(secondaryColor) : Color(accentColor))
-            .shadow(
-                color: Color(secondaryColor),
-                radius: buttonShadowRadius,
-                x: isPressed ? -buttonShadowOffset : buttonShadowOffset,
-                y: isPressed ? -buttonShadowOffset : buttonShadowOffset)
-        )
+    private func defaultButton<V>(_ label: V, isDisabled: Bool, isPressed: Bool) -> some View where V: View {
+        label.simpleSkinDefaultButton(
+            isDisabled: isDisabled, isPressed: isPressed,
+            accentColor: Color(accentColor), secondaryColor: Color(secondaryColor),
+            buttonShadowRadius: buttonShadowRadius, buttonShadowOffset: buttonShadowOffset)
     }
     
     /**
     - Play button is centered and fills the available space up to 75% with aspect ratio 1:1
     */
-    private func playButton(isDisabled: Bool, isPressed: Bool) -> AnyView {
-        AnyView(
-            VStack {
-                Spacer()
-                HStack {
-                    Spacer()
-                    defaultButton(
-                        AnyView(Image(systemName: "play").resizable().scaledToFit().scaleEffect(playButtonScale)),
-                        isDisabled: isDisabled, isPressed: isPressed)
-                    Spacer()
-                }
-                Spacer()
-            }
-        )
+    private func playButton(isDisabled: Bool, isPressed: Bool) -> some View {
+        Image(systemName: "play").simpleSkinPlayButton(
+            isDisabled: isDisabled, isPressed: isPressed,
+            playButtonScale: playButtonScale,
+            accentColor: Color(accentColor), secondaryColor: Color(secondaryColor),
+            buttonShadowRadius: buttonShadowRadius, buttonShadowOffset: buttonShadowOffset)
     }
     
     private func isPlayButton(_ item: Navigation) -> Bool {
@@ -232,66 +235,136 @@ open class SimpleSkin: IdentitySkin {
     }
 
     /**
-      Backgrounds are default
-     */
-    private func mainBackground(_ view: AnyView) -> AnyView {
-        return AnyView(ZStack {
-            VStack {
-                Spacer()
-                HStack {Spacer()}
-                Spacer()
-            }
-            .background(Color(primaryInvertColor))
-            .edgesIgnoringSafeArea(.all)
-            
-            view.foregroundColor(Color(primaryColor))
-        })
-    }
-    
-    /**
-    - InLevel hides the back button
-     */
-    private func hide(_ view: AnyView, hidden: Bool) -> AnyView {
-        hidden ? AnyView(EmptyView()) : view
-    }
-    
-    /**
-    OffLevel and Settings-Info on the bottom. InLevel-Info to top-center
-     */
-    private func position(_ view: AnyView, position: UnitPoint?) -> AnyView {
-        guard let position = position else {return view}
-        
-        return AnyView(
-            VStack {
-                if ![.top, .topLeading, .topTrailing].contains(position) {Spacer()}
-                HStack {
-                    if ![.topLeading, .leading , .bottomLeading].contains(position) {Spacer()}
-                    view
-                    if ![.topTrailing, .trailing , .bottomTrailing].contains(position) {Spacer()}
-                }
-                if ![.bottom, .bottomLeading, .bottomTrailing].contains(position) {Spacer()}
-            }
-        )
-    }
-
-    /**
     - When overlayed, views are blurred
      */
-    private func overlayedView(_ view: AnyView, isOverlayed: Bool) -> AnyView {
-        AnyView(view.blur(radius: isOverlayed ? overlayedBlurRadius : 0.0))
+    private func overlayed<V>(_ view: V, isOverlayed: Bool) -> some View where V: View {
+        view.simpleSkinOverlayed(isOverlayed, blurRadius: overlayedBlurRadius)
     }
 
     /**
      - Backgroud is blurred with UltraThinMaterialDark, rounded edges as padded from the screen edges
      - Content within Overlay is extra padded
      */
-    private func overlayingView(_ view: AnyView) -> AnyView {
-        AnyView(view
-            .padding(overlayingInnerPadding)
-            .background(
-                BlurView(style: .systemUltraThinMaterialLight)
-                .cornerRadius(overlayingCornerRadius, antialiased: true)
-            )
-            .padding(overlayingOuterPadding))
+    private func overlaying<V>(_ view: V) -> some View where V: View {
+        view.simpleSkinOverlaying(
+            innerPadding: overlayingInnerPadding,
+            outerPadding: overlayingOuterPadding,
+            cornerRadius: overlayingCornerRadius)
+    }
+}
+
+// MARK: Extend view with helper functions for skins
+public extension View {
+    func anyView() -> AnyView {
+        return AnyView(self)
+    }
+    
+    func simpleSkinDefaultButton(
+        isDisabled: Bool, isPressed: Bool,
+        accentColor: Color, secondaryColor: Color,
+        buttonShadowRadius: CGFloat, buttonShadowOffset: CGFloat) -> some View
+    {
+        self.padding()
+            .foregroundColor(isDisabled ? secondaryColor : accentColor)
+            .shadow(
+                color: secondaryColor,
+                radius: buttonShadowRadius,
+                x: isPressed ? -buttonShadowOffset : buttonShadowOffset,
+                y: isPressed ? -buttonShadowOffset : buttonShadowOffset)
+    }
+    
+    func simpleSkinSmooth(duration: Double) -> some View {
+        self.transition(AnyTransition.opacity.animation(Animation.easeInOut(duration: duration)))
+    }
+    
+    func simpleSkinHide(_ hidden: Bool) -> some View {
+        Group {if !hidden {self}}
+    }
+    
+    func simpleSkinPosition(_ position: UnitPoint?) -> some View {
+        Group {
+            if position == nil {
+                self
+            } else  {
+                VStack {
+                    if ![.top, .topLeading, .topTrailing].contains(position!) {Spacer()}
+                    HStack {
+                        if ![.topLeading, .leading , .bottomLeading].contains(position!) {Spacer()}
+                        self
+                        if ![.topTrailing, .trailing , .bottomTrailing].contains(position!) {Spacer()}
+                    }
+                    if ![.bottom, .bottomLeading, .bottomTrailing].contains(position!) {Spacer()}
+                }
+            }
+        }
+    }
+    
+    func simpleSkinOverlayed(_ isOverlayed: Bool, blurRadius: CGFloat) -> some View {
+        self.blur(radius: isOverlayed ? blurRadius : 0.0)
+    }
+    
+    func simpleSkinOverlaying(innerPadding: CGFloat, outerPadding: CGFloat, cornerRadius: CGFloat) -> some View {
+        self
+        .padding(innerPadding)
+        .background(
+            BlurView(style: .systemUltraThinMaterialLight)
+            .cornerRadius(cornerRadius, antialiased: true)
+        )
+        .padding(outerPadding)
+    }
+    
+    func simpleSkinBackground(primary: Color, primaryInvert: Color) -> some View {
+        ZStack {
+            VStack {
+                Spacer()
+                HStack {Spacer()}
+                Spacer()
+            }
+            .background(primaryInvert)
+            .edgesIgnoringSafeArea(.all)
+            
+            self.foregroundColor(primary)
+        }
+    }
+}
+
+public extension Image {
+    func simpleSkinPlayButton(
+        isDisabled: Bool, isPressed: Bool,
+        playButtonScale: CGFloat,
+        accentColor: Color, secondaryColor: Color,
+        buttonShadowRadius: CGFloat, buttonShadowOffset: CGFloat) -> some View
+    {
+        VStack {
+            Spacer()
+            HStack {
+                Spacer()
+                self.resizable().scaledToFit().scaleEffect(playButtonScale)
+                    .simpleSkinDefaultButton(
+                        isDisabled: isDisabled, isPressed: isPressed,
+                        accentColor: accentColor, secondaryColor: secondaryColor,
+                        buttonShadowRadius: buttonShadowRadius, buttonShadowOffset: buttonShadowOffset)
+                Spacer()
+            }
+            Spacer()
+        }
+    }
+}
+
+public extension Text {
+    func simpleSkinStandard(font: Font = .body, align: TextAlignment = .center, primary: Color) -> some View {
+        let view = self
+            .foregroundColor(primary)
+            .lineLimit(nil)
+            .font(font)
+            .multilineTextAlignment(align)
+        
+        return Group {
+            if align == .leading {
+                HStack {view; Spacer()}
+            } else {
+                view
+            }
+        }
     }
 }

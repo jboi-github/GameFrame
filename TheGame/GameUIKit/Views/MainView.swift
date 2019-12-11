@@ -16,15 +16,19 @@ struct MainView<C, S>: View where C: GameConfig, S: Skin {
     
     private struct Banner: View {
         @ObservedObject private var adMob = GameFrame.adMob
+        @EnvironmentObject private var config: C
         @EnvironmentObject private var skin: S
         
         var body: some View {
-            GFBannerView() // Must be shown, otherwise AdMob doe not start to load anything
-                .frame(width: adMob.bannerSize.width, height: adMob.bannerSize.height)
-                .build(skin, .Main(.Banner(
-                    width: adMob.bannerSize.width,
-                    height: adMob.bannerSize.height,
-                    available: adMob.bannerAvailable)))
+            ZStack {
+                GFBannerView() // Must be shown, otherwise AdMob doe not start to load anything
+                if !adMob.bannerAvailable {config.noBannerZone}
+            }
+            .frame(width: adMob.bannerSize.width, height: adMob.bannerSize.height)
+            .build(skin, .Main(.Banner(
+                width: adMob.bannerSize.width,
+                height: adMob.bannerSize.height,
+                available: adMob.bannerAvailable)))
         }
     }
     

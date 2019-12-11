@@ -26,7 +26,7 @@ struct SettingsView<C, S>: View where C: GameConfig, S: Skin {
             ZStack {
                 // Spread to available display
                 VStack{Spacer(); HStack{Spacer()}}
-                EmptyView()
+                config.settingsZone
                     .build(skin, .Settings(.Space(
                         gameFrame,
                         informationFrame: informationFrame,

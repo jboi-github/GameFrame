@@ -118,10 +118,10 @@ public enum SkinItem {
  2. Write your own modifier and return it in the overridden function
  */
 public protocol Skin: ObservableObject {
-    func build(_ item: SkinItem.SkinItemView, view: AnyView) -> AnyView
+    func build<V>(_ item: SkinItem.SkinItemView, view: V) -> AnyView where V: View
     func build(_ item: SkinItem.SkinItemText, text: Text) -> AnyView
     func build(_ item: SkinItem.SkinItemImage, image: Image) -> AnyView
-    func build(_ item: SkinItem.SkinItemButton, label: AnyView, isPressed: Bool) -> AnyView
+    func build<V>(_ item: SkinItem.SkinItemButton, label: V, isPressed: Bool) -> AnyView where V: View
 }
 
 struct SkinButtonStyle<S>: ButtonStyle where S: Skin {
@@ -129,13 +129,13 @@ struct SkinButtonStyle<S>: ButtonStyle where S: Skin {
     let item: SkinItem.SkinItemButton
     
     func makeBody(configuration: Self.Configuration) -> some View {
-        skin.build(item, label: AnyView(configuration.label), isPressed: configuration.isPressed)
+        skin.build(item, label: configuration.label, isPressed: configuration.isPressed)
     }
 }
 
 extension View {
     func build<S>(_ skin: S, _ item: SkinItem.SkinItemView) -> some View  where S: Skin {
-        skin.build(item, view: AnyView(self))
+        skin.build(item, view: self)
     }
 }
 extension Text {
@@ -148,5 +148,3 @@ extension Image {
         skin.build(item, image: self)
     }
 }
-
-// TODO: Implement GameZone, SettingsSpace and Banner-Alternative with ViewBuilder into config
