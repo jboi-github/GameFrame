@@ -15,7 +15,7 @@ struct OffLevelView<C, S>: View where C: GameConfig, S: Skin {
     
     var body: some View {
         VStack {
-            NavigationBar<S>(
+            NavigationBar<C, S>(
                 parent: "OffLevel",
                 title: config.offLevelNavigationBarTitle,
                 item1: config.offLevelNavigationBarButton1,

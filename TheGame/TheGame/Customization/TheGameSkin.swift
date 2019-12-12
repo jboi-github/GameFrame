@@ -20,6 +20,7 @@ class TheGameSkin: SimpleSkin {
             accentColor: UIColor.systemRed,
             primaryInvertColor: UIColor.darkGray,
             secondaryInvertColor: UIColor.lightGray,
-            accentInvertColor: UIColor.systemGreen)
+            accentInvertColor: UIColor.systemGreen,
+            smoothDuration: 5.0)
     }
 }

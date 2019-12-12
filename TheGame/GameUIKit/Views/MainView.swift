@@ -34,18 +34,23 @@ struct MainView<C, S>: View where C: GameConfig, S: Skin {
     
     var body: some View {
         VStack {
-            if navigator.current == .OffLevel {
-                OffLevelView<C, S>()
-            } else if navigator.current == .InLevel {
-                InLevelView<C, S>()
-            } else if navigator.current == .Settings {
-                SettingsView<C, S>()
-            } else if navigator.current == .Store {
-                StoreView<C, S>()
-            }
+            asView(navigator.current)
             Banner()
         }
         .build(skin, .Main(.Main))
+    }
+    
+    private func asView(_ item: GameNavigationModel.GameNavigation) -> some View {
+        switch item {
+        case .OffLevel:
+            return OffLevelView<C, S>().anyView()
+        case .InLevel:
+            return InLevelView<C, S>().anyView()
+        case .Settings:
+            return SettingsView<C, S>().anyView()
+        case .Store:
+            return StoreView<C, S>().anyView()
+        }
     }
 }
 

@@ -17,7 +17,7 @@ struct SettingsView<C, S>: View where C: GameConfig, S: Skin {
 
     var body: some View {
         VStack {
-            NavigationBar<S>(
+            NavigationBar<C, S>(
                 parent: "Settings",
                 title: config.settingsNavigationBarTitle,
                 item1: config.settingsNavigationBarButton1,

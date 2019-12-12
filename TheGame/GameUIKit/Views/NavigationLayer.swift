@@ -36,7 +36,7 @@ struct NavigationLayer<C, S>: View where C: GameConfig, S: Skin {
                     ForEach(0..<self.items[row].count, id: \.self) {
                         col in
                         
-                        NavigationItem<S>(
+                        NavigationItem<C, S>(
                             parent: self.parent,
                             item: self.items[row][col],
                             isOverlayed: self.isOverlayed,

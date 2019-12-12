@@ -25,7 +25,7 @@ struct InLevelView<C, S>: View where C: GameConfig, S: Skin {
         
         var body: some View {
             VStack {
-                NavigationBar<S>(
+                NavigationBar<C, S>(
                     parent: "InLevel",
                     title: config.inLevelNavigationBarTitle,
                     item1: config.inLevelNavigationBarButton1,

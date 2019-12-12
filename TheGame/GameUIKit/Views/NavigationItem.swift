@@ -9,7 +9,7 @@
 import SwiftUI
 import GameFrameKit
 
-struct NavigationItem<S>: View where S: Skin {
+struct NavigationItem<C, S>: View where C: GameConfig, S: Skin {
     let parent: String
     let item: Navigation
     let isOverlayed: Bool
@@ -17,6 +17,7 @@ struct NavigationItem<S>: View where S: Skin {
     @ObservedObject private var inApp = GameFrame.inApp
     @ObservedObject private var adMob = GameFrame.adMob
     @ObservedObject private var gameCenter = GameFrame.gameCenter
+    @EnvironmentObject private var config: C
     @EnvironmentObject private var skin: S
 
     var body: some View {
@@ -61,13 +62,27 @@ struct NavigationItem<S>: View where S: Skin {
         case let .Links(link: link):
             switch link {
             case let .Play(image: image):
-                return AnyView(Button(action: {GameUI.instance.navigator.push(.InLevel)}) {image})
+                return Button(action: {
+                    GameUI.instance.navigator.push(.InLevel(title: self.config.inLevelNavigationBarTitle))
+                }) {image}
+                .anyView()
             case let .Store(image: image):
-                return AnyView(Button(action: {GameUI.instance.navigator.push(.Store)}) {image})
+                return Button(action: {
+                    GameUI.instance.navigator.push(.Store(title: self.config.storeNavigationBarTitle))
+                }) {image}
+                .anyView()
             case let .Settings(image: image):
-                return AnyView(Button(action: {GameUI.instance.navigator.push(.Settings)}) {image})
-            case let .Back(image: image):
-                return AnyView(Button(action: {GameUI.instance.navigator.pop()}) {image})
+                return Button(action: {
+                    GameUI.instance.navigator.push(.Settings(title: self.config.settingsNavigationBarTitle))
+                }) {image}
+                .anyView()
+            case let .Back(image: image, prevTitle: prevTitle):
+                return Button(action: {GameUI.instance.navigator.pop()}) {
+                    HStack {
+                        image
+                        Text(prevTitle)
+                    }
+                }.anyView()
             }
         }
     }
@@ -100,7 +115,7 @@ struct NavigationItem<S>: View where S: Skin {
 
 struct NavigationItem_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationItem<PreviewSkin>(
+        NavigationItem<PreviewConfig, PreviewSkin>(
             parent: "Preview", item: .Generics(.Url("https://www.apple.com")), isOverlayed: false, bounds: .zero)
             .environmentObject(PreviewSkin())
             .environmentObject(PreviewConfig())

@@ -45,7 +45,11 @@ public class GameUI: NSObject, ObservableObject  {
     {
         if instance != nil {return}
         
-        instance = GameUI(gameDelegate: gameDelegate, startsOffLevel: gameConfig.startsOffLevel)
+        instance = GameUI(
+            gameDelegate: gameDelegate,
+            startsOffLevel: gameConfig.startsOffLevel,
+            offLevelTitle: gameConfig.offLevelNavigationBarTitle,
+            inLevelTitle: gameConfig.inLevelNavigationBarTitle)
         
         GameFrame.createSharedInstance(
             scene, purchasables: gameConfig.purchasables,
@@ -103,9 +107,12 @@ public class GameUI: NSObject, ObservableObject  {
     let navigator: GameNavigationModel
 
     // MARK: Initialization
-    private init(gameDelegate: GameDelegate, startsOffLevel: Bool) {
+    private init(gameDelegate: GameDelegate, startsOffLevel: Bool, offLevelTitle: String, inLevelTitle: String) {
         self.gameDelegate = gameDelegate
-        self.navigator = GameNavigationModel(startsOffLevel: startsOffLevel)
+        self.navigator = GameNavigationModel(
+            startsOffLevel: startsOffLevel,
+            offLevelTitle: offLevelTitle,
+            inLevelTitle: inLevelTitle)
         
         super.init()
         

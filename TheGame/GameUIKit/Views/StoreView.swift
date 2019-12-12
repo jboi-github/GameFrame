@@ -75,7 +75,7 @@ struct StoreView<C, S>: View where C: GameConfig, S: Skin {
             }
             
             return VStack {
-                NavigationBar<S>(
+                NavigationBar<C, S>(
                     parent: "Store",
                     title: config.storeNavigationBarTitle,
                     item1: items.count > 2 ? items[1] : nil,

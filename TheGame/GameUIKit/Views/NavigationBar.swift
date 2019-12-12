@@ -8,13 +8,14 @@
 
 import SwiftUI
 
-struct NavigationBar<S>: View where S: Skin {
+struct NavigationBar<C, S>: View where C: GameConfig, S: Skin {
     let parent: String
     let title: String
     let item1: Navigation?
     let item2: Navigation?
     let isOverlayed: Bool
     let bounds: CGRect?
+    @EnvironmentObject private var config: C
     @EnvironmentObject private var skin: S
     
     init(parent: String,
@@ -40,16 +41,16 @@ struct NavigationBar<S>: View where S: Skin {
                 Spacer()
             }
             HStack {
-                if GameUI.instance?.navigator.canGoBack() ?? false {
-                    NavigationItem<S>(
+                if GameUI.instance.navigator.canGoBack() {
+                    NavigationItem<C, S>(
                         parent: parent,
-                        item: .Links(.Back()),
+                        item: .Links(.Back(prevTitle: GameUI.instance.navigator.prevTitle())),
                         isOverlayed: isOverlayed,
                         bounds: bounds)
                 }
                 Spacer()
-                if item1 != nil {NavigationItem<S>(parent: parent, item: item1!, isOverlayed: isOverlayed, bounds: bounds)}
-                if item2 != nil {NavigationItem<S>(parent: parent, item: item2!, isOverlayed: isOverlayed, bounds: bounds)}
+                if item1 != nil {NavigationItem<C, S>(parent: parent, item: item1!, isOverlayed: isOverlayed, bounds: bounds)}
+                if item2 != nil {NavigationItem<C, S>(parent: parent, item: item2!, isOverlayed: isOverlayed, bounds: bounds)}
             }
         }
         .build(skin, .Commons(.NavigationBar(parent: parent)))
@@ -58,12 +59,13 @@ struct NavigationBar<S>: View where S: Skin {
 
 struct NavigationBar_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationBar<PreviewSkin>(
+        NavigationBar<PreviewConfig, PreviewSkin>(
         parent: "Preview",
         title: "Title",
         item1: .Generics(.Url("https://www.apple.com")),
         item2: .Generics(.Url("https://www.google.com")),
         isOverlayed: false)
         .environmentObject(PreviewSkin())
+        .environmentObject(PreviewConfig())
     }
 }
