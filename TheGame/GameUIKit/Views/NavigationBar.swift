@@ -46,11 +46,22 @@ struct NavigationBar<C, S>: View where C: GameConfig, S: Skin {
                         parent: parent,
                         item: .Links(.Back(prevTitle: GameUI.instance.navigator.prevTitle())),
                         isOverlayed: isOverlayed,
-                        bounds: bounds)
+                        bounds: bounds,
+                        gameFrameId: "\(parent)-0")
                 }
                 Spacer()
-                if item1 != nil {NavigationItem<C, S>(parent: parent, item: item1!, isOverlayed: isOverlayed, bounds: bounds)}
-                if item2 != nil {NavigationItem<C, S>(parent: parent, item: item2!, isOverlayed: isOverlayed, bounds: bounds)}
+                if item1 != nil {
+                    NavigationItem<C, S>(
+                        parent: parent, item: item1!,
+                        isOverlayed: isOverlayed, bounds: bounds,
+                        gameFrameId: "\(parent)-1")
+                }
+                if item2 != nil {
+                    NavigationItem<C, S>(
+                        parent: parent, item: item2!,
+                        isOverlayed: isOverlayed, bounds: bounds,
+                        gameFrameId: "\(parent)-2")
+                }
             }
         }
         .build(skin, .Commons(.NavigationBar(parent: parent)))

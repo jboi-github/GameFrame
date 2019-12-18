@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import GameFrameKit
 
 // MARK: Skin items
 /**
@@ -30,8 +31,8 @@ public enum SkinItem {
         
         /// Modifiers for Main-View
         public enum SkinItemMain {
-            case Main
-            case Banner(width: CGFloat, height: CGFloat, available: Bool)
+            case Main(current: Int)
+            case Banner(width: CGFloat, height: CGFloat)
         }
         
         /// Modifiers for OffLevel-View
@@ -61,15 +62,15 @@ public enum SkinItem {
         
         /// Modifiers for Offer-Overlay
         public enum SkinItemOffer {
-            case Main(isOverlayed: Bool)
-            case Products
+            case Main
+            case Products(isOverlayed: Bool)
         }
         
         /// Modifiers for any other view and overlay
         public enum SkinItemCommons {
             case Information(parent: String)
             case InformationRow(parent: String, row: Int)
-            case InformationNonConsumable(parent: String, id: String)
+            case InformationNonConsumable(parent: String, id: String, isOpened: Bool)
             case NavigationLayer(parent: String)
             case NavigationBar(parent: String)
             case NavigationRow(parent: String, row: Int)
@@ -88,7 +89,7 @@ public enum SkinItem {
         case OfferProductTitle(id: String)
         case OfferProductDescription(id: String)
         case OfferProductPrice(id: String)
-        case InformationItem(parent: String, id: String)
+        case InformationItem(parent: String, id: String, current: Double)
         case ErrorMessage
         case NavigationBarTitle(parent: String)
     }
@@ -126,10 +127,16 @@ public protocol Skin: ObservableObject {
 
 struct SkinButtonStyle<S>: ButtonStyle where S: Skin {
     let skin: S
+    let frameId: String
     let item: SkinItem.SkinItemButton
     
     func makeBody(configuration: Self.Configuration) -> some View {
-        skin.build(item, label: configuration.label, isPressed: configuration.isPressed)
+        if configuration.isPressed {
+            if let frame = GameUI.instance.storedFrames[frameId] {
+                GameUI.instance.triggerPoint = frame.mid
+            }
+        }
+        return skin.build(item, label: configuration.label, isPressed: configuration.isPressed)
     }
 }
 

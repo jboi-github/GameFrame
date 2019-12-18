@@ -9,47 +9,56 @@
 import SwiftUI
 import GameFrameKit
 
-struct MainView<C, S>: View where C: GameConfig, S: Skin {
-    @ObservedObject private var navigator = GameUI.instance.navigator
+private struct Banner<C, S>: View where C: GameConfig, S: Skin {
+    @State private var bannerAvailable = GameFrame.adMob.bannerAvailable
+    @State private var bannerSize = GameFrame.adMob.bannerSize
     @EnvironmentObject private var config: C
     @EnvironmentObject private var skin: S
     
-    private struct Banner: View {
-        @ObservedObject private var adMob = GameFrame.adMob
-        @EnvironmentObject private var config: C
-        @EnvironmentObject private var skin: S
-        
-        var body: some View {
-            ZStack {
-                GFBannerView() // Must be shown, otherwise AdMob doe not start to load anything
-                if !adMob.bannerAvailable {config.noBannerZone}
-            }
-            .frame(width: adMob.bannerSize.width, height: adMob.bannerSize.height)
-            .build(skin, .Main(.Banner(
-                width: adMob.bannerSize.width,
-                height: adMob.bannerSize.height,
-                available: adMob.bannerAvailable)))
+    var body: some View {
+        ZStack {
+            GFBannerView() // Must be shown, otherwise AdMob doe not start to load anything
+            if !bannerAvailable {config.noBannerZone}
         }
+        .frame(width: bannerSize.width, height: bannerSize.height)
+        .build(skin, .Main(.Banner(
+            width: bannerSize.width,
+            height: bannerSize.height)))
+            .onReceive(GameFrame.adMob.$bannerSize) {self.bannerSize = $0}
+            .onReceive(GameFrame.adMob.$bannerAvailable) {self.bannerAvailable = $0}
     }
+}
+
+struct MainView<C, S>: View where C: GameConfig, S: Skin {
+    @State private var current = -1
+    @EnvironmentObject private var config: C
+    @EnvironmentObject private var skin: S
     
     var body: some View {
         VStack {
-            asView(navigator.current)
-            Banner()
+            if current == 0 {
+                OffLevelView<C, S>()
+            } else if current == 1 {
+                InLevelView<C, S>()
+            } else if current == 2 {
+                SettingsView<C, S>()
+            } else if current == 3 {
+                StoreView<C, S>()
+            }
+            Banner<C, S>()
         }
-        .build(skin, .Main(.Main))
-    }
-    
-    private func asView(_ item: GameNavigationModel.GameNavigation) -> some View {
-        switch item {
-        case .OffLevel:
-            return OffLevelView<C, S>().anyView()
-        case .InLevel:
-            return InLevelView<C, S>().anyView()
-        case .Settings:
-            return SettingsView<C, S>().anyView()
-        case .Store:
-            return StoreView<C, S>().anyView()
+        .build(skin, .Main(.Main(current: current)))
+        .onReceive(GameUI.instance.navigator.$current) {
+            switch $0 {
+            case .OffLevel:
+                self.current = 0
+            case .InLevel:
+                self.current = 1
+            case .Settings:
+                self.current = 2
+            case .Store:
+                self.current = 3
+            }
         }
     }
 }

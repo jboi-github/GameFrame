@@ -48,15 +48,19 @@ struct BlurView: UIViewRepresentable {
 }
 
 struct ErrorAlert<C, S>: View  where C: GameConfig, S: Skin {
+    @State private var error: Error? = nil
     @EnvironmentObject private var skin: S
     
     var body: some View {
         VStack {
-            Text("\(GameFrame.inApp.error?.localizedDescription ?? "OK")")
+            Text("\(error?.localizedDescription ?? "unknown error")")
                 .build(skin, .ErrorMessage)
-            NavigationLayer<C, S>(parent: "Error", items: [[.Buttons(.ErrorBack())]])
+            NavigationLayer<C, S>(
+                parent: "Error",
+                items: [[.Buttons(.ErrorBack())]])
         }
         .build(skin, .Commons(.Error))
+        .onReceive(GameFrame.inApp.$error) {self.error = $0}
     }
 }
 
@@ -75,15 +79,30 @@ extension View {
         return self
     }
     
-    func getFrame(_ frame: Binding<CGRect>) -> some View {
-        self
+    func storeFrame(_ key: String) -> some View {
+        return self
         .background(
             GeometryReader {
                 proxy -> AnyView in
                 
-                DispatchQueue.main.async {frame.wrappedValue = proxy.frame(in: .global)}
-                return AnyView(EmptyView())
+                GameUI.instance.storeFrame(key, frame: proxy.frame(in: .global))
+                return EmptyView().anyView()
             }
         )
     }
+    
+    func getFrame(_ key: String, frame: Binding<CGRect>) -> some View {
+        self
+        .onReceive(GameUI.instance.$storedFramesChanged.filter {
+            key == $0
+        }) {
+            if let _frame = GameUI.instance.storedFrames[$0] {
+                frame.wrappedValue = _frame
+            }
+        }
+    }
+}
+
+public extension CGRect {
+    var mid: CGPoint {CGPoint(x: self.midX, y: self.midY)}
 }

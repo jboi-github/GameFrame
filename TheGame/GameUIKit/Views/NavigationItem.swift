@@ -14,9 +14,10 @@ struct NavigationItem<C, S>: View where C: GameConfig, S: Skin {
     let item: Navigation
     let isOverlayed: Bool
     let bounds: CGRect?
-    @ObservedObject private var inApp = GameFrame.inApp
-    @ObservedObject private var adMob = GameFrame.adMob
-    @ObservedObject private var gameCenter = GameFrame.gameCenter
+    let gameFrameId: String
+    @State private var inAppAvailable = GameFrame.inApp.available
+    @State private var rewardAvailable = GameFrame.adMob.rewardAvailable
+    @State private var gameCenterEnabled = GameFrame.gameCenter.enabled
     @EnvironmentObject private var config: C
     @EnvironmentObject private var skin: S
 
@@ -24,7 +25,12 @@ struct NavigationItem<C, S>: View where C: GameConfig, S: Skin {
         asView(item, bounds: bounds)
             .disabled(isDisabled(item))
             .buttonStyle(SkinButtonStyle(
-                skin: skin, item: .NavigationItem(parent: parent, isDisabled: isDisabled(item), item: item)))
+                skin: skin, frameId: gameFrameId,
+                item: .NavigationItem(parent: parent, isDisabled: isDisabled(item), item: item)))
+            .storeFrame(gameFrameId)
+            .onReceive(GameFrame.inApp.$available) {self.inAppAvailable = $0}
+            .onReceive(GameFrame.adMob.$rewardAvailable) {self.rewardAvailable = $0}
+            .onReceive(GameFrame.gameCenter.$enabled) {self.gameCenterEnabled = $0}
     }
 
     private func asView(_ item: Navigation, bounds: CGRect?) -> some View {
@@ -32,32 +38,32 @@ struct NavigationItem<C, S>: View where C: GameConfig, S: Skin {
         case let .Generics(generic: generic):
             switch generic {
             case let .Action(action, image: image):
-                return AnyView(Button(action: action) {image})
+                return Button(action: action) {image}.anyView()
             case let .Url(urlString, image: image):
-                return AnyView(Button(action: getUrlAction(urlString)) {image})
+                return Button(action: getUrlAction(urlString)) {image}.anyView()
             }
         case let .Buttons(button: button):
             switch button {
             case let .ErrorBack(image: image):
-                return AnyView(Button(action: {GameFrame.inApp.clearError()}) {image})
+                return Button(action: {GameFrame.inApp.clearError()}) {image}.anyView()
             case let .OfferBack(image: image):
-                return AnyView(Button(action: {GameUI.instance.clearOffer()}) {image})
+                return Button(action: {GameUI.instance.clearOffer()}) {image}.anyView()
             case let .SystemSettings(image: image):
-                return AnyView(Button(action: getUrlAction(UIApplication.openSettingsURLString)) {image})
+                return Button(action: getUrlAction(UIApplication.openSettingsURLString)) {image}.anyView()
             case let .Like(image: image, appId: appId):
-                return AnyView(Button(
-                    action: getUrlAction("https://itunes.apple.com/app/id\(appId)?action=write-review")) {image})
+                return Button(
+                    action: getUrlAction("https://itunes.apple.com/app/id\(appId)?action=write-review")) {image}.anyView()
             case let .Restore(image: image):
-                return AnyView(Button(action: {GameFrame.inApp.restore()}) {image})
+                return Button(action: {GameFrame.inApp.restore()}) {image}.anyView()
             case let .Reward(image: image, consumableId: consumableId, quantity: quantity):
-                return AnyView(Button(action: {
+                return Button(action: {
                         let consumable = GameFrame.coreData.getConsumable(consumableId)
                         GameFrame.adMob.showReward(consumable: consumable, quantity: quantity)
-                    }) {image})
+                    }) {image}.anyView()
             case let .Share(image: image):
-                return AnyView(Button(action: {GameFrame.share.show(bounds: bounds)}) {image})
+                return Button(action: {GameFrame.share.show(bounds: bounds)}) {image}.anyView()
             case let .GameCenter(image: image):
-                return AnyView(Button(action: {GameFrame.gameCenter.show()}) {image})
+                return Button(action: {GameFrame.gameCenter.show()}) {image}.anyView()
         }
         case let .Links(link: link):
             switch link {
@@ -94,11 +100,11 @@ struct NavigationItem<C, S>: View where C: GameConfig, S: Skin {
         case let .Buttons(button: button):
             switch button {
             case .Restore:
-                return !inApp.available
+                return !inAppAvailable
             case .Reward:
-                return !adMob.rewardAvailable
+                return !rewardAvailable
             case .GameCenter:
-                return !gameCenter.enabled
+                return !gameCenterEnabled
             case let .Like(image: _, appId: appId):
                 return !canUrlAction("https://itunes.apple.com/app/id\(appId)?action=write-review")
             default: return false
@@ -106,7 +112,7 @@ struct NavigationItem<C, S>: View where C: GameConfig, S: Skin {
         case let .Links(link: link):
             switch link {
             case .Store:
-                return !inApp.available
+                return !inAppAvailable
             default: return false
             }
         }
@@ -116,7 +122,9 @@ struct NavigationItem<C, S>: View where C: GameConfig, S: Skin {
 struct NavigationItem_Previews: PreviewProvider {
     static var previews: some View {
         NavigationItem<PreviewConfig, PreviewSkin>(
-            parent: "Preview", item: .Generics(.Url("https://www.apple.com")), isOverlayed: false, bounds: .zero)
+            parent: "Preview", item: .Generics(.Url("https://www.apple.com")),
+            isOverlayed: false, bounds: .zero,
+            gameFrameId: "X-1")
             .environmentObject(PreviewSkin())
             .environmentObject(PreviewConfig())
     }

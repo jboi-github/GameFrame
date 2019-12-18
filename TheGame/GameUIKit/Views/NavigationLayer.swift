@@ -40,7 +40,8 @@ struct NavigationLayer<C, S>: View where C: GameConfig, S: Skin {
                             parent: self.parent,
                             item: self.items[row][col],
                             isOverlayed: self.isOverlayed,
-                            bounds: self.bounds)
+                            bounds: self.bounds,
+                            gameFrameId: "\(self.parent)-\(row)-\(col)")
                     }
                 }
                 .build(self.skin, .Commons(.NavigationRow(parent: self.parent, row: row)))
@@ -58,7 +59,7 @@ struct NavigationLayer_Previews: PreviewProvider {
                 .Generics(.Url("https://www.apple.com")),
                 .Generics(.Url("https://www.google.com")),
                 .Generics(.Url("https://www.bing.com"))
-            ]])
+                ]])
             .environmentObject(PreviewSkin())
             .environmentObject(PreviewConfig())
     }

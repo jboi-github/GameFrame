@@ -47,7 +47,10 @@ open class SimpleSkin: IdentitySkin {
     private let overlayingOuterPadding: CGFloat
     private let overlayingCornerRadius: CGFloat
     
-    private let smoothDuration: Double
+    private let smooth: Animation
+    private let spring: Animation
+    
+    private var prevView = -1
 
     public init(
         primaryColor: UIColor = UIColor.white,
@@ -80,7 +83,9 @@ open class SimpleSkin: IdentitySkin {
         self.overlayingInnerPadding = overlayingInnerPadding
         self.overlayingOuterPadding = overlayingOuterPadding
         self.overlayingCornerRadius = overlayingCornerRadius
-        self.smoothDuration = smoothDuration
+        
+        self.smooth = Animation.easeInOut(duration: smoothDuration)
+        self.spring = Animation.spring(response: 5.0, dampingFraction: 0.75)
         
         super.init()
     }
@@ -93,6 +98,10 @@ open class SimpleSkin: IdentitySkin {
             return standardText(text, font: .subheadline, align: .leading).anyView()
         case let .NavigationBarTitle(parent: parent):
             return standardText(text, font: parent == "OffLevel" ? .largeTitle : .title).anyView()
+        case .ErrorMessage:
+            return standardText(text).foregroundColor(Color(primaryInvertColor)).anyView()
+        case .InformationItem:
+            return standardText(text).animation(smooth).scaleEffect(1.1).anyView()
         default:
             return standardText(text).anyView()
         }
@@ -119,9 +128,12 @@ open class SimpleSkin: IdentitySkin {
         switch item {
         case let .Main(mainItem):
             switch mainItem {
-            case .Main:
+            case let .Main(current: current):
+                defer {prevView = current}
                 return view
                     .simpleSkinBackground(primary: Color(primaryColor), primaryInvert: Color(primaryInvertColor))
+                    .clipShape(Circle().scale(current == -1 ? 0 : 3))
+                    .animation(prevView == -1 && current != -1 ? smooth : nil, value: current)
                     .anyView()
             default:
                 return view.anyView()
@@ -129,30 +141,34 @@ open class SimpleSkin: IdentitySkin {
         case let .OffLevel(offLevelItem):
             switch offLevelItem {
             case .Main:
-                return view.simpleSkinSmooth(duration: smoothDuration).anyView()
+                return view.simpleSkinSmoothAppear(smooth).anyView()
             }
         case let .InLevel(inLevelItem):
             switch inLevelItem {
             case .Main:
-                return view.simpleSkinSmooth(duration: smoothDuration).anyView()
+                return view
+                    .simpleSkinSmoothAppear(smooth)
+                    .anyView()
             case let .Game(isOverlayed: isOverlayed):
-                return view.simpleSkinOverlayed(isOverlayed, blurRadius: overlayedBlurRadius).anyView()
+                return view
+                    .simpleSkinOverlayed(isOverlayed, blurRadius: overlayedBlurRadius, animation: smooth)
+                    .anyView()
             default:
                 return view.anyView()
             }
         case let .Settings(settingsItem):
             switch settingsItem {
             case .Main:
-                return view.simpleSkinSmooth(duration: smoothDuration).anyView()
+                return view.simpleSkinSmoothAppear(smooth).anyView()
             default:
                 return view.anyView()
             }
         case let .Store(storeItem):
             switch storeItem {
             case .Main:
-                return view.simpleSkinSmooth(duration: smoothDuration).anyView()
+                return view.simpleSkinSmoothAppear(smooth).anyView()
             case let .Products(isOverlayed: isOverlayed):
-                return view.simpleSkinOverlayed(isOverlayed, blurRadius: overlayedBlurRadius)
+                return view.simpleSkinOverlayed(isOverlayed, blurRadius: overlayedBlurRadius, animation: smooth)
                     .padding(.horizontal)
                     .anyView()
             default:
@@ -160,18 +176,19 @@ open class SimpleSkin: IdentitySkin {
             }
         case let .Offer(offerItem):
             switch offerItem {
-            case let .Main(isOverlayed: isOverlayed):
-                return overlaying(view)
-                    .simpleSkinOverlayed(isOverlayed, blurRadius: overlayedBlurRadius)
-                    .simpleSkinSmooth(duration: smoothDuration)
+            case .Main:
+                return overlaying(view).anyView()
+            case let .Products(isOverlayed: isOverlayed):
+                return view
+                    .simpleSkinOverlayed(isOverlayed, blurRadius: overlayedBlurRadius, animation: smooth)
                     .anyView()
-            default:
-                return view.anyView()
             }
         case let .Commons(commonsItem):
             switch commonsItem {
-            case .Error, .Wait:
+            case .Error:
                 return overlaying(view).anyView()
+            case .Wait:
+                return overlaying(view.scaledToFit().scaleEffect(0.5)).anyView()
             case let .NavigationBar(parent: parent):
                 return view.simpleSkinHide(parent == "InLevel").anyView()
             case let .NavigationLayer(parent: parent):
@@ -213,11 +230,12 @@ open class SimpleSkin: IdentitySkin {
     - Play button is centered and fills the available space up to 75% with aspect ratio 1:1
     */
     private func playButton(isDisabled: Bool, isPressed: Bool) -> some View {
-        Image(systemName: "play").simpleSkinPlayButton(
+        Image(systemName: "play.circle").simpleSkinPlayButton(
             isDisabled: isDisabled, isPressed: isPressed,
             playButtonScale: playButtonScale,
             accentColor: Color(accentColor), secondaryColor: Color(secondaryColor),
-            buttonShadowRadius: buttonShadowRadius, buttonShadowOffset: buttonShadowOffset)
+            buttonShadowRadius: buttonShadowRadius * 5.0,
+            buttonShadowOffset: buttonShadowOffset * 5.0)
     }
     
     private func isPlayButton(_ item: Navigation) -> Bool {
@@ -235,13 +253,6 @@ open class SimpleSkin: IdentitySkin {
     }
 
     /**
-    - When overlayed, views are blurred
-     */
-    private func overlayed<V>(_ view: V, isOverlayed: Bool) -> some View where V: View {
-        view.simpleSkinOverlayed(isOverlayed, blurRadius: overlayedBlurRadius)
-    }
-
-    /**
      - Backgroud is blurred with UltraThinMaterialDark, rounded edges as padded from the screen edges
      - Content within Overlay is extra padded
      */
@@ -249,7 +260,8 @@ open class SimpleSkin: IdentitySkin {
         view.simpleSkinOverlaying(
             innerPadding: overlayingInnerPadding,
             outerPadding: overlayingOuterPadding,
-            cornerRadius: overlayingCornerRadius)
+            cornerRadius: overlayingCornerRadius,
+            animation: smooth)
     }
 }
 
@@ -271,10 +283,6 @@ public extension View {
                 radius: buttonShadowRadius,
                 x: isPressed ? -buttonShadowOffset : buttonShadowOffset,
                 y: isPressed ? -buttonShadowOffset : buttonShadowOffset)
-    }
-    
-    func simpleSkinSmooth(duration: Double) -> some View {
-        self.transition(AnyTransition.opacity.animation(Animation.easeInOut(duration: duration)))
     }
     
     func simpleSkinHide(_ hidden: Bool) -> some View {
@@ -299,18 +307,26 @@ public extension View {
         }
     }
     
-    func simpleSkinOverlayed(_ isOverlayed: Bool, blurRadius: CGFloat) -> some View {
+    func simpleSkinOverlayed(_ isOverlayed: Bool, blurRadius: CGFloat, animation: Animation) -> some View {
         self.blur(radius: isOverlayed ? blurRadius : 0.0)
+            .animation(animation, value: isOverlayed)
     }
     
-    func simpleSkinOverlaying(innerPadding: CGFloat, outerPadding: CGFloat, cornerRadius: CGFloat) -> some View {
+    func simpleSkinOverlaying(
+        innerPadding: CGFloat,
+        outerPadding: CGFloat,
+        cornerRadius: CGFloat,
+        animation: Animation)
+        -> some View
+    {
         self
-        .padding(innerPadding)
-        .background(
-            BlurView(style: .systemUltraThinMaterialLight)
-            .cornerRadius(cornerRadius, antialiased: true)
-        )
-        .padding(outerPadding)
+            .padding(innerPadding)
+            .background(
+                BlurView(style: .systemUltraThinMaterialLight)
+                .cornerRadius(cornerRadius, antialiased: true)
+            )
+            .padding(outerPadding)
+            .transition(AnyTransition.scale(scale: 0, anchor: UnitPoint.trailing).animation(animation))
     }
     
     func simpleSkinBackground(primary: Color, primaryInvert: Color) -> some View {
@@ -325,6 +341,10 @@ public extension View {
             
             self.foregroundColor(primary)
         }
+    }
+    
+    func simpleSkinSmoothAppear(_ animation: Animation) -> some View {
+        self.transition(AnyTransition.opacity.animation(animation))
     }
 }
 
@@ -343,7 +363,8 @@ public extension Image {
                     .simpleSkinDefaultButton(
                         isDisabled: isDisabled, isPressed: isPressed,
                         accentColor: accentColor, secondaryColor: secondaryColor,
-                        buttonShadowRadius: buttonShadowRadius, buttonShadowOffset: buttonShadowOffset)
+                        buttonShadowRadius: buttonShadowRadius,
+                        buttonShadowOffset: buttonShadowOffset)
                 Spacer()
             }
             Spacer()

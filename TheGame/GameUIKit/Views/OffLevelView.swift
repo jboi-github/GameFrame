@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+private let gameFrameId = UUID().uuidString
+
 struct OffLevelView<C, S>: View where C: GameConfig, S: Skin {
     @State private var gameFrame: CGRect = .zero
     @EnvironmentObject private var config: C
@@ -31,7 +33,8 @@ struct OffLevelView<C, S>: View where C: GameConfig, S: Skin {
             }
         }
         .build(skin, .OffLevel(.Main))
-        .getFrame($gameFrame)
+        .storeFrame(gameFrameId)
+        .getFrame(gameFrameId, frame: $gameFrame)
     }
 }
 
