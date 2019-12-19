@@ -60,7 +60,9 @@ struct ErrorAlert<C, S>: View  where C: GameConfig, S: Skin {
                 items: [[.Buttons(.ErrorBack())]])
         }
         .build(skin, .Commons(.Error))
-        .onReceive(GameFrame.inApp.$error) {self.error = $0}
+        .onReceive(GameFrame.inApp.$error) {
+            if self.error == nil {self.error = $0}
+        }
     }
 }
 

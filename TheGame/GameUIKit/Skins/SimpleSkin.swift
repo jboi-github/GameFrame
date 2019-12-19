@@ -188,7 +188,7 @@ open class SimpleSkin: IdentitySkin {
             case .Error:
                 return overlaying(view).anyView()
             case .Wait:
-                return overlaying(view.scaledToFit().scaleEffect(0.5)).anyView()
+                return overlaying(view).scaledToFit().scaleEffect(0.5).anyView()
             case let .NavigationBar(parent: parent):
                 return view.simpleSkinHide(parent == "InLevel").anyView()
             case let .NavigationLayer(parent: parent):
@@ -319,14 +319,20 @@ public extension View {
         animation: Animation)
         -> some View
     {
-        self
+        var offset: CGPoint = .zero
+        if let triggerPoint = GameUI.instance.triggerPoint,
+            let mainMid = GameUI.instance.storedFrames[mainFrameId]?.mid
+        {
+            offset = CGPoint(x: triggerPoint.x - mainMid.x, y: triggerPoint.y - mainMid.y)
+        }
+        return self
             .padding(innerPadding)
             .background(
                 BlurView(style: .systemUltraThinMaterialLight)
                 .cornerRadius(cornerRadius, antialiased: true)
             )
             .padding(outerPadding)
-            .transition(AnyTransition.scale(scale: 0, anchor: UnitPoint.trailing).animation(animation))
+            .transition(AnyTransition.scale.combined(with: AnyTransition.offset(x: offset.x, y: offset.y)))
     }
     
     func simpleSkinBackground(primary: Color, primaryInvert: Color) -> some View {

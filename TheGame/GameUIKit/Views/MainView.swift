@@ -9,6 +9,8 @@
 import SwiftUI
 import GameFrameKit
 
+let mainFrameId = "mainFrameId"
+
 private struct Banner<C, S>: View where C: GameConfig, S: Skin {
     @State private var bannerAvailable = GameFrame.adMob.bannerAvailable
     @State private var bannerSize = GameFrame.adMob.bannerSize
@@ -48,6 +50,7 @@ struct MainView<C, S>: View where C: GameConfig, S: Skin {
             Banner<C, S>()
         }
         .build(skin, .Main(.Main(current: current)))
+        .storeFrame(mainFrameId)
         .onReceive(GameUI.instance.navigator.$current) {
             switch $0 {
             case .OffLevel:

@@ -126,9 +126,18 @@ struct StoreView<C, S>: View where C: GameConfig, S: Skin {
             }
         }
         .build(skin, .Store(.Main))
-        .onReceive(GameFrame.inApp.$purchasing) {self.purchasing = $0; self.isOverlayed = $0 || self.error != nil}
-        .onReceive(GameFrame.inApp.$error) {self.error = $0; self.isOverlayed = self.purchasing || $0 != nil}
-
+        .onReceive(GameFrame.inApp.$purchasing) { purchasing in
+            withAnimation {
+                self.purchasing = purchasing;
+                self.isOverlayed = purchasing || self.error != nil
+            }
+        }
+        .onReceive(GameFrame.inApp.$error) { error in
+            withAnimation {
+                self.error = error;
+                self.isOverlayed = self.purchasing || error != nil
+            }
+        }
     }
 }
 

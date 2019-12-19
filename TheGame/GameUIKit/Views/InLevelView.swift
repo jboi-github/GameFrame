@@ -163,8 +163,18 @@ private struct OfferOverlay<C, S>: View where C: GameConfig, S: Skin {
             }
         }
         .build(skin, .Offer(.Main))
-        .onReceive(GameFrame.inApp.$purchasing) {self.purchasing = $0; self.isOverlayed = $0 || self.error != nil}
-        .onReceive(GameFrame.inApp.$error) {self.error = $0; self.isOverlayed = self.purchasing || $0 != nil}
+        .onReceive(GameFrame.inApp.$purchasing) { purchasing in
+            withAnimation {
+                self.purchasing = purchasing;
+                self.isOverlayed = purchasing || self.error != nil
+            }
+        }
+        .onReceive(GameFrame.inApp.$error) { error in
+            withAnimation {
+                self.error = error;
+                self.isOverlayed = self.purchasing || error != nil
+            }
+        }
     }
 }
 
@@ -182,7 +192,11 @@ struct InLevelView<C, S>: View where C: GameConfig, S: Skin {
             }
         }
         .build(skin, .InLevel(.Main))
-        .onReceive(GameUI.instance.$offer) {_ in self.makeOffer = GameUI.instance.offer != nil}
+        .onReceive(GameUI.instance.$offer) {_ in
+            withAnimation {
+                self.makeOffer = GameUI.instance.offer != nil
+            }
+        }
     }
 }
 
