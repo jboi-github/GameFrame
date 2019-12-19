@@ -30,7 +30,7 @@ public enum Navigation {
         /// Open Settings page for this game.
         case Settings(image: Image = Image(systemName: "gear"))
         /// Go back one level in store or in-level
-        case Back(image: Image = Image(systemName: "chevron.left"))
+        case Back(image: Image = Image(systemName: "chevron.left"), prevTitle: String = "")
     }
     
     public enum Button {

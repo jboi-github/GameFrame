@@ -9,6 +9,115 @@
 import SwiftUI
 import GameFrameKit
 
+private struct AchievementView<S>: View where S: Skin {
+    let parent: String
+    let id: String
+    let format: String
+    @State private var current = 0.0
+    @EnvironmentObject private var skin: S
+    
+    init(parent: String, id: String, format: String) {
+        self.parent = parent
+        self.id = id
+        self.format = format
+        self.current = GameFrame.coreData.getAchievement(id).current
+    }
+    
+    var body: some View {
+        Text("\(current.format(format))")
+            .build(skin, .InformationItem(parent: parent, id: id, current: current))
+            .onReceive(GameFrame.coreData.getAchievement(id).$current) {self.current = $0}
+    }
+}
+
+private struct ScoreView<S>: View where S: Skin {
+    let parent: String
+    let id: String
+    @State private var current = 0
+    @EnvironmentObject private var skin: S
+    
+    init(parent: String, id: String) {
+        self.parent = parent
+        self.id = id
+        current = GameFrame.coreData.getScore(id).current
+    }
+    
+    var body: some View {
+        Text("\(current) / \(GameFrame.coreData.getScore(id).highest)")
+            .build(skin, .InformationItem(parent: parent, id: id, current: Double(current)))
+            .onReceive(GameFrame.coreData.getScore(id).$current) {self.current = $0}
+    }
+}
+
+private struct ConsumableView<S>: View where S: Skin {
+    let parent: String
+    let id: String
+    @State private var available = 0
+    @EnvironmentObject private var skin: S
+    
+    init(parent: String, id: String) {
+        self.parent = parent
+        self.id = id
+        available = GameFrame.coreData.getConsumable(id).available
+    }
+    
+    var body: some View {
+        Text("\(available)")
+            .build(skin, .InformationItem(parent: parent, id: id, current: Double(available)))
+            .onReceive(GameFrame.coreData.getConsumable(id).$available) {self.available = $0}
+    }
+}
+
+private struct NonConsumableView<S>: View where S: Skin {
+    let parent: String
+    let id: String
+    let opened: Image
+    let closed: Image?
+    @State private var isOpened = false
+    @EnvironmentObject private var skin: S
+    
+    init(parent: String, id: String, opened: Image, closed: Image?) {
+        self.parent = parent
+        self.id = id
+        self.opened = opened
+        self.closed = closed
+        isOpened = GameFrame.coreData.getNonConsumable(id).isOpened
+    }
+    
+    var body: some View {
+        Group {
+            if isOpened {
+                opened
+            } else if closed != nil {
+                closed!
+            }
+        }
+        .build(skin, .Commons(.InformationNonConsumable(parent: parent, id: id, isOpened: isOpened)))
+        .onReceive(GameFrame.coreData.getNonConsumable(id).$isOpened) {self.isOpened = $0}
+    }
+}
+
+private struct Item<S>: View where S: Skin {
+    let parent: String
+    let row: Int
+    let col: Int
+    let item: Information
+    @EnvironmentObject private var skin: S
+    
+    var body: some View {
+        switch item {
+        case let .Achievement(id: id, format: format):
+            return AchievementView<S>(parent: parent, id: id, format: format).anyView()
+        case let .Score(id: id):
+            return ScoreView<S>(parent: parent, id: id).anyView()
+        case let .Consumable(id: id):
+            return ConsumableView<S>(parent: parent, id: id).anyView()
+        case let .NonConsumable(id: id, opened: opened, closed: closed):
+            return NonConsumableView<S>(parent: parent, id: id, opened: opened, closed: closed).anyView()
+        }
+    }
+}
+
 /**
  Information items to be used in configuration of the game. Each reflects an information.
 */
@@ -33,111 +142,6 @@ struct InformationLayer<S>: View where S: Skin {
             }
         }
         .build(skin, .Commons(.Information(parent: parent)))
-    }
-    
-    private struct Item<S>: View where S: Skin {
-        let parent: String
-        let row: Int
-        let col: Int
-        let item: Information
-        @EnvironmentObject private var skin: S
-        
-        var body: some View {
-            switch item {
-            case let .Achievement(id: id, format: format):
-                return AnyView(AchievementView<S>(parent: parent, id: id, format: format))
-            case let .Score(id: id):
-                return AnyView(ScoreView<S>(parent: parent, id: id))
-            case let .Consumable(id: id):
-                return AnyView(ConsumableView<S>(parent: parent, id: id))
-            case let .NonConsumable(id: id, opened: opened, closed: closed):
-                return AnyView(NonConsumableView<S>(parent: parent, id: id, opened: opened, closed: closed))
-            }
-        }
-        
-        private struct AchievementView<S>: View where S: Skin {
-            let parent: String
-            let id: String
-            let format: String
-            @ObservedObject private var achievement: GFAchievement
-            @EnvironmentObject private var skin: S
-            
-            init(parent: String, id: String, format: String) {
-                self.parent = parent
-                self.id = id
-                self.format = format
-                achievement = GameFrame.coreData.getAchievement(id)
-            }
-            
-            var body: some View {
-                Text("\(achievement.current.format(format))")
-                    .build(skin, .InformationItem(parent: parent, id: id))
-            }
-        }
-        
-        private struct ScoreView<S>: View where S: Skin {
-            let parent: String
-            let id: String
-            @ObservedObject private var score: GFScore
-            @EnvironmentObject private var skin: S
-            
-            init(parent: String, id: String) {
-                self.parent = parent
-                self.id = id
-                score = GameFrame.coreData.getScore(id)
-            }
-            
-            var body: some View {
-                Text("\(score.current) / \(score.highest)")
-                    .build(skin, .InformationItem(parent: parent, id: id))
-            }
-        }
-        
-        private struct ConsumableView<S>: View where S: Skin {
-            let parent: String
-            let id: String
-            @ObservedObject private var consumable: GFConsumable
-            @EnvironmentObject private var skin: S
-            
-            init(parent: String, id: String) {
-                self.parent = parent
-                self.id = id
-                consumable = GameFrame.coreData.getConsumable(id)
-            }
-            
-            var body: some View {
-                Text("\(consumable.available)")
-                    .build(skin, .InformationItem(parent: parent, id: id))
-            }
-        }
-
-        private struct NonConsumableView<S>: View where S: Skin {
-            let parent: String
-            let id: String
-            let opened: Image
-            let closed: Image?
-            @ObservedObject private var nonConsumable: GFNonConsumable
-            @EnvironmentObject private var skin: S
-            
-            init(parent: String, id: String, opened: Image, closed: Image?) {
-                self.parent = parent
-                self.id = id
-                self.opened = opened
-                self.closed = closed
-                nonConsumable = GameFrame.coreData.getNonConsumable(id)
-            }
-            
-            var body: some View {
-                HStack {
-                    if nonConsumable.isOpened {
-                        opened
-                    } else if closed != nil {
-                        closed!
-                    }
-                }
-                .build(skin, .Commons(.InformationNonConsumable(parent: parent, id: id)))
-            }
-        }
     }
 }
 

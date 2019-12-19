@@ -12,6 +12,10 @@ import GameFrameKit
 import SwiftUI
 
 class TheGameConfig: GameConfig {
+    lazy var gameZone: some View = TheGameView()
+    lazy var settingsZone: some View = TheGameSettingsView()
+    lazy var noBannerZone: some View = Text("Thank you for playing The Game")
+
     let startsOffLevel: Bool = false
     
     func offLevelInformation(frame: CGRect) -> [[Information]] {

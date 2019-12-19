@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import GameFrameKit
 
 // MARK: Skin items
 /**
@@ -30,8 +31,8 @@ public enum SkinItem {
         
         /// Modifiers for Main-View
         public enum SkinItemMain {
-            case Main
-            case Banner(width: CGFloat, height: CGFloat, available: Bool)
+            case Main(current: Int)
+            case Banner(width: CGFloat, height: CGFloat)
         }
         
         /// Modifiers for OffLevel-View
@@ -61,15 +62,15 @@ public enum SkinItem {
         
         /// Modifiers for Offer-Overlay
         public enum SkinItemOffer {
-            case Main(isOverlayed: Bool)
-            case Products
+            case Main
+            case Products(isOverlayed: Bool)
         }
         
         /// Modifiers for any other view and overlay
         public enum SkinItemCommons {
             case Information(parent: String)
             case InformationRow(parent: String, row: Int)
-            case InformationNonConsumable(parent: String, id: String)
+            case InformationNonConsumable(parent: String, id: String, isOpened: Bool)
             case NavigationLayer(parent: String)
             case NavigationBar(parent: String)
             case NavigationRow(parent: String, row: Int)
@@ -88,7 +89,7 @@ public enum SkinItem {
         case OfferProductTitle(id: String)
         case OfferProductDescription(id: String)
         case OfferProductPrice(id: String)
-        case InformationItem(parent: String, id: String)
+        case InformationItem(parent: String, id: String, current: Double)
         case ErrorMessage
         case NavigationBarTitle(parent: String)
     }
@@ -118,24 +119,30 @@ public enum SkinItem {
  2. Write your own modifier and return it in the overridden function
  */
 public protocol Skin: ObservableObject {
-    func build(_ item: SkinItem.SkinItemView, view: AnyView) -> AnyView
+    func build<V>(_ item: SkinItem.SkinItemView, view: V) -> AnyView where V: View
     func build(_ item: SkinItem.SkinItemText, text: Text) -> AnyView
     func build(_ item: SkinItem.SkinItemImage, image: Image) -> AnyView
-    func build(_ item: SkinItem.SkinItemButton, label: AnyView, isPressed: Bool) -> AnyView
+    func build<V>(_ item: SkinItem.SkinItemButton, label: V, isPressed: Bool) -> AnyView where V: View
 }
 
 struct SkinButtonStyle<S>: ButtonStyle where S: Skin {
     let skin: S
+    let frameId: String
     let item: SkinItem.SkinItemButton
     
     func makeBody(configuration: Self.Configuration) -> some View {
-        skin.build(item, label: AnyView(configuration.label), isPressed: configuration.isPressed)
+        if configuration.isPressed {
+            if let frame = GameUI.instance.storedFrames[frameId] {
+                GameUI.instance.triggerPoint = frame.mid
+            }
+        }
+        return skin.build(item, label: configuration.label, isPressed: configuration.isPressed)
     }
 }
 
 extension View {
     func build<S>(_ skin: S, _ item: SkinItem.SkinItemView) -> some View  where S: Skin {
-        skin.build(item, view: AnyView(self))
+        skin.build(item, view: self)
     }
 }
 extension Text {
@@ -148,5 +155,3 @@ extension Image {
         skin.build(item, image: self)
     }
 }
-
-// TODO: Implement GameZone, SettingsSpace and Banner-Alternative with ViewBuilder into config

@@ -45,7 +45,11 @@ public class GameUI: NSObject, ObservableObject  {
     {
         if instance != nil {return}
         
-        instance = GameUI(gameDelegate: gameDelegate, startsOffLevel: gameConfig.startsOffLevel)
+        instance = GameUI(
+            gameDelegate: gameDelegate,
+            startsOffLevel: gameConfig.startsOffLevel,
+            offLevelTitle: gameConfig.offLevelNavigationBarTitle,
+            inLevelTitle: gameConfig.inLevelNavigationBarTitle)
         
         GameFrame.createSharedInstance(
             scene, purchasables: gameConfig.purchasables,
@@ -100,12 +104,24 @@ public class GameUI: NSObject, ObservableObject  {
     @Published private(set) var isInLevel: Bool = false
     @Published private(set) var isResumed: Bool = false
     
-    let navigator: GameNavigationModel
+    /**
+     Set by views and buttons to indicate best guess of plaers current focus point on the screen.
+     
+     In particular, this is:
+     - In all screens initially the center of the screen
+     - When a button was pressed, the mid of the button
+     
+     Might be used as anchor point for scale animations.
+     */
+    public internal(set) var triggerPoint: CGPoint?
 
     // MARK: Initialization
-    private init(gameDelegate: GameDelegate, startsOffLevel: Bool) {
+    private init(gameDelegate: GameDelegate, startsOffLevel: Bool, offLevelTitle: String, inLevelTitle: String) {
         self.gameDelegate = gameDelegate
-        self.navigator = GameNavigationModel(startsOffLevel: startsOffLevel)
+        self.navigator = GameNavigationModel(
+            startsOffLevel: startsOffLevel,
+            offLevelTitle: offLevelTitle,
+            inLevelTitle: inLevelTitle)
         
         super.init()
         
@@ -119,6 +135,22 @@ public class GameUI: NSObject, ObservableObject  {
 
     // MARK: Internals
     let gameDelegate: GameDelegate
+    let navigator: GameNavigationModel
+    
+    private(set) var storedFrames = [String: CGRect]()
+    @Published private(set) var storedFramesChanged: String = ""
+    
+    func storeFrame(_ key: String, frame: CGRect) {
+        storedFrames[key] = frame
+        storedFramesChanged = key
+    }
+    
+    var firstTimeAfterBoot: Bool {
+        let result = _firstTimeAfterBoot
+        _firstTimeAfterBoot = false
+        return result
+    }
+    private var _firstTimeAfterBoot = true
 
     /// reading a published variable triggers changes!
     var isInLevelShadow: Bool = false {

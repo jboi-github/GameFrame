@@ -8,6 +8,10 @@
 
 import SwiftUI
 
+private var gameFrameId = UUID().uuidString
+private var informationFrameId = UUID().uuidString
+private var navigationFrameId = UUID().uuidString
+
 struct SettingsView<C, S>: View where C: GameConfig, S: Skin {
     @State private var gameFrame: CGRect = .zero
     @State private var informationFrame: CGRect = .zero
@@ -17,7 +21,7 @@ struct SettingsView<C, S>: View where C: GameConfig, S: Skin {
 
     var body: some View {
         VStack {
-            NavigationBar<S>(
+            NavigationBar<C, S>(
                 parent: "Settings",
                 title: config.settingsNavigationBarTitle,
                 item1: config.settingsNavigationBarButton1,
@@ -26,7 +30,7 @@ struct SettingsView<C, S>: View where C: GameConfig, S: Skin {
             ZStack {
                 // Spread to available display
                 VStack{Spacer(); HStack{Spacer()}}
-                EmptyView()
+                config.settingsZone
                     .build(skin, .Settings(.Space(
                         gameFrame,
                         informationFrame: informationFrame,
@@ -34,15 +38,18 @@ struct SettingsView<C, S>: View where C: GameConfig, S: Skin {
                 InformationLayer<S>(
                     parent: "Settings",
                     items: config.settingsInformation(frame: gameFrame))
-                    .getFrame($informationFrame)
+                    .storeFrame(informationFrameId)
                 NavigationLayer<C, S>(
                     parent: "Settings",
                     items: config.settingsNavigation(frame: gameFrame))
-                    .getFrame($navigationFrame)
+                    .storeFrame(navigationFrameId)
             }
         }
         .build(skin, .Settings(.Main))
-        .getFrame($gameFrame)
+        .storeFrame(gameFrameId)
+        .getFrame(gameFrameId, frame: $gameFrame)
+        .getFrame(informationFrameId, frame: $informationFrame)
+        .getFrame(navigationFrameId, frame: $navigationFrame)
     }
 }
 

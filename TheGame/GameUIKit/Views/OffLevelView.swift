@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+private let gameFrameId = UUID().uuidString
+
 struct OffLevelView<C, S>: View where C: GameConfig, S: Skin {
     @State private var gameFrame: CGRect = .zero
     @EnvironmentObject private var config: C
@@ -15,7 +17,7 @@ struct OffLevelView<C, S>: View where C: GameConfig, S: Skin {
     
     var body: some View {
         VStack {
-            NavigationBar<S>(
+            NavigationBar<C, S>(
                 parent: "OffLevel",
                 title: config.offLevelNavigationBarTitle,
                 item1: config.offLevelNavigationBarButton1,
@@ -31,7 +33,8 @@ struct OffLevelView<C, S>: View where C: GameConfig, S: Skin {
             }
         }
         .build(skin, .OffLevel(.Main))
-        .getFrame($gameFrame)
+        .storeFrame(gameFrameId)
+        .getFrame(gameFrameId, frame: $gameFrame)
     }
 }
 

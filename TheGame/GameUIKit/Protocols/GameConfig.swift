@@ -15,6 +15,31 @@ import SwiftUI
  Implement this protocol to define how to navigate through your app and what information to show where and when.
  */
 public protocol GameConfig: ObservableObject {
+    // MARK: Game Views-Configuration
+    associatedtype GameZoneType: View
+    associatedtype SettingsZoneType: View
+    associatedtype NoBannerZoneType: View
+    /**
+     Here you're. Place here your view that contains the game itself.
+     
+     Usually, this is a SCNView or SKView, wrapped in a UIRepresantive.
+     */
+    var gameZone: GameZoneType {get}
+    
+    /**
+     Place here your view that contains settings for the game.
+     
+     Usually, this is a SCNView or SKView, wrapped in a UIRepresantive. Use this views, e.g. to let the player choose an avatar or weapons etc.
+     */
+    var settingsZone: SettingsZoneType {get}
+    
+    /**
+     Place here your view that shows up, when no advertisement banner is available.
+     
+     Usually, this is a text or graphik. It is shown, when AdMob has no banner available or the player bought an advertisement-free version.
+     */
+    var noBannerZone: NoBannerZoneType {get}
+
     // MARK: OffLevel-Configuration
     /**
      Set to true, to start Game in Off-Level. The player has to press the play-button to start the game. This is useful for arcade games and whenever timing
@@ -243,6 +268,10 @@ public enum NavigationLocation {
 import GameFrameKit
 
 class PreviewConfig: GameConfig {
+    let gameZone: some View = EmptyView()
+    let settingsZone: some View = EmptyView()
+    let noBannerZone: some View = EmptyView()
+
     let startsOffLevel: Bool = true
     
     func offLevelInformation(frame: CGRect) -> [[Information]] {return [[Information]]()}

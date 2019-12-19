@@ -17,8 +17,8 @@ import SwiftUI
 open class IdentitySkin: Skin {
     public init() {}
     
-    open func build(_ item: SkinItem.SkinItemView, view: AnyView) -> AnyView {view}
+    open func build<V>(_ item: SkinItem.SkinItemView, view: V) -> AnyView where V: View {AnyView(view)}
     open func build(_ item: SkinItem.SkinItemText, text: Text) -> AnyView {AnyView(text)}
     open func build(_ item: SkinItem.SkinItemImage, image: Image) -> AnyView {AnyView(image)}
-    open func build(_ item: SkinItem.SkinItemButton, label: AnyView, isPressed: Bool = false) -> AnyView {label}
+    open func build<V>(_ item: SkinItem.SkinItemButton, label: V, isPressed: Bool = false) -> AnyView where V: View {AnyView(label)}
 }
