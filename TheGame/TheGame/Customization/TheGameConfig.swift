@@ -154,4 +154,8 @@ class TheGameConfig: GameConfig {
         .Score("Points") {"My best: \($0.highest)"},
         .NonConsumable("weaponC") {$0.isOpened ? "Got the coolest weapon!" : "Struggeling to get weaponC. Can you help?"}
     ]
+    
+    let sounds: [String: (resource: String, type: String?)] = [
+        "GrandOpening": (resource: "Bell", type: nil)
+    ]
 }

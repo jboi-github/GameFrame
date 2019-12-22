@@ -20,5 +20,8 @@ open class IdentitySkin: Skin {
     open func build<V>(_ item: SkinItem.SkinItemView, view: V) -> AnyView where V: View {AnyView(view)}
     open func build(_ item: SkinItem.SkinItemText, text: Text) -> AnyView {AnyView(text)}
     open func build(_ item: SkinItem.SkinItemImage, image: Image) -> AnyView {AnyView(image)}
-    open func build<V>(_ item: SkinItem.SkinItemButton, label: V, isPressed: Bool = false) -> AnyView where V: View {AnyView(label)}
+    open func build<V>(_ item: SkinItem.SkinItemButton, label: V, isPressed: Bool = false) -> AnyView where V: View {label.anyView()}
+    open func build<V>(_ item: SkinItem.SkinItemToggle, label: V, isOn: Binding<Bool>) -> AnyView where V: View {
+        Toggle(isOn: isOn, label: {label}).anyView()
+    }
 }

@@ -37,53 +37,86 @@ struct NavigationItem<C, S>: View where C: GameConfig, S: Skin {
         switch item {
         case let .Generics(generic: generic):
             switch generic {
-            case let .Action(action, image: image):
-                return Button(action: action) {image}.anyView()
-            case let .Url(urlString, image: image):
-                return Button(action: getUrlAction(urlString)) {image}.anyView()
+            case let .Action(action, image: image, sound: sound):
+                return Button(action: {
+                    if let sound = sound {GameFrame.audio.play(sound)}
+                    action()
+                }) {image}.anyView()
+            case let .Url(urlString, image: image, sound: sound):
+                return Button(action: {
+                    if let sound = sound {GameFrame.audio.play(sound)}
+                    getUrlAction(urlString)()
+                }) {image}.anyView()
             }
         case let .Buttons(button: button):
             switch button {
-            case let .ErrorBack(image: image):
-                return Button(action: {GameFrame.inApp.clearError()}) {image}.anyView()
-            case let .OfferBack(image: image):
-                return Button(action: {GameUI.instance.clearOffer()}) {image}.anyView()
-            case let .SystemSettings(image: image):
-                return Button(action: getUrlAction(UIApplication.openSettingsURLString)) {image}.anyView()
-            case let .Like(image: image, appId: appId):
-                return Button(
-                    action: getUrlAction("https://itunes.apple.com/app/id\(appId)?action=write-review")) {image}.anyView()
-            case let .Restore(image: image):
-                return Button(action: {GameFrame.inApp.restore()}) {image}.anyView()
-            case let .Reward(image: image, consumableId: consumableId, quantity: quantity):
+            case let .ErrorBack(image: image, sound: sound):
                 return Button(action: {
+                    if let sound = sound {GameFrame.audio.play(sound)}
+                    GameFrame.inApp.clearError()
+                }) {image}.anyView()
+            case let .OfferBack(image: image, sound: sound):
+                return Button(action: {
+                    if let sound = sound {GameFrame.audio.play(sound)}
+                    GameUI.instance.clearOffer()
+                }) {image}.anyView()
+            case let .SystemSettings(image: image, sound: sound):
+                return Button(action: {
+                    if let sound = sound {GameFrame.audio.play(sound)}
+                    getUrlAction(UIApplication.openSettingsURLString)()
+                }) {image}.anyView()
+            case let .Like(image: image, sound: sound, appId: appId):
+                return Button(action: {
+                    if let sound = sound {GameFrame.audio.play(sound)}
+                    getUrlAction("https://itunes.apple.com/app/id\(appId)?action=write-review")()
+                }) {image}.anyView()
+            case let .Restore(image: image, sound: sound):
+                return Button(action: {
+                    if let sound = sound {GameFrame.audio.play(sound)}
+                    GameFrame.inApp.restore()
+                }) {image}.anyView()
+            case let .Reward(image: image, sound: sound, consumableId: consumableId, quantity: quantity):
+                return Button(action: {
+                        if let sound = sound {GameFrame.audio.play(sound)}
                         let consumable = GameFrame.coreData.getConsumable(consumableId)
                         GameFrame.adMob.showReward(consumable: consumable, quantity: quantity)
                     }) {image}.anyView()
-            case let .Share(image: image):
-                return Button(action: {GameFrame.share.show(bounds: bounds)}) {image}.anyView()
-            case let .GameCenter(image: image):
-                return Button(action: {GameFrame.gameCenter.show()}) {image}.anyView()
+            case let .Share(image: image, sound: sound):
+                return Button(action: {
+                    if let sound = sound {GameFrame.audio.play(sound)}
+                    GameFrame.share.show(bounds: bounds)
+                }) {image}.anyView()
+            case let .GameCenter(image: image, sound: sound):
+                return Button(action: {
+                    if let sound = sound {GameFrame.audio.play(sound)}
+                    GameFrame.gameCenter.show()
+                }) {image}.anyView()
         }
         case let .Links(link: link):
             switch link {
-            case let .Play(image: image):
+            case let .Play(image: image, sound: sound):
                 return Button(action: {
+                    if let sound = sound {GameFrame.audio.play(sound)}
                     GameUI.instance.navigator.push(.InLevel(title: self.config.inLevelNavigationBarTitle))
                 }) {image}
                 .anyView()
-            case let .Store(image: image):
+            case let .Store(image: image, sound: sound):
                 return Button(action: {
+                    if let sound = sound {GameFrame.audio.play(sound)}
                     GameUI.instance.navigator.push(.Store(title: self.config.storeNavigationBarTitle))
                 }) {image}
                 .anyView()
-            case let .Settings(image: image):
+            case let .Settings(image: image, sound: sound):
                 return Button(action: {
+                    if let sound = sound {GameFrame.audio.play(sound)}
                     GameUI.instance.navigator.push(.Settings(title: self.config.settingsNavigationBarTitle))
                 }) {image}
                 .anyView()
-            case let .Back(image: image, prevTitle: prevTitle):
-                return Button(action: {GameUI.instance.navigator.pop()}) {
+            case let .Back(image: image, sound: sound, prevTitle: prevTitle):
+                return Button(action: {
+                    if let sound = sound {GameFrame.audio.play(sound)}
+                    GameUI.instance.navigator.pop()
+                }) {
                     HStack {
                         image
                         Text(prevTitle)
@@ -105,7 +138,7 @@ struct NavigationItem<C, S>: View where C: GameConfig, S: Skin {
                 return !rewardAvailable
             case .GameCenter:
                 return !gameCenterEnabled
-            case let .Like(image: _, appId: appId):
+            case let .Like(image: _, sound: _, appId: appId):
                 return !canUrlAction("https://itunes.apple.com/app/id\(appId)?action=write-review")
             default: return false
         }

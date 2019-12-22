@@ -11,6 +11,8 @@
 		15134585238DB10200A56D01 /* Information.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15134584238DB10200A56D01 /* Information.swift */; };
 		151345A823904EA500A56D01 /* GFShare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 151345A723904EA500A56D01 /* GFShare.swift */; };
 		151F921F239A74F70010A21F /* SimpleSkin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 151F921E239A74F70010A21F /* SimpleSkin.swift */; };
+		1529ED2623ACD247002B8500 /* GFAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1529ED2523ACD247002B8500 /* GFAudio.swift */; };
+		1529ED2923AD0A58002B8500 /* Bell.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1529ED2823AD0A57002B8500 /* Bell.mp3 */; };
 		153F1202237C8E2100D3B6AD /* TheGameSkin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 153F1201237C8E2100D3B6AD /* TheGameSkin.swift */; };
 		1540988F23773041002A5E4F /* TheGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1540988E23773041002A5E4F /* TheGameView.swift */; };
 		1540B469239BA7060045A14F /* IdentitySkin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1540B468239BA7060045A14F /* IdentitySkin.swift */; };
@@ -161,6 +163,8 @@
 		15134584238DB10200A56D01 /* Information.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Information.swift; sourceTree = "<group>"; };
 		151345A723904EA500A56D01 /* GFShare.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GFShare.swift; sourceTree = "<group>"; };
 		151F921E239A74F70010A21F /* SimpleSkin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleSkin.swift; sourceTree = "<group>"; };
+		1529ED2523ACD247002B8500 /* GFAudio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GFAudio.swift; sourceTree = "<group>"; };
+		1529ED2823AD0A57002B8500 /* Bell.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Bell.mp3; sourceTree = "<group>"; };
 		153F1201237C8E2100D3B6AD /* TheGameSkin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TheGameSkin.swift; sourceTree = "<group>"; };
 		1540988E23773041002A5E4F /* TheGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TheGameView.swift; sourceTree = "<group>"; };
 		1540B468239BA7060045A14F /* IdentitySkin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentitySkin.swift; sourceTree = "<group>"; };
@@ -274,6 +278,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1529ED2723AD01AB002B8500 /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				1529ED2823AD0A57002B8500 /* Bell.mp3 */,
+			);
+			path = Sounds;
+			sourceTree = "<group>";
+		};
 		154EEA052369DF430052B734 = {
 			isa = PBXGroup;
 			children = (
@@ -332,6 +344,7 @@
 		15557F84236B6BEF005950B3 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1529ED2723AD01AB002B8500 /* Sounds */,
 				159C093D236C64BF00A3B08E /* Preview Content */,
 				154EEA1A2369DF450052B734 /* Assets.xcassets */,
 				154EEA1F2369DF450052B734 /* LaunchScreen.storyboard */,
@@ -365,6 +378,7 @@
 				155DBBF5237EF65800AA6412 /* GFAdMob.swift */,
 				155DBBF6237EF65800AA6412 /* GFTools.swift */,
 				151345A723904EA500A56D01 /* GFShare.swift */,
+				1529ED2523ACD247002B8500 /* GFAudio.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -659,6 +673,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				154EEA212369DF450052B734 /* LaunchScreen.storyboard in Resources */,
+				1529ED2923AD0A58002B8500 /* Bell.mp3 in Resources */,
 				154EEA1B2369DF450052B734 /* Assets.xcassets in Resources */,
 				15557F8A236B6EF7005950B3 /* Default-568h@2x.png in Resources */,
 			);
@@ -728,6 +743,7 @@
 				155DBC10237EF65800AA6412 /* GFEntityNonConsumable+CoreDataClass.swift in Sources */,
 				155DBC06237EF65800AA6412 /* GFScore.swift in Sources */,
 				155DBC17237EF65800AA6412 /* GFEntityScore+CoreDataClass.swift in Sources */,
+				1529ED2623ACD247002B8500 /* GFAudio.swift in Sources */,
 				155DBC08237EF65800AA6412 /* GFObjects.swift in Sources */,
 				155DBC04237EF65800AA6412 /* GFNonConsumable.swift in Sources */,
 				155DBC13237EF65800AA6412 /* GFEntityNonConsumable+CoreDataProperties.swift in Sources */,
@@ -942,7 +958,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"TheGame/Resources/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "TheGame/Resources/Preview\\ Content";
 				DEVELOPMENT_TEAM = YW52XX5QKJ;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -967,7 +983,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"TheGame/Resources/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "TheGame/Resources/Preview\\ Content";
 				DEVELOPMENT_TEAM = YW52XX5QKJ;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
