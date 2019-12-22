@@ -65,6 +65,16 @@ public class GameUI: NSObject, ObservableObject  {
                     .environmentObject(gameSkin)
                     .environmentObject(gameConfig)
         }
+        
+        gameConfig.sounds.forEach {
+            let (key, (resource, type)) = $0
+            
+            if let type = type {
+                GameFrame.audio.register(key, resource: resource, withExtension: type)
+            } else {
+                GameFrame.audio.register(key, resource: resource)
+            }
+        }
     }
 
     /**

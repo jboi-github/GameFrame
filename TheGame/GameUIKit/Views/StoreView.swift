@@ -56,8 +56,8 @@ private struct ProductRow<S>: View where S: Skin {
                 skin: skin,
                 frameId: "Store-Button-\(product.productIdentifier)",
                 item: .StoreProductButton(
-                id: product.productIdentifier,
-                isDisabled: isOverlayed)))
+                    id: product.productIdentifier,
+                    isDisabled: isOverlayed)))
             .storeFrame("Store-Button-\(product.productIdentifier)")
         }
         .build(skin, .Store(.Product(id: product.productIdentifier)))

@@ -22,6 +22,7 @@ struct TheGameView: View {
             HStack {
                 Spacer()
                 Button(action: {
+                    GameFrame.audio.play("GrandOpening")
                     self.bullets.consume(1)
                     if self.bullets.available <= 0 {
                         self.makeOfferOrDie(consumableId: "Bullets", quantity: 100)

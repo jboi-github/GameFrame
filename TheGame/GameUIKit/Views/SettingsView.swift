@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import GameFrameKit
 
 private var gameFrameId = UUID().uuidString
 private var informationFrameId = UUID().uuidString
@@ -16,6 +17,7 @@ struct SettingsView<C, S>: View where C: GameConfig, S: Skin {
     @State private var gameFrame: CGRect = .zero
     @State private var informationFrame: CGRect = .zero
     @State private var navigationFrame: CGRect = .zero
+    @State private var AudioTurnedOn = GameFrame.audio.turnedOn
     @EnvironmentObject private var config: C
     @EnvironmentObject private var skin: S
 
@@ -44,12 +46,16 @@ struct SettingsView<C, S>: View where C: GameConfig, S: Skin {
                     items: config.settingsNavigation(frame: gameFrame))
                     .storeFrame(navigationFrameId)
             }
+            Toggle(isOn: $AudioTurnedOn) {EmptyView()}
+                .toggleStyle(SkinToggleStyle(skin: skin, item: .SettingsAudio))
         }
         .build(skin, .Settings(.Main))
         .storeFrame(gameFrameId)
         .getFrame(gameFrameId, frame: $gameFrame)
         .getFrame(informationFrameId, frame: $informationFrame)
         .getFrame(navigationFrameId, frame: $navigationFrame)
+        .onAppear {self.AudioTurnedOn = GameFrame.audio.turnedOn}
+        .onDisappear {GameFrame.audio.turnedOn = self.AudioTurnedOn}
     }
 }
 

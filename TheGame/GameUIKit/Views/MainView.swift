@@ -46,6 +46,9 @@ struct MainView<C, S>: View where C: GameConfig, S: Skin {
                 SettingsView<C, S>()
             } else if current == 3 {
                 StoreView<C, S>()
+            } else {
+                Spacer()
+                HStack{Spacer()}
             }
             Banner<C, S>()
         }

@@ -18,6 +18,7 @@ public enum SkinItem {
     case Text(_ item: SkinItemText)
     case Image(_ item: SkinItemImage)
     case Button(_ item: SkinItemButton)
+    case Toggle(_ item: SkinItemToggle)
     
     /// All views to be modified
     public enum SkinItemView {
@@ -107,6 +108,11 @@ public enum SkinItem {
         case OfferProduct(id: String, isDisabled: Bool)
         case NavigationItem(parent: String, isDisabled: Bool, item: Navigation)
     }
+    
+    /// Modifiers for toggles in all views
+    public enum SkinItemToggle {
+        case SettingsAudio
+    }
 }
 
 // MARK: Definiton of Skin
@@ -123,6 +129,7 @@ public protocol Skin: ObservableObject {
     func build(_ item: SkinItem.SkinItemText, text: Text) -> AnyView
     func build(_ item: SkinItem.SkinItemImage, image: Image) -> AnyView
     func build<V>(_ item: SkinItem.SkinItemButton, label: V, isPressed: Bool) -> AnyView where V: View
+    func build<V>(_ item: SkinItem.SkinItemToggle, label: V, isOn: Binding<Bool>) -> AnyView where V: View
 }
 
 struct SkinButtonStyle<S>: ButtonStyle where S: Skin {
@@ -140,9 +147,24 @@ struct SkinButtonStyle<S>: ButtonStyle where S: Skin {
     }
 }
 
+struct SkinToggleStyle<S>: ToggleStyle where S: Skin {
+    let skin: S
+    let item: SkinItem.SkinItemToggle
+    
+    func makeBody(configuration: Self.Configuration) -> some View {
+        return skin.build(item, label: configuration.label, isOn: configuration.$isOn)
+    }
+}
+
 extension View {
     func build<S>(_ skin: S, _ item: SkinItem.SkinItemView) -> some View  where S: Skin {
         skin.build(item, view: self)
+    }
+    
+    /// Play a sound, that is registrered with the give key
+    func play(_ key: String?, mix: GFAudio.Mix = .overlay) -> some View {
+        if let key = key {GameFrame.audio.play(key, mix: mix)}
+        return self
     }
 }
 extension Text {

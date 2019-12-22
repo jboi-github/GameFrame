@@ -50,6 +50,8 @@ open class SimpleSkin: IdentitySkin {
     private let smooth: Animation
     private let spring: Animation
     
+    private let soundGrandOpening: String
+    
     private var prevView = -1
 
     public init(
@@ -68,7 +70,7 @@ open class SimpleSkin: IdentitySkin {
         overlayingInnerPadding: CGFloat = 16,
         overlayingOuterPadding: CGFloat = 32,
         overlayingCornerRadius: CGFloat = 32,
-        smoothDuration: Double = 0.5
+        soundGrandOpening: String = "GrandOpening"
     ) {
         self.primaryColor = primaryColor
         self.secondaryColor = secondaryColor
@@ -84,8 +86,10 @@ open class SimpleSkin: IdentitySkin {
         self.overlayingOuterPadding = overlayingOuterPadding
         self.overlayingCornerRadius = overlayingCornerRadius
         
-        self.smooth = Animation.easeInOut(duration: smoothDuration)
-        self.spring = Animation.spring(response: 5.0, dampingFraction: 0.75)
+        self.smooth = Animation.easeInOut
+        self.spring = Animation.spring()
+        
+        self.soundGrandOpening = soundGrandOpening
         
         super.init()
     }
@@ -99,7 +103,7 @@ open class SimpleSkin: IdentitySkin {
         case let .NavigationBarTitle(parent: parent):
             return standardText(text, font: parent == "OffLevel" ? .largeTitle : .title).anyView()
         case .ErrorMessage:
-            return standardText(text).foregroundColor(Color(primaryInvertColor)).anyView()
+            return standardText(text).foregroundColor(Color(primaryColor)).anyView()
         case .InformationItem:
             return standardText(text).animation(smooth).scaleEffect(1.1).anyView()
         default:
@@ -124,6 +128,22 @@ open class SimpleSkin: IdentitySkin {
         }
     }
     
+    override open func build<V>(_ item: SkinItem.SkinItemToggle, label: V, isOn: Binding<Bool>) -> AnyView where V: View {
+        HStack {
+            Text("Turn Audio On/Off")
+            Spacer()
+            Button(action: {
+                isOn.wrappedValue.toggle()
+            }) {
+                Image(systemName: isOn.wrappedValue ? "speaker.3" : "speaker.slash")
+            }
+        }
+        .simpleSkinDefaultToggle(
+            accentColor: Color(accentColor), secondaryColor: Color(secondaryColor),
+            buttonShadowRadius: buttonShadowRadius, buttonShadowOffset: buttonShadowOffset)
+        .anyView()
+    }
+    
     override open func build<V>(_ item: SkinItem.SkinItemView, view: V) -> AnyView where V: View {
         switch item {
         case let .Main(mainItem):
@@ -131,10 +151,11 @@ open class SimpleSkin: IdentitySkin {
             case let .Main(current: current):
                 defer {prevView = current}
                 return view
-                    .simpleSkinBackground(primary: Color(primaryColor), primaryInvert: Color(primaryInvertColor))
-                    .clipShape(Circle().scale(current == -1 ? 0 : 3))
-                    .animation(prevView == -1 && current != -1 ? smooth : nil, value: current)
-                    .anyView()
+                .simpleSkinSmoothAppAppear(
+                    smooth, primary: Color(primaryColor), primaryInvert: Color(primaryInvertColor),
+                    preAppStart: current == -1, postAppStart: prevView == -1 && current != -1)
+                .play(current == -1 ? soundGrandOpening : nil)
+                .anyView()
             default:
                 return view.anyView()
             }
@@ -159,7 +180,9 @@ open class SimpleSkin: IdentitySkin {
         case let .Settings(settingsItem):
             switch settingsItem {
             case .Main:
-                return view.simpleSkinSmoothAppear(smooth).anyView()
+                return view.simpleSkinSmoothAppear(smooth)
+                    .padding(.horizontal)
+                    .anyView()
             default:
                 return view.anyView()
             }
@@ -265,6 +288,36 @@ open class SimpleSkin: IdentitySkin {
     }
 }
 
+enum ScaledCircleRadius {
+    case Min, Max, Full
+}
+
+/// Create circle, which radius is just over all edges
+struct ScaledCircle: Shape {
+    let scaleOfOne: ScaledCircleRadius
+    
+    func path(in rect: CGRect) -> Path {
+        let side = getSide(width: rect.width, height: rect.height, scaleOfOne: scaleOfOne)
+        let square = CGRect(
+            origin: CGPoint(x: rect.midX - side / 2.0, y: rect.midY - side / 2.0),
+            size: CGSize(width: side, height: side))
+        return Circle().path(in: square)
+    }
+    
+    private func getSide(width: CGFloat, height: CGFloat, scaleOfOne: ScaledCircleRadius) -> CGFloat {
+        switch scaleOfOne {
+        case .Min:
+            return min(width, height)
+        case .Max:
+            return max(width, height)
+        case .Full:
+            let s1 = min(width, height)
+            let s2 = max(width, height)
+            return sqrt(s1*s1 + s2*s2)
+        }
+    }
+}
+
 // MARK: Extend view with helper functions for skins
 public extension View {
     func anyView() -> AnyView {
@@ -283,6 +336,17 @@ public extension View {
                 radius: buttonShadowRadius,
                 x: isPressed ? -buttonShadowOffset : buttonShadowOffset,
                 y: isPressed ? -buttonShadowOffset : buttonShadowOffset)
+    }
+    
+    func simpleSkinDefaultToggle(
+        accentColor: Color, secondaryColor: Color,
+        buttonShadowRadius: CGFloat, buttonShadowOffset: CGFloat) -> some View
+    {
+        self.padding()
+            .foregroundColor(accentColor)
+            .shadow(
+                color: secondaryColor, radius: buttonShadowRadius,
+                x: buttonShadowOffset, y: buttonShadowOffset)
     }
     
     func simpleSkinHide(_ hidden: Bool) -> some View {
@@ -335,17 +399,25 @@ public extension View {
             .transition(AnyTransition.scale.combined(with: AnyTransition.offset(x: offset.x, y: offset.y)))
     }
     
-    func simpleSkinBackground(primary: Color, primaryInvert: Color) -> some View {
+    func simpleSkinSmoothAppAppear(
+        _ animation: Animation, primary: Color, primaryInvert: Color,
+        preAppStart: Bool, postAppStart: Bool)
+        -> some View
+    {
         ZStack {
-            VStack {
-                Spacer()
-                HStack {Spacer()}
-                Spacer()
-            }
-            .background(primaryInvert)
-            .edgesIgnoringSafeArea(.all)
+            Rectangle()
+                .opacity(preAppStart ? 0.0 : 1.0)
+                .animation(postAppStart ? animation : nil, value: preAppStart)
+                .foregroundColor(primaryInvert)
+                .edgesIgnoringSafeArea(.all)
             
-            self.foregroundColor(primary)
+            self
+                .background(primaryInvert)
+                .clipShape(ScaledShape(
+                    shape: ScaledCircle(scaleOfOne: .Full),
+                    scale: preAppStart ? .zero : .init(width: 1, height: 1)))
+                .animation(postAppStart ? animation : nil, value: preAppStart)
+                .foregroundColor(primary)
         }
     }
     

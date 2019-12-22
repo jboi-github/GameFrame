@@ -9,8 +9,6 @@
 import SwiftUI
 import StoreKit
 import Combine
-import LinkPresentation
-import AVFoundation
 
 // TODO: Test with sandbox user
 // TODO: Purchase Simple purchase
@@ -42,12 +40,14 @@ public class GameFrame: NSObject {
     public static var inApp: GFInApp {GameFrame.instance.inAppImpl}
     public static var adMob: GFAdMob {GameFrame.instance.adMobImpl}
     public static var share: GFShare {GameFrame.instance.shareImpl}
+    public static var audio: GFAudio {GameFrame.instance.audioImpl}
 
     internal private(set) var coreDataImpl: GFCoreDataCloudKit!
     internal private(set) var gameCenterImpl: GFGameCenter!
     internal private(set) var inAppImpl: GFInApp!
     internal private(set) var adMobImpl: GFAdMob!
     internal private(set) var shareImpl: GFShare!
+    internal private(set) var audioImpl: GFAudio!
 
     /**
      Create the shared instance of GameFrame and does the setup of a scene for `SceneDelegate`
@@ -122,16 +122,8 @@ public class GameFrame: NSObject {
             adUnitIdRewarded: adUnitIdRewarded,
             adUnitIdInterstitial: adUnitIdInterstitial)
         self.shareImpl = GFShare(window, appId: appId, infos: infos, greeting: greeting)
-        
-        // Mix Audio Signals with existing sound like background music
-        let avSession = AVAudioSession.sharedInstance()
-        do {
-            try avSession.setCategory(.ambient, mode: .default, options: .mixWithOthers)
-            try avSession.setActive(true)
-        } catch {
-            log(error)
-        }
-    }
+        self.audioImpl = GFAudio()
+}
 
     // MARK: - Public functions
     /**

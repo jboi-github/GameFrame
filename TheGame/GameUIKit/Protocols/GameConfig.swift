@@ -258,6 +258,15 @@ public protocol GameConfig: ObservableObject {
      Information like Achievements, Scores, Consumables and non-consumables to be shared.
      */
     var sharedInformations: [GFShareInformation] {get}
+    
+    /**
+     List of all sounds and their keys. the keys are used throughout the game to play sounds either when navigation butons are pressed or
+     anywhere in the skin. Use `View.gameSkinPlay(key)` to play a sound together with animations.
+     - resource is the name of the resource file containing the sound
+     - type is the file extension. Defaults to "mp3"
+     - subdirectory is a directory in which the sounds are placed. Defaults to "Sounds"
+     */
+    var sounds: [String: (resource: String, type: String?)] {get}
 }
 
 public enum NavigationLocation {
@@ -306,4 +315,6 @@ class PreviewConfig: GameConfig {
     let sharedAppId: Int = 0
     let sharedGreeting: String = ""
     let sharedInformations = [GFShareInformation]()
+    
+    let sounds = [String: (resource: String, type: String?)]()
 }
