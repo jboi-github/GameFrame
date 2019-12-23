@@ -106,5 +106,65 @@ extension View {
 }
 
 public extension CGRect {
-    var mid: CGPoint {CGPoint(x: self.midX, y: self.midY)}
+    var mid: CGPoint {CGPoint(x: midX, y: midY)}
+}
+
+/**
+ A View that shows decimal numbers. When changed, the digits rotate depending on a given animation.
+ */
+public struct Number: View {
+    let animation: Animation
+    private let characters: [Character]
+    private let frameId: String
+    private static let digits: [Character] = [" ", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+    @State private var frame: CGRect = .zero
+    
+    init(parent: String, id: String, text: String, animation: Animation = .spring()) {
+        self.animation = animation
+        self.characters = text.map {$0 as Character}
+        self.frameId = "Number - \(parent) - \(id)"
+    }
+    
+    public var body: some View {
+        HStack(alignment: .top, spacing: 0) {
+            ForEach(0..<characters.count, id: \.self) {id in
+                Group {
+                    if self.getDigit(self.characters[id]) != nil {
+                        DigitView(digit: self.getDigit(self.characters[id])!, height: self.frame.size.height / 11.0)
+                    } else {
+                        Text(String(self.characters[id]))
+                    }
+                }
+            }
+        }
+        .animation(animation)
+        .storeFrame(frameId)
+        .getFrame(frameId, frame: $frame)
+        .clipShape(Rectangle().path(in: CGRect(
+            origin: .zero,
+            size: CGSize(width: frame.size.width, height: frame.size.height / 11.0))))
+        .frame(width: nil, height: frame.size.height / 11.0, alignment: .top)
+    }
+    
+    private struct DigitView: View {
+        let digit: Int
+        let height: CGFloat
+        
+        var body: some View {
+            VStack {
+                ForEach(-1..<10, id: \.self) {
+                    Text($0 < 0 ? " " : "\($0)")
+                }
+            }
+            .offset(x: 0, y: -height * CGFloat(digit+1))
+        }
+    }
+    
+    private func getDigit(_ c: Character) -> Int? {
+        if let idx = Number.digits.firstIndex(where: {$0 == c}) {
+            return idx-1
+        } else {
+            return nil
+        }
+    }
 }

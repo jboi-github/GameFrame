@@ -10,6 +10,8 @@ import SwiftUI
 import GameFrameKit
 import StoreKit
 
+private let frameId = UUID().uuidString
+
 private struct ProductRow<S>: View where S: Skin {
     let product: SKProduct
     let isOverlayed: Bool
@@ -66,7 +68,7 @@ private struct ProductRow<S>: View where S: Skin {
 
 private struct ProductsView<C, S>: View where C: GameConfig, S: Skin {
     let isOverlayed: Bool
-    @State private var productsFrame: CGRect = .zero
+    @State private var frame: CGRect = .zero
     @EnvironmentObject private var skin: S
     @EnvironmentObject private var config: C
 
@@ -93,7 +95,7 @@ private struct ProductsView<C, S>: View where C: GameConfig, S: Skin {
                     } else {
                         ScrollView {
                             ForEach(0..<products.count, id: \.self) {
-                                ProductRow<S>(product: products[$0], isOverlayed: self.isOverlayed, frame: self.productsFrame)
+                                ProductRow<S>(product: products[$0], isOverlayed: self.isOverlayed, frame: self.frame)
                             }
                         }
                     }
@@ -105,6 +107,8 @@ private struct ProductsView<C, S>: View where C: GameConfig, S: Skin {
                     isOverlayed: isOverlayed)
             }
         }
+        .storeFrame(frameId)
+        .getFrame(frameId, frame: $frame)
         .build(skin, .Store(.Products(isOverlayed: isOverlayed)))
     }
 }
