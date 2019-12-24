@@ -53,8 +53,14 @@ struct ErrorAlert<C, S>: View  where C: GameConfig, S: Skin {
     
     var body: some View {
         VStack {
-            Text("\(error?.localizedDescription ?? "unknown error")")
-                .build(skin, .ErrorMessage)
+            Group {
+                if error != nil {
+                    Text("\(error!.localizedDescription)").build(skin, .ErrorMessage)
+                } else {
+                    Text("whenErrorNil".localized).build(skin, .ErrorMessage)
+                }
+            }
+            
             NavigationLayer<C, S>(
                 parent: "Error",
                 items: [[.Buttons(.ErrorBack())]])
@@ -111,6 +117,7 @@ public extension CGRect {
 
 /**
  A View that shows decimal numbers. When changed, the digits rotate depending on a given animation.
+ Idea taken from: https://swiftui-lab.com/swiftui-animations-part3/
  */
 public struct Number: View {
     let animation: Animation

@@ -90,8 +90,7 @@ private struct ProductsView<C, S>: View where C: GameConfig, S: Skin {
                 VStack {
                     Spacer()
                     if products.isEmpty {
-                        Text("No products available or store not available")
-                            .build(skin, .StoreEmpty)
+                        Text("noProductsInStore".localized).build(skin, .StoreEmpty)
                     } else {
                         ScrollView {
                             ForEach(0..<products.count, id: \.self) {

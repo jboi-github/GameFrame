@@ -52,6 +52,8 @@ open class SimpleSkin: IdentitySkin {
     
     private let soundGrandOpening: String
     
+    private let turnAudioOnOff: String
+    
     private var prevView = -1
 
     public init(
@@ -70,7 +72,8 @@ open class SimpleSkin: IdentitySkin {
         overlayingInnerPadding: CGFloat = 16,
         overlayingOuterPadding: CGFloat = 32,
         overlayingCornerRadius: CGFloat = 32,
-        soundGrandOpening: String = "GrandOpening"
+        soundGrandOpening: String = "GrandOpening",
+        turnAudioOnOff: String = "turnAudioOnOff".localized
     ) {
         self.primaryColor = primaryColor
         self.secondaryColor = secondaryColor
@@ -90,6 +93,8 @@ open class SimpleSkin: IdentitySkin {
         self.spring = Animation.spring()
         
         self.soundGrandOpening = soundGrandOpening
+        
+        self.turnAudioOnOff = turnAudioOnOff
         
         super.init()
     }
@@ -128,7 +133,7 @@ open class SimpleSkin: IdentitySkin {
     
     override open func build<V>(_ item: SkinItem.SkinItemToggle, label: V, isOn: Binding<Bool>) -> AnyView where V: View {
         HStack {
-            Text("Turn Audio On/Off")
+            Text(turnAudioOnOff)
             Spacer()
             Button(action: {
                 isOn.wrappedValue.toggle()

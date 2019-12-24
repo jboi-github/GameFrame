@@ -105,6 +105,10 @@ public extension SKProduct {
     }
 }
 
+public extension String {
+    var localized: String {NSLocalizedString(self, comment: "")}
+}
+
 public var maxLogLevel = Int.max
 
 /**
