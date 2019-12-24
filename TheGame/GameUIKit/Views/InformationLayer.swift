@@ -24,8 +24,8 @@ private struct AchievementView<S>: View where S: Skin {
     }
     
     var body: some View {
-        Text("\(current.format(format))")
-            .build(skin, .InformationItem(parent: parent, id: id, current: current))
+        Number(parent: parent, id: id, text: "\(current.format(format))")
+            .build(skin, .Commons(.InformationItem(parent: parent, id: id, current: current)))
             .onReceive(GameFrame.coreData.getAchievement(id).$current) {self.current = $0}
     }
 }
@@ -43,8 +43,8 @@ private struct ScoreView<S>: View where S: Skin {
     }
     
     var body: some View {
-        Text("\(current) / \(GameFrame.coreData.getScore(id).highest)")
-            .build(skin, .InformationItem(parent: parent, id: id, current: Double(current)))
+        Number(parent: parent, id: id, text: "\(current) / \(GameFrame.coreData.getScore(id).highest)")
+            .build(skin, .Commons(.InformationItem(parent: parent, id: id, current: Double(current))))
             .onReceive(GameFrame.coreData.getScore(id).$current) {self.current = $0}
     }
 }
@@ -62,8 +62,8 @@ private struct ConsumableView<S>: View where S: Skin {
     }
     
     var body: some View {
-        Text("\(available)")
-            .build(skin, .InformationItem(parent: parent, id: id, current: Double(available)))
+        Number(parent: parent, id: id, text: "\(available)")
+            .build(skin, .Commons(.InformationItem(parent: parent, id: id, current: Double(available))))
             .onReceive(GameFrame.coreData.getConsumable(id).$available) {self.available = $0}
     }
 }

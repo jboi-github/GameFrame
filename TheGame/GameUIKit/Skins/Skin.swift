@@ -70,6 +70,7 @@ public enum SkinItem {
         /// Modifiers for any other view and overlay
         public enum SkinItemCommons {
             case Information(parent: String)
+            case InformationItem(parent: String, id: String, current: Double)
             case InformationRow(parent: String, row: Int)
             case InformationNonConsumable(parent: String, id: String, isOpened: Bool)
             case NavigationLayer(parent: String)
@@ -90,7 +91,6 @@ public enum SkinItem {
         case OfferProductTitle(id: String)
         case OfferProductDescription(id: String)
         case OfferProductPrice(id: String)
-        case InformationItem(parent: String, id: String, current: Double)
         case ErrorMessage
         case NavigationBarTitle(parent: String)
     }

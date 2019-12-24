@@ -1,0 +1,37 @@
+/* 
+  TheGameMessages.strings
+  TheGame
+
+  Created by Juergen Boiselle on 23.12.19.
+  Copyright © 2019 Juergen Boiselle. All rights reserved.
+*/
+
+// Shown when an error pop up, but error description is nil
+"whenErrorNil" = "erreur inconnue";
+
+// Shown when store is overall available but cannot show any products
+"noProductsInStore" = "Aucun produit disponible ou magasin non disponible";
+
+// Shown when no banner is available
+"noBannerZone" = "Merci d'avoir joué à The Game";
+
+// Settings text to switch sounds on/off
+"turnAudioOnOff" = "Tonalités on/off";
+
+// Titles in Navigation Bars
+"OffLevelTitle" = "The Game";
+
+// Titles in Navigation Bars
+"InLevelTitle" = "The Game - GO!";
+
+// Titles in Navigation Bars
+"SettingsTitle" = "Settings";
+
+// Titles in Navigation Bars
+"StoreTitle" = "Store";
+
+// Texts for sharing sheet
+"sharedGreeting" = "Salut! Je joue à The Game";
+"sharedPoints" = "Mon meilleur score: %ld";
+"sharedWeaponOn" = "J'ai l'arme la plus cool!";
+"sharedWeaponOff" = "Je lutte pour obtenir l'arme C. Tu peux m'aider?";

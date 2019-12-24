@@ -14,7 +14,7 @@ import SwiftUI
 class TheGameConfig: GameConfig {
     lazy var gameZone: some View = TheGameView()
     lazy var settingsZone: some View = TheGameSettingsView()
-    lazy var noBannerZone: some View = Text("Thank you for playing The Game")
+    lazy var noBannerZone: some View = Text("noBannerZone".localized)
 
     let startsOffLevel: Bool = false
     
@@ -40,7 +40,7 @@ class TheGameConfig: GameConfig {
     }
     
     // Just title
-    var offLevelNavigationBarTitle: String = "The Game"
+    var offLevelNavigationBarTitle: String = "OffLevelTitle".localized
     var offLevelNavigationBarButton1: Navigation? = nil
     var offLevelNavigationBarButton2: Navigation? = nil
 
@@ -84,7 +84,7 @@ class TheGameConfig: GameConfig {
     }
     
     // Entirely hidden
-    var inLevelNavigationBarTitle: String = ""
+    var inLevelNavigationBarTitle: String = "InLevelTitle".localized
     var inLevelNavigationBarButton1: Navigation? = nil
     var inLevelNavigationBarButton2: Navigation? = nil
 
@@ -119,7 +119,7 @@ class TheGameConfig: GameConfig {
     }
     
     // Only Navigation Bar
-    var settingsNavigationBarTitle: String = "Settings"
+    var settingsNavigationBarTitle: String = "SettingsTitle".localized
     var settingsNavigationBarButton1: Navigation? = .Buttons(.SystemSettings())
     var settingsNavigationBarButton2: Navigation? = .Links(.Store())
     func settingsNavigation(frame: CGRect) -> [[Navigation]] {return [[Navigation]]()}
@@ -138,21 +138,21 @@ class TheGameConfig: GameConfig {
         .NonConsumable(id: "weaponB"),
         .NonConsumable(id: "weaponC")
     ]
-    var storeNavigationBarTitle: String = "Store"
+    var storeNavigationBarTitle: String = "StoreTitle".localized
     var storeRewardConsumableId: String? = "Bullets"
     var storeRewardQuantity: Int = 100
 
     let adUnitIdBanner: String? = "ca-app-pub-3940256099942544/2934735716" // TODO: Replace with id from Google AdMob
-    let adUnitIdRewarded: String? = "ca-app-pub-3940256099942544/1712485313" // TODO: Replace with id from AppStore
-    let adUnitIdInterstitial: String? = "ca-app-pub-3940256099942544/4411468910" // TODO: Replace with id from AppStore
+    let adUnitIdRewarded: String? = "ca-app-pub-3940256099942544/1712485313" // TODO: Replace with id from Google AdMob
+    let adUnitIdInterstitial: String? = "ca-app-pub-3940256099942544/4411468910" // TODO: Replace with id from Google AdMob
     
     let adNonCosumableId: String? = "no-ads4"
 
     let sharedAppId: Int = 1293516048
-    let sharedGreeting: String = "Hi! I'm playing The Game"
+    let sharedGreeting: String = "sharedGreeting".localized
     let sharedInformations: [GFShareInformation] = [
-        .Score("Points") {"My best: \($0.highest)"},
-        .NonConsumable("weaponC") {$0.isOpened ? "Got the coolest weapon!" : "Struggeling to get weaponC. Can you help?"}
+        .Score("Points") {String(format: "sharedPoints".localized, $0.highest)}, // TODO: Localize
+        .NonConsumable("weaponC") {$0.isOpened ? "sharedWeaponOn".localized : "sharedWeaponOff".localized}
     ]
     
     let sounds: [String: (resource: String, type: String?)] = [

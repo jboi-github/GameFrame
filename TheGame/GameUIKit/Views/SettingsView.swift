@@ -9,9 +9,9 @@
 import SwiftUI
 import GameFrameKit
 
-private var gameFrameId = UUID().uuidString
-private var informationFrameId = UUID().uuidString
-private var navigationFrameId = UUID().uuidString
+private let gameFrameId = UUID().uuidString
+private let informationFrameId = UUID().uuidString
+private let navigationFrameId = UUID().uuidString
 
 struct SettingsView<C, S>: View where C: GameConfig, S: Skin {
     @State private var gameFrame: CGRect = .zero

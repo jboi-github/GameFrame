@@ -52,6 +52,8 @@ open class SimpleSkin: IdentitySkin {
     
     private let soundGrandOpening: String
     
+    private let turnAudioOnOff: String
+    
     private var prevView = -1
 
     public init(
@@ -70,7 +72,8 @@ open class SimpleSkin: IdentitySkin {
         overlayingInnerPadding: CGFloat = 16,
         overlayingOuterPadding: CGFloat = 32,
         overlayingCornerRadius: CGFloat = 32,
-        soundGrandOpening: String = "GrandOpening"
+        soundGrandOpening: String = "GrandOpening",
+        turnAudioOnOff: String = "turnAudioOnOff".localized
     ) {
         self.primaryColor = primaryColor
         self.secondaryColor = secondaryColor
@@ -91,6 +94,8 @@ open class SimpleSkin: IdentitySkin {
         
         self.soundGrandOpening = soundGrandOpening
         
+        self.turnAudioOnOff = turnAudioOnOff
+        
         super.init()
     }
     
@@ -104,8 +109,6 @@ open class SimpleSkin: IdentitySkin {
             return standardText(text, font: parent == "OffLevel" ? .largeTitle : .title).anyView()
         case .ErrorMessage:
             return standardText(text).foregroundColor(Color(primaryColor)).anyView()
-        case .InformationItem:
-            return standardText(text).animation(smooth).scaleEffect(1.1).anyView()
         default:
             return standardText(text).anyView()
         }
@@ -130,7 +133,7 @@ open class SimpleSkin: IdentitySkin {
     
     override open func build<V>(_ item: SkinItem.SkinItemToggle, label: V, isOn: Binding<Bool>) -> AnyView where V: View {
         HStack {
-            Text("Turn Audio On/Off")
+            Text(turnAudioOnOff)
             Spacer()
             Button(action: {
                 isOn.wrappedValue.toggle()
@@ -220,6 +223,12 @@ open class SimpleSkin: IdentitySkin {
                     .anyView()
             case let .Information(parent: parent):
                 return view.simpleSkinPosition(parent == "InLevel" ? .topTrailing : .bottom).anyView()
+            case .InformationItem:
+                return view.simpleSkinNumber(
+                    font: .system(.body, design: .monospaced),
+                    primary: Color(primaryColor))
+                    .padding()
+                    .anyView()
             default:
                 return view.anyView()
             }
@@ -292,7 +301,7 @@ enum ScaledCircleRadius {
     case Min, Max, Full
 }
 
-/// Create circle, which radius is just over all edges
+/// Create circle with radius just over all edges
 struct ScaledCircle: Shape {
     let scaleOfOne: ScaledCircleRadius
     
@@ -423,6 +432,13 @@ public extension View {
     
     func simpleSkinSmoothAppear(_ animation: Animation) -> some View {
         self.transition(AnyTransition.opacity.animation(animation))
+    }
+    
+    func simpleSkinNumber(font: Font = .body, primary: Color) -> some View {
+        self
+            .foregroundColor(primary)
+            .lineLimit(1)
+            .font(font)
     }
 }
 
