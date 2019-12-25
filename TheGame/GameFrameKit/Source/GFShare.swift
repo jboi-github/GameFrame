@@ -53,7 +53,7 @@ public class GFShare: NSObject {
      Applications to share with are defined by the player.
      - Parameter bounds: Frame of the screenshot, that will be appended
      */
-    public func show(bounds: CGRect?) {
+    public func show(buttonFrame: CGRect, bounds: CGRect?) {
         // Build the information items
         let screenshot = bounds != nil ? getScreenhot(bounds: bounds!) : nil
         let imageUrl = screenshot != nil ? urlForImage(image: screenshot!) : nil
@@ -74,7 +74,16 @@ public class GFShare: NSObject {
         
         // Create and show view
         let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
-        window?.rootViewController?.present(ac, animated: true)
+        
+        guard let rootViewController = window?.rootViewController else {return}
+            
+        //If user on iPad
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            ac.popoverPresentationController?.sourceView = rootViewController.view
+            ac.popoverPresentationController?.sourceRect = buttonFrame
+        }
+        //Present the shareView on iPhone
+        rootViewController.present(ac, animated: true)
     }
 
     // MARK: - Internals

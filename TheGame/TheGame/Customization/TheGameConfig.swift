@@ -151,7 +151,7 @@ class TheGameConfig: GameConfig {
     let sharedAppId: Int = 1293516048
     let sharedGreeting: String = "sharedGreeting".localized
     let sharedInformations: [GFShareInformation] = [
-        .Score("Points") {String(format: "sharedPoints".localized, $0.highest)}, // TODO: Localize
+        .Score("Points") {String(format: "sharedPoints".localized, $0.highest)},
         .NonConsumable("weaponC") {$0.isOpened ? "sharedWeaponOn".localized : "sharedWeaponOff".localized}
     ]
     
