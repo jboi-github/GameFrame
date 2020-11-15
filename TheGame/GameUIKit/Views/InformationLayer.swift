@@ -20,13 +20,13 @@ private struct AchievementView<S>: View where S: Skin {
         self.parent = parent
         self.id = id
         self.format = format
-        self.current = GameFrame.coreData.getAchievement(id).current
+        //self.current = GameFrame.coreData.getAchievement(id).current
     }
     
     var body: some View {
         Number(parent: parent, id: id, text: "\(current.format(format))")
             .build(skin, .Commons(.InformationItem(parent: parent, id: id, current: current)))
-            .onReceive(GameFrame.coreData.getAchievement(id).$current) {self.current = $0}
+            //.onReceive(GameFrame.coreData.getAchievement(id).$current) {self.current = $0}
     }
 }
 
@@ -39,12 +39,12 @@ private struct ScoreView<S>: View where S: Skin {
     init(parent: String, id: String) {
         self.parent = parent
         self.id = id
-        current = GameFrame.coreData.getScore(id).current
     }
     
     var body: some View {
-        Number(parent: parent, id: id, text: "\(current) / \(GameFrame.coreData.getScore(id).highest)")
+        Number(parent: parent, id: id, text: "\(current) / \(0)")
             .build(skin, .Commons(.InformationItem(parent: parent, id: id, current: Double(current))))
+            .onAppear {self.current = GameFrame.coreData.getScore(id).current}
             .onReceive(GameFrame.coreData.getScore(id).$current) {self.current = $0}
     }
 }
@@ -58,12 +58,12 @@ private struct ConsumableView<S>: View where S: Skin {
     init(parent: String, id: String) {
         self.parent = parent
         self.id = id
-        available = GameFrame.coreData.getConsumable(id).available
     }
     
     var body: some View {
         Number(parent: parent, id: id, text: "\(available)")
             .build(skin, .Commons(.InformationItem(parent: parent, id: id, current: Double(available))))
+            .onAppear {self.available = GameFrame.coreData.getConsumable(id).available}
             .onReceive(GameFrame.coreData.getConsumable(id).$available) {self.available = $0}
     }
 }
@@ -81,7 +81,6 @@ private struct NonConsumableView<S>: View where S: Skin {
         self.id = id
         self.opened = opened
         self.closed = closed
-        isOpened = GameFrame.coreData.getNonConsumable(id).isOpened
     }
     
     var body: some View {
@@ -93,6 +92,7 @@ private struct NonConsumableView<S>: View where S: Skin {
             }
         }
         .build(skin, .Commons(.InformationNonConsumable(parent: parent, id: id, isOpened: isOpened)))
+        .onAppear {self.isOpened = GameFrame.coreData.getNonConsumable(id).isOpened}
         .onReceive(GameFrame.coreData.getNonConsumable(id).$isOpened) {self.isOpened = $0}
     }
 }

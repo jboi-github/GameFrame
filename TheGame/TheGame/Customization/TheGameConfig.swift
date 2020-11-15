@@ -46,13 +46,14 @@ class TheGameConfig: GameConfig {
 
     func offLevelNavigation(frame: CGRect) -> [[Navigation]] {
         if frame.width < frame.height {
+            #warning ("TODO: Replace `appId` with real value from AppStore")
             return [[
                 .Links(.Store()),
                 .Buttons(.Reward(consumableId: "Bullets", quantity: 100))
             ], [
                 .Buttons(.GameCenter()),
                 .Buttons(.Share()),
-                .Buttons(.Like(appId: 1293516048)) // TODO: Replace with real value from AppStore
+                .Buttons(.Like(appId: 1293516048))
             ], [
                 .Generics(.Url("https://www.apple.com")),
                 .Links(.Settings())
@@ -60,12 +61,13 @@ class TheGameConfig: GameConfig {
                 .Links(.Play())
             ]]
         } else {
+            #warning ("TODO: Replace `appId` with real value from AppStore")
             return [[
                 .Links(.Store()),
                 .Buttons(.Reward(consumableId: "Bullets", quantity: 100)),
                 .Buttons(.GameCenter()),
                 .Buttons(.Share()),
-                .Buttons(.Like(appId: 1293516048)), // TODO: Replace with real value from AppStore
+                .Buttons(.Like(appId: 1293516048)),
                 .Generics(.Url("https://www.apple.com")),
                 .Links(.Settings())
             ], [
@@ -142,9 +144,10 @@ class TheGameConfig: GameConfig {
     var storeRewardConsumableId: String? = "Bullets"
     var storeRewardQuantity: Int = 100
 
-    let adUnitIdBanner: String? = "ca-app-pub-3940256099942544/2934735716" // TODO: Replace with id from Google AdMob
-    let adUnitIdRewarded: String? = "ca-app-pub-3940256099942544/1712485313" // TODO: Replace with id from Google AdMob
-    let adUnitIdInterstitial: String? = "ca-app-pub-3940256099942544/4411468910" // TODO: Replace with id from Google AdMob
+    #warning ("TODO: Replace with id from Google AdMob")
+    let adUnitIdBanner: String? = "ca-app-pub-3940256099942544/2934735716"
+    let adUnitIdRewarded: String? = "ca-app-pub-3940256099942544/1712485313"
+    let adUnitIdInterstitial: String? = "ca-app-pub-3940256099942544/4411468910"
     
     let adNonCosumableId: String? = "no-ads4"
 

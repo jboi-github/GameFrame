@@ -62,7 +62,8 @@ public protocol GameConfig: ObservableObject {
      Usually games, that have a minimalistic approach for the skin should let the player navigate by navigation bar.
      Games, that make heavy changes of the skin and build there own UX, probably want to use the navigation layer.
      */
-    var offLevelNavigationBarTitle: String {get} // TODO: Should be localized
+    #warning ("TODO: Should be localized")
+    var offLevelNavigationBarTitle: String {get}
     
     /**
      First of two possible buttons in the navigation bar. If nil it's not shown.
@@ -101,7 +102,8 @@ public protocol GameConfig: ObservableObject {
      Usually games, that have a minimalistic approach for the skin should let the player navigate by navigation bar.
      Games, that make heavy changes of the skin and build there own UX, probably want to use the navigation layer.
      */
-    var inLevelNavigationBarTitle: String {get} // TODO: Should be localized
+    #warning ("TODO: Should be localized")
+    var inLevelNavigationBarTitle: String {get}
     
     /**
      First of two possible buttons in the navigation bar. If nil it's not shown.
@@ -140,7 +142,8 @@ public protocol GameConfig: ObservableObject {
      Usually games, that have a minimalistic approach for the skin should let the player navigate by navigation bar.
      Games, that make heavy changes of the skin and build there own UX, probably want to use the navigation layer.
      */
-    var settingsNavigationBarTitle: String {get} // TODO: Should be localized
+    #warning ("TODO: Should be localized")
+    var settingsNavigationBarTitle: String {get}
     
     /**
      First of two possible buttons in the navigation bar. If nil it's not shown.
@@ -200,7 +203,8 @@ public protocol GameConfig: ObservableObject {
      Usually games, that have a minimalistic approach for the skin should let the player navigate by navigation bar.
      Games, that make heavy changes of the skin and build there own UX, probably want to use the navigation layer.
      */
-    var storeNavigationBarTitle: String {get} // TODO: Should be localized
+    #warning ("TODO: Should be localized")
+    var storeNavigationBarTitle: String {get}
     
     /**
      Consumable to be earned, when the player watches a rewarded video in store.
@@ -252,7 +256,8 @@ public protocol GameConfig: ObservableObject {
      
      When sharing via email, the greeting is used as subject. In the Share-Metadata it is used as subline.
      */
-    var sharedGreeting: String {get} // TODO: Should be possible to localize
+    #warning ("TODO: Should be localized")
+    var sharedGreeting: String {get}
     
     /**
      Information like Achievements, Scores, Consumables and non-consumables to be shared.
