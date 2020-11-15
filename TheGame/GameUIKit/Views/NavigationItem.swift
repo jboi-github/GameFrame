@@ -15,6 +15,7 @@ struct NavigationItem<C, S>: View where C: GameConfig, S: Skin {
     let isOverlayed: Bool
     let bounds: CGRect?
     let gameFrameId: String
+    @State private var gameFrame: CGRect = .zero
     @State private var inAppAvailable = GameFrame.inApp.available
     @State private var rewardAvailable = GameFrame.adMob.rewardAvailable
     @State private var gameCenterEnabled = GameFrame.gameCenter.enabled
@@ -22,18 +23,19 @@ struct NavigationItem<C, S>: View where C: GameConfig, S: Skin {
     @EnvironmentObject private var skin: S
 
     var body: some View {
-        asView(item, bounds: bounds)
+        asView(item, buttonFrame: gameFrame, bounds: bounds)
             .disabled(isDisabled(item))
             .buttonStyle(SkinButtonStyle(
                 skin: skin, frameId: gameFrameId,
                 item: .NavigationItem(parent: parent, isDisabled: isDisabled(item), item: item)))
             .storeFrame(gameFrameId)
+            .getFrame(gameFrameId, frame: $gameFrame)
             .onReceive(GameFrame.inApp.$available) {self.inAppAvailable = $0}
             .onReceive(GameFrame.adMob.$rewardAvailable) {self.rewardAvailable = $0}
             .onReceive(GameFrame.gameCenter.$enabled) {self.gameCenterEnabled = $0}
     }
-
-    private func asView(_ item: Navigation, bounds: CGRect?) -> some View {
+    
+    private func asView(_ item: Navigation, buttonFrame: CGRect, bounds: CGRect?) -> some View {
         switch item {
         case let .Generics(generic: generic):
             switch generic {
@@ -84,7 +86,7 @@ struct NavigationItem<C, S>: View where C: GameConfig, S: Skin {
             case let .Share(image: image, sound: sound):
                 return Button(action: {
                     if let sound = sound {GameFrame.audio.play(sound)}
-                    GameFrame.share.show(bounds: bounds)
+                    GameFrame.share.show(buttonFrame: buttonFrame, bounds: bounds)
                 }) {image}.anyView()
             case let .GameCenter(image: image, sound: sound):
                 return Button(action: {

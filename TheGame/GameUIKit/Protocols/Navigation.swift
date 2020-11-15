@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-// TODO: Bug in Swift: Too many cases in an enum will crash app
+#warning ("TODO: Bug in Swift: Too many cases in an enum will crash app")
 
 /**
  Use one of these cases to name and parameterize a navigation item.

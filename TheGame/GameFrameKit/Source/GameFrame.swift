@@ -10,20 +10,19 @@ import SwiftUI
 import StoreKit
 import Combine
 
-// TODO: Test with sandbox user
-// TODO: Purchase Simple purchase
-// TODO: Purchase Deferred purchase
-// TODO: Purchase Failed, simple purchase
-// TODO: Purchase Restore: Calls purchaed again?
-// TODO: Automated Test Cases - Unit tests -> 3 Tage
-// TODO: Automated Test Cases - UI Tests -> 3 Tage
-// -> End Nov done
-// TODO: Design Game -> LONG
-// TODO: define products, Ads, leaderboards, achievements -> 2 Tag
-// TODO: Setup Views for Store, Settings, Offers, Main (without GameZone), Launchscreen -> 5 Tage
-// TODO: Create external links to community of Instagram, Twitter, Facebook -> 3 Tag
-// TODO: What about Data Privacy Statement??? -> 2 Tage
-// TODO: Build Game Engine in GameZone -> LONG
+#warning ("TODO: Test with sandbox user")
+#warning ("TODO: Purchase Simple purchase")
+#warning ("TODO: Purchase Deferred purchase")
+#warning ("TODO: Purchase Failed, simple purchase")
+#warning ("TODO: Purchase Restore: Calls purchaed again?")
+#warning ("TODO: Automated Test Cases - Unit tests -> 3 Tage")
+#warning ("TODO: Automated Test Cases - UI Tests -> 3 Tage")
+#warning ("TODO: Design Game -> LONG")
+#warning ("TODO: define products, Ads, leaderboards, achievements -> 2 Tag")
+#warning ("TODO: Setup Views for Store, Settings, Offers, Main (without GameZone), Launchscreen -> 5 Tage")
+#warning ("TODO: Create external links to community of Instagram, Twitter, Facebook -> 3 Tag")
+#warning ("TODO: What about Data Privacy Statement??? -> 2 Tage")
+#warning ("TODO: Build Game Engine in GameZone -> LONG")
 
 /**
  GameFrame is the central object to work with the GameFrame-Framework.
