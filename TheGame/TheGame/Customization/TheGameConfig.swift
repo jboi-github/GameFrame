@@ -12,6 +12,9 @@ import GameFrameKit
 import SwiftUI
 
 class TheGameConfig: GameConfig {
+    #warning ("TODO: Replace `appId` with real value from AppStore")
+    private static let appId = 1293516048
+    
     lazy var gameZone: some View = TheGameView()
     lazy var settingsZone: some View = TheGameSettingsView()
     lazy var noBannerZone: some View = Text("noBannerZone".localized)
@@ -46,14 +49,13 @@ class TheGameConfig: GameConfig {
 
     func offLevelNavigation(frame: CGRect) -> [[Navigation]] {
         if frame.width < frame.height {
-            #warning ("TODO: Replace `appId` with real value from AppStore")
             return [[
                 .Links(.Store()),
                 .Buttons(.Reward(consumableId: "Bullets", quantity: 100))
             ], [
                 .Buttons(.GameCenter()),
                 .Buttons(.Share()),
-                .Buttons(.Like(appId: 1293516048))
+                .Buttons(.Like(appId: TheGameConfig.appId))
             ], [
                 .Generics(.Url("https://www.apple.com")),
                 .Links(.Settings())
@@ -61,13 +63,12 @@ class TheGameConfig: GameConfig {
                 .Links(.Play())
             ]]
         } else {
-            #warning ("TODO: Replace `appId` with real value from AppStore")
             return [[
                 .Links(.Store()),
                 .Buttons(.Reward(consumableId: "Bullets", quantity: 100)),
                 .Buttons(.GameCenter()),
                 .Buttons(.Share()),
-                .Buttons(.Like(appId: 1293516048)),
+                .Buttons(.Like(appId: TheGameConfig.appId)),
                 .Generics(.Url("https://www.apple.com")),
                 .Links(.Settings())
             ], [

@@ -139,6 +139,7 @@ struct NavigationItem<C, S>: View where C: GameConfig, S: Skin {
             case .Reward:
                 return !rewardAvailable
             case .GameCenter:
+                log(gameCenterEnabled)
                 return !gameCenterEnabled
             case let .Like(image: _, sound: _, appId: appId):
                 return !canUrlAction("https://itunes.apple.com/app/id\(appId)?action=write-review")

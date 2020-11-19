@@ -16,7 +16,7 @@ class TheGameSkin: SimpleSkin {
     init() {
         super.init(
             primaryColor: UIColor.lightGray,
-            secondaryColor: UIColor.systemRed,
+            secondaryColor: UIColor.systemGray,
             accentColor: UIColor.systemRed,
             primaryInvertColor: UIColor.darkGray,
             secondaryInvertColor: UIColor.lightGray,

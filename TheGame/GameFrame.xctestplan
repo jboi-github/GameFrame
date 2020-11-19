@@ -1,0 +1,22 @@
+{
+  "configurations" : [
+    {
+      "id" : "BCD9031D-B691-4E35-B327-CC9C22445781",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:TheGame.xcodeproj",
+      "identifier" : "155DBBB4237EF54400AA6412",
+      "name" : "GameFrameKit"
+    }
+  },
+  "testTargets" : [
+
+  ],
+  "version" : 1
+}

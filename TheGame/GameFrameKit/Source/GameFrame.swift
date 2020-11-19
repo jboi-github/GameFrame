@@ -55,8 +55,7 @@ public class GameFrame: NSObject {
       - Parameter consumablesConfig: Associates consumables with products in store. Check GFInAppImpl for explanation and examples.
       - Parameter makeContentView:  A closure that builds the main view. It can already make use of `GameFrame`, e.g. to get Achievements, Scores, Consumables or NonConsumables and apss them to the view.
      */
-    public class func createSharedInstance<Label : View>(
-        _ scene: UIScene,
+    public class func createSharedInstance(
         purchasables: [String: [GFInApp.Purchasable]],
         adUnitIdBanner: String?,
         adUnitIdRewarded: String?,
@@ -64,15 +63,10 @@ public class GameFrame: NSObject {
         adNonCosumableId: String?,
         appId: Int,
         infos: [GFShareInformation],
-        greeting: String?,
-        makeContentView: () -> Label)
+        greeting: String?)
     {
-        // Use a UIHostingController as window root view controller.
-        guard let windowScene = scene as? UIWindowScene else {return}
-        let window = UIWindow(windowScene: windowScene)
-        
         instance = GameFrame(
-            window: window, purchasables: purchasables,
+            purchasables: purchasables,
             adUnitIdBanner: adUnitIdBanner,
             adUnitIdRewarded: adUnitIdRewarded,
             adUnitIdInterstitial: adUnitIdInterstitial,
@@ -92,15 +86,11 @@ public class GameFrame: NSObject {
                 adAssignements = coreData.getNonConsumable(adNonCosumableId).$isOpened.assign(to: \.wasBought, on: adMob)
             }
         }
-        
-        window.rootViewController = UIHostingController(rootView: makeContentView())
-        window.makeKeyAndVisible()
         log()
     }
     
     /// Singelton init
     private init(
-        window: UIWindow?,
         purchasables: [String: [GFInApp.Purchasable]],
         adUnitIdBanner: String?,
         adUnitIdRewarded: String?,
@@ -111,16 +101,15 @@ public class GameFrame: NSObject {
         greeting: String?)
     {
         log()
-        self.window = window
         super.init()
         self.coreDataImpl = GFCoreDataCloudKit()
-        self.gameCenterImpl = GFGameCenter(window)
+        self.gameCenterImpl = GFGameCenter()
         self.inAppImpl = GFInApp(purchasables)
         self.adMobImpl = GFAdMob(
-            window, adUnitIdBanner: adUnitIdBanner,
+            adUnitIdBanner: adUnitIdBanner,
             adUnitIdRewarded: adUnitIdRewarded,
             adUnitIdInterstitial: adUnitIdInterstitial)
-        self.shareImpl = GFShare(window, appId: appId, infos: infos, greeting: greeting)
+        self.shareImpl = GFShare(appId: appId, infos: infos, greeting: greeting)
         self.audioImpl = GFAudio()
 }
 
@@ -167,7 +156,6 @@ public class GameFrame: NSObject {
     public func resume() {}
     
     // MARK: - Internal handling
-    private let window: UIWindow?
     private static var adAssignements: AnyCancellable? = nil
     private static var waitForCoreData: AnyCancellable? = nil
 }

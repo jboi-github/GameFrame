@@ -17,15 +17,13 @@ import GoogleMobileAds
  */
 public class GFAdMob: NSObject, ObservableObject {
     // MARK: - Initializaton
-    internal init(_ _window: UIWindow?, adUnitIdBanner _adUnitIdBanner: String?, adUnitIdRewarded _adUnitIdRewarded: String?, adUnitIdInterstitial _adUnitIdInterstitial: String?) {
+    internal init(adUnitIdBanner _adUnitIdBanner: String?, adUnitIdRewarded _adUnitIdRewarded: String?, adUnitIdInterstitial _adUnitIdInterstitial: String?) {
         log()
-        window = _window
         adUnitIdBanner = _adUnitIdBanner
         adUnitIdRewarded = _adUnitIdRewarded
         adUnitIdInterstitial = _adUnitIdInterstitial
         super.init()
         
-        if window == nil {return}
         setBannerSize()
 
         delegater = Delegater(parent: self)
@@ -52,8 +50,8 @@ public class GFAdMob: NSObject, ObservableObject {
             consumable.earn(quantity)
         }
         rewardedCompletion = completionHandler
-        if let window = window {
-            rewardedAd?.present(fromRootViewController: window.rootViewController!, delegate:delegater!)
+        if let rootViewController = rootViewController {
+            rewardedAd?.present(fromRootViewController: rootViewController, delegate:delegater!)
             rewardAvailable.unset()
         }
     }
@@ -77,9 +75,7 @@ public class GFAdMob: NSObject, ObservableObject {
     
     // MARK: For Banner
     fileprivate func setBannerSize() {
-        guard let window = window else {return}
-        
-        gadAdSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(window.frame.width)
+        gadAdSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(UIScreen.main.bounds.width)
         bannerSize = gadAdSize!.size
     }
     
@@ -112,8 +108,8 @@ public class GFAdMob: NSObject, ObservableObject {
         guard adUnitIdInterstitial != nil else {return}
         guard interstitial?.isReady ?? false else {return}
         
-        if let window = window {
-            interstitial!.present(fromRootViewController: window.rootViewController!)
+        if let rootViewController = rootViewController {
+            interstitial!.present(fromRootViewController: rootViewController)
         }
     }
     
@@ -129,7 +125,6 @@ public class GFAdMob: NSObject, ObservableObject {
 }
 
 fileprivate var adUnitIdBanner: String? = nil
-fileprivate var window: UIWindow? = nil
 fileprivate var delegater: Delegater? = nil
 
 /// The banner advertisement has fixed width and height. Should be positioned.

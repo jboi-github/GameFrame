@@ -18,15 +18,14 @@ import GameKit
  */
 public class GFGameCenter: NSObject, ObservableObject {
     // MARK: - Initialization
-    internal init(_ window: UIWindow?) {
+    internal override init() {
         log()
-        self.window = window
         super.init()
         
-        guard window != nil else {return}
         GKLocalPlayer.local.authenticateHandler = {
             (viewController, error) in
             
+            log(viewController != nil)
             guard check(error) else {return}
             
             if let viewController = viewController {
@@ -35,7 +34,7 @@ public class GFGameCenter: NSObject, ObservableObject {
             
             // User authenticated
             if GKLocalPlayer.local.isAuthenticated {self.report()}
-            self.enabled = (window != nil) && (self.uiController != nil || GKLocalPlayer.local.isAuthenticated)
+            self.enabled = self.uiController != nil || GKLocalPlayer.local.isAuthenticated
         }
     }
     
@@ -53,14 +52,13 @@ public class GFGameCenter: NSObject, ObservableObject {
         if GKLocalPlayer.local.isAuthenticated {
             let gc = GKGameCenterViewController()
             gc.gameCenterDelegate = gcControllerDelegate
-            window?.rootViewController?.present(gc, animated: true, completion:nil)
+            rootViewController?.present(gc, animated: true)
         } else if let uiController = uiController {
-            window?.rootViewController?.present(uiController, animated: true, completion:nil)
+            rootViewController?.present(uiController, animated: true)
         }
     }
 
     // MARK: - Internal handling
-    private let window: UIWindow?
     private var uiController: UIViewController? = nil
     private let gcControllerDelegate = GCControllerDelegate()
 

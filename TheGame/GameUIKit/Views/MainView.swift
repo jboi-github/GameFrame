@@ -31,12 +31,14 @@ private struct Banner<C, S>: View where C: GameConfig, S: Skin {
     }
 }
 
-struct MainView<C, S>: View where C: GameConfig, S: Skin {
+public struct MainView<C, S>: View where C: GameConfig, S: Skin {
     @State private var current = -1
     @EnvironmentObject private var config: C
     @EnvironmentObject private var skin: S
     
-    var body: some View {
+    public init() {}
+    
+    public var body: some View {
         VStack {
             if current == 0 {
                 OffLevelView<C, S>()

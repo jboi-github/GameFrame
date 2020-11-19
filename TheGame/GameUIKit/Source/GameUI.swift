@@ -40,10 +40,13 @@ public class GameUI: NSObject, ObservableObject  {
         - gameSkin: Define the skin, colors and formatting of your game.
      */
     public static func createSharedInstance<C, S>(
-        scene: UIScene, gameConfig: C, gameDelegate: GameDelegate, gameSkin: S)
+        gameConfig: C, gameDelegate: GameDelegate, gameSkin: S) -> some View
         where C: GameConfig, S: Skin
     {
-        if instance != nil {return}
+        if instance != nil {
+            log("GameUI instance called more then once!!! Exiting")
+            exit(-1)
+        }
         
         instance = GameUI(
             gameDelegate: gameDelegate,
@@ -52,19 +55,14 @@ public class GameUI: NSObject, ObservableObject  {
             inLevelTitle: gameConfig.inLevelNavigationBarTitle)
         
         GameFrame.createSharedInstance(
-            scene, purchasables: gameConfig.purchasables,
+            purchasables: gameConfig.purchasables,
             adUnitIdBanner: gameConfig.adUnitIdBanner,
             adUnitIdRewarded: gameConfig.adUnitIdRewarded,
             adUnitIdInterstitial: gameConfig.adUnitIdInterstitial,
             adNonCosumableId: gameConfig.adNonCosumableId,
             appId: gameConfig.sharedAppId,
             infos: gameConfig.sharedInformations,
-            greeting: gameConfig.sharedGreeting) {
-            
-                return MainView<C,S>()
-                    .environmentObject(gameSkin)
-                    .environmentObject(gameConfig)
-        }
+            greeting: gameConfig.sharedGreeting)
         
         gameConfig.sounds.forEach {
             let (key, (resource, type)) = $0
@@ -75,6 +73,10 @@ public class GameUI: NSObject, ObservableObject  {
                 GameFrame.audio.register(key, resource: resource)
             }
         }
+        
+        return MainView<C,S>()
+            .environmentObject(gameSkin)
+            .environmentObject(gameConfig)
     }
 
     /**

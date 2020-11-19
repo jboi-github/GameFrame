@@ -105,6 +105,15 @@ public extension SKProduct {
     }
 }
 
+/// Present a view controller in applictions current root controller. silently do nothing if no root controller is available
+internal var rootViewController: UIViewController? {
+    UIApplication
+        .shared
+        .windows
+        .first(where: { (window) -> Bool in window.isKeyWindow})?
+        .rootViewController
+}
+
 public extension String {
     var localized: String {NSLocalizedString(self, comment: "")}
 }

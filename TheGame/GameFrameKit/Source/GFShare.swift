@@ -31,9 +31,8 @@ public enum GFShareInformation {
 
 public class GFShare: NSObject {
     // MARK: - Initializaton
-    internal init(_ window: UIWindow?, appId: Int, infos: [GFShareInformation], greeting: String?) {
+    internal init(appId: Int, infos: [GFShareInformation], greeting: String?) {
         log()
-        self.window = window
         self.infos = infos
         self.url = URL(string: "https://itunes.apple.com/app/id\(appId)")
         self.appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String ?? Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? ""
@@ -75,19 +74,17 @@ public class GFShare: NSObject {
         // Create and show view
         let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
         
-        guard let rootViewController = window?.rootViewController else {return}
-            
         //If user on iPad
         if UIDevice.current.userInterfaceIdiom == .pad {
-            ac.popoverPresentationController?.sourceView = rootViewController.view
+            #warning("TODO: Get rootViewController")
+            //ac.popoverPresentationController?.sourceView = rootViewController.view
             ac.popoverPresentationController?.sourceRect = buttonFrame
         }
         //Present the shareView on iPhone
-        rootViewController.present(ac, animated: true)
+        rootViewController?.present(ac, animated: true)
     }
 
     // MARK: - Internals
-    private let window: UIWindow?
     private let url: URL?
     private let infos: [GFShareInformation]
     private var greeting: String
@@ -106,7 +103,11 @@ public class GFShare: NSObject {
 
     private func getScreenhot(bounds: CGRect) -> UIImage? {
         return UIGraphicsImageRenderer(bounds: bounds).image {
-            window?.layer.render(in: $0.cgContext)
+            UIApplication
+                .shared
+                .windows
+                .first(where: { (window) -> Bool in window.isKeyWindow})?
+                .layer.render(in: $0.cgContext)
         }
     }
     
