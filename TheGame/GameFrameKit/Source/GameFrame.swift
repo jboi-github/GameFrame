@@ -10,20 +10,6 @@ import SwiftUI
 import StoreKit
 import Combine
 
-#warning ("TODO: Test with sandbox user")
-#warning ("TODO: Purchase Simple purchase")
-#warning ("TODO: Purchase Deferred purchase")
-#warning ("TODO: Purchase Failed, simple purchase")
-#warning ("TODO: Purchase Restore: Calls purchaed again?")
-#warning ("TODO: Automated Test Cases - Unit tests -> 3 Tage")
-#warning ("TODO: Automated Test Cases - UI Tests -> 3 Tage")
-#warning ("TODO: Design Game -> LONG")
-#warning ("TODO: define products, Ads, leaderboards, achievements -> 2 Tag")
-#warning ("TODO: Setup Views for Store, Settings, Offers, Main (without GameZone), Launchscreen -> 5 Tage")
-#warning ("TODO: Create external links to community of Instagram, Twitter, Facebook -> 3 Tag")
-#warning ("TODO: What about Data Privacy Statement??? -> 2 Tage")
-#warning ("TODO: Build Game Engine in GameZone -> LONG")
-
 /**
  GameFrame is the central object to work with the GameFrame-Framework.
  - To initialize it, replace some code in the `SceneDelegate.swift`
@@ -40,6 +26,7 @@ public class GameFrame: NSObject {
     public static var adMob: GFAdMob {GameFrame.instance.adMobImpl}
     public static var share: GFShare {GameFrame.instance.shareImpl}
     public static var audio: GFAudio {GameFrame.instance.audioImpl}
+    public static var review: GFReview {GameFrame.instance.reviewImpl}
 
     internal private(set) var coreDataImpl: GFCoreDataCloudKit!
     internal private(set) var gameCenterImpl: GFGameCenter!
@@ -47,6 +34,7 @@ public class GameFrame: NSObject {
     internal private(set) var adMobImpl: GFAdMob!
     internal private(set) var shareImpl: GFShare!
     internal private(set) var audioImpl: GFAudio!
+    internal private(set) var reviewImpl: GFReview!
 
     /**
      Create the shared instance of GameFrame and does the setup of a scene for `SceneDelegate`
@@ -61,10 +49,17 @@ public class GameFrame: NSObject {
         adUnitIdRewarded: String?,
         adUnitIdInterstitial: String?,
         adNonCosumableId: String?,
-        appId: Int,
+        appId: String,
         infos: [GFShareInformation],
-        greeting: String?)
+        greeting: String?,
+        doNotAskFirstBefore: Int,
+        doNotAskAgainBefore: Int,
+        keyUserDefaultDisabled: String,
+        keyUserDefaultRuns: String,
+        keyUserDefaultLastAsk: String)
     {
+        guard instance == nil else {return}
+        
         instance = GameFrame(
             purchasables: purchasables,
             adUnitIdBanner: adUnitIdBanner,
@@ -73,7 +68,12 @@ public class GameFrame: NSObject {
             adNonCosumableId: adNonCosumableId,
             appId: appId,
             infos: infos,
-            greeting: greeting)
+            greeting: greeting,
+            doNotAskFirstBefore: doNotAskFirstBefore,
+            doNotAskAgainBefore: doNotAskAgainBefore,
+            keyUserDefaultDisabled: keyUserDefaultDisabled,
+            keyUserDefaultRuns: keyUserDefaultRuns,
+            keyUserDefaultLastAsk: keyUserDefaultLastAsk)
 
         // Connect changes in nonConsumable for non-ads-purchases to GFAdMob
         waitForCoreData = coreData.$hasFetchedLocally.first().sink(receiveCompletion: {_ in
@@ -96,9 +96,14 @@ public class GameFrame: NSObject {
         adUnitIdRewarded: String?,
         adUnitIdInterstitial: String?,
         adNonCosumableId: String?,
-        appId: Int,
+        appId: String,
         infos: [GFShareInformation],
-        greeting: String?)
+        greeting: String?,
+        doNotAskFirstBefore: Int,
+        doNotAskAgainBefore: Int,
+        keyUserDefaultDisabled: String,
+        keyUserDefaultRuns: String,
+        keyUserDefaultLastAsk: String)
     {
         log()
         super.init()
@@ -111,6 +116,13 @@ public class GameFrame: NSObject {
             adUnitIdInterstitial: adUnitIdInterstitial)
         self.shareImpl = GFShare(appId: appId, infos: infos, greeting: greeting)
         self.audioImpl = GFAudio()
+        self.reviewImpl = GFReview(
+            appId: appId,
+            doNotAskFirstBefore: doNotAskFirstBefore,
+            doNotAskAgainBefore: doNotAskAgainBefore,
+            keyUserDefaultDisabled: keyUserDefaultDisabled,
+            keyUserDefaultRuns: keyUserDefaultRuns,
+            keyUserDefaultLastAsk: keyUserDefaultLastAsk)
 }
 
     // MARK: - Public functions
@@ -137,7 +149,7 @@ public class GameFrame: NSObject {
         
         // For whatever reason, you cannot show both. Interstitial has prio if available
         let showInterstitial = showInterstitial && (adMobImpl.interstitial?.isReady ?? false)
-        if requestReview && !showInterstitial {SKStoreReviewController.requestReview()}
+        reviewImpl.leaveLevel(requestReview: requestReview && !showInterstitial)
         if showInterstitial {adMobImpl.showInterstitial()}
     }
     

@@ -70,7 +70,7 @@ struct NavigationItem<C, S>: View where C: GameConfig, S: Skin {
             case let .Like(image: image, sound: sound, appId: appId):
                 return Button(action: {
                     if let sound = sound {GameFrame.audio.play(sound)}
-                    getUrlAction("https://itunes.apple.com/app/id\(appId)?action=write-review")()
+                    getUrlAction(getReviewUrl(appId: appId))()
                 }) {image}.anyView()
             case let .Restore(image: image, sound: sound):
                 return Button(action: {
@@ -142,7 +142,7 @@ struct NavigationItem<C, S>: View where C: GameConfig, S: Skin {
                 log(gameCenterEnabled)
                 return !gameCenterEnabled
             case let .Like(image: _, sound: _, appId: appId):
-                return !canUrlAction("https://itunes.apple.com/app/id\(appId)?action=write-review")
+                return !canUrlAction(getReviewUrl(appId: appId))
             default: return false
         }
         case let .Links(link: link):

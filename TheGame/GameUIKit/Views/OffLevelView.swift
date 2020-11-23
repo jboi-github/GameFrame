@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import GameFrameKit
 
 private let gameFrameId = UUID().uuidString
 
@@ -35,6 +36,12 @@ struct OffLevelView<C, S>: View where C: GameConfig, S: Skin {
         .build(skin, .OffLevel(.Main))
         .storeFrame(gameFrameId)
         .getFrame(gameFrameId, frame: $gameFrame)
+        .onReceive(GameFrame.gameCenter.$enabled) {
+            (enabled) in
+            GameUI.instance.setGameCenterAccessPoint(
+                mode: config.offLevelGameCenter.mode,
+                location: config.offLevelGameCenter.location)
+        }
     }
 }
 

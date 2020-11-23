@@ -58,6 +58,11 @@ private struct GameView<C, S>: View where C: GameConfig, S: Skin {
         .getFrame(informationFrameId, frame: $informationFrame)
         .getFrame(navigationFrameId, frame: $navigationFrame)
         .onAppear {
+            GameUI.instance.setGameCenterAccessPoint(
+                mode: config.inLevelGameCenter.mode,
+                location: config.inLevelGameCenter.location)
+        }
+        .onAppear {
             if !self.isOverlayed {GameUI.instance.resume()}
         }
         .onDisappear {

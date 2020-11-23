@@ -10,10 +10,11 @@ import Foundation
 import GameUIKit
 import GameFrameKit
 import SwiftUI
+import GameKit
 
 class TheGameConfig: GameConfig {
     #warning ("TODO: Replace `appId` with real value from AppStore")
-    private static let appId = 1293516048
+    private static let appId = "1293516048"
     
     lazy var gameZone: some View = TheGameView()
     lazy var settingsZone: some View = TheGameSettingsView()
@@ -76,7 +77,8 @@ class TheGameConfig: GameConfig {
             ]]
         }
     }
-    
+    var offLevelGameCenter: (mode: GameCenterMode, location: GKAccessPoint.Location) = (.Full, .topLeading)
+
     func inLevelInformation(frame: CGRect) -> [[Information]] {
         [[
             .Score(id: "Points")
@@ -113,7 +115,8 @@ class TheGameConfig: GameConfig {
             ]
         }
     }
-    
+    var inLevelGameCenter: (mode: GameCenterMode, location: GKAccessPoint.Location) = (.Compact, .topLeading)
+
     func settingsInformation(frame: CGRect) -> [[Information]] {
         [[
             .Achievement(id: "Medals", format: "%.1f"),
@@ -152,7 +155,7 @@ class TheGameConfig: GameConfig {
     
     let adNonCosumableId: String? = "no-ads4"
 
-    let sharedAppId: Int = 1293516048
+    let sharedAppId: String = TheGameConfig.appId
     let sharedGreeting: String = "sharedGreeting".localized
     let sharedInformations: [GFShareInformation] = [
         .Score("Points") {String(format: "sharedPoints".localized, $0.highest)},
@@ -162,4 +165,10 @@ class TheGameConfig: GameConfig {
     let sounds: [String: (resource: String, type: String?)] = [
         "GrandOpening": (resource: "Bell", type: nil)
     ]
+    
+    let reviewDoNotAskFirstBefore: Int = 10
+    let reviewDoNotAskAgainBefore: Int = 5
+    let reviewKeyDisabled: String = "GameFrame.Review.Disabled"
+    let reviewKeyRuns: String = "GameFrame.Review.Runs"
+    let reviewKeyLastAsk: String = "GameFrame.Review.LastAsk"
 }

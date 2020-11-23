@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import GameFrameKit
 
 /**
  After some time with NavigationView, I decided to write my own Navigation. Without bugs that makes the views bounce for and back. With more freedom to run
@@ -54,8 +55,12 @@ class GameNavigationModel: NSObject, ObservableObject {
     }
     
     func pop() {
+        guard stack.count > 1 else {
+            log("Already at first screen!")
+            return
+        }
         stack.removeLast()
-        current = stack.last! // Crashes, when pop more then pushed
+        current = stack.last!
     }
     
     func canGoBack() -> Bool {

@@ -20,13 +20,13 @@ private struct AchievementView<S>: View where S: Skin {
         self.parent = parent
         self.id = id
         self.format = format
-        //self.current = GameFrame.coreData.getAchievement(id).current
     }
     
     var body: some View {
         Number(parent: parent, id: id, text: "\(current.format(format))")
             .build(skin, .Commons(.InformationItem(parent: parent, id: id, current: current)))
-            //.onReceive(GameFrame.coreData.getAchievement(id).$current) {self.current = $0}
+            .onAppear {self.current = GameFrame.coreData.getAchievement(id).current}
+            .onReceive(GameFrame.coreData.getAchievement(id).$current) {self.current = $0}
     }
 }
 

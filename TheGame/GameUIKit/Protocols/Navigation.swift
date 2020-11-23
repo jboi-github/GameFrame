@@ -7,8 +7,9 @@
 //
 
 import SwiftUI
+import GameFrameKit
 
-#warning ("TODO: Bug in Swift: Too many cases in an enum will crash app")
+// Bug in Swift: Too many cases in an enum will crash app
 
 /**
  Use one of these cases to name and parameterize a navigation item.
@@ -28,7 +29,7 @@ public enum Navigation {
         /// Open store with given consumables and non-consumables.
         case Store(image: Image = Image(systemName: "cart"), sound: String? = nil)
         /// Open Settings page for this game.
-        case Settings(image: Image = Image(systemName: "gear"), sound: String? = nil)
+        case Settings(image: Image = Image(systemName: "ellipsis"), sound: String? = nil)
         /// Go back one level in store or in-level
         case Back(image: Image = Image(systemName: "chevron.left"), sound: String? = nil, prevTitle: String = "")
     }
@@ -39,9 +40,9 @@ public enum Navigation {
         /// Return from showing an offer
         case OfferBack(image: Image = Image(systemName: "xmark"), sound: String? = nil)
         /// Open system preferences for this app
-        case SystemSettings(image: Image = Image(systemName: "slider.horizontal.3"), sound: String? = nil)
+        case SystemSettings(image: Image = Image(systemName: "gear"), sound: String? = nil)
         /// Open review page of given app id
-        case Like(image: Image = Image(systemName: "hand.thumbsup"), sound: String? = nil, appId: Int)
+        case Like(image: Image = Image(systemName: "hand.thumbsup"), sound: String? = nil, appId: String)
         /// Inform app store to restore any existing purchases
         case Restore(image: Image = Image(systemName: "arrow.uturn.right"), sound: String? = nil)
         /// Start rewarded video
@@ -49,10 +50,15 @@ public enum Navigation {
         /// Open system dialog to share with other applications
         case Share(image: Image = Image(systemName: "square.and.arrow.up"), sound: String? = nil)
         /// Open external GameCenter
-        case GameCenter(image: Image = Image(systemName: "rosette"), sound: String? = nil)
+        case GameCenter(image: AnyView = getImage("GameCenterIcon", Image(systemName: "rosette")), sound: String? = nil)
     }
     
     case Generics(_ generic: Generic)
     case Links(_ link: Link)
     case Buttons(_ button: Button)
+
+    public static func getImage(_ name: String, _ alternative: Image) -> AnyView {
+        guard let bundle = Bundle(identifier: "apps4live.GameUIKit") else {return alternative.anyView()}
+        return alternative.overlay(Image(name, bundle: bundle).resizable().scaledToFit()).anyView()
+    }
 }

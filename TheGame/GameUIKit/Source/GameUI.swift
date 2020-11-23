@@ -9,6 +9,7 @@
 import Foundation
 import SwiftUI
 import GameFrameKit
+import GameKit
 
 /**
  The main class to control and work with games.
@@ -62,7 +63,12 @@ public class GameUI: NSObject, ObservableObject  {
             adNonCosumableId: gameConfig.adNonCosumableId,
             appId: gameConfig.sharedAppId,
             infos: gameConfig.sharedInformations,
-            greeting: gameConfig.sharedGreeting)
+            greeting: gameConfig.sharedGreeting,
+            doNotAskFirstBefore: gameConfig.reviewDoNotAskFirstBefore,
+            doNotAskAgainBefore: gameConfig.reviewDoNotAskAgainBefore,
+            keyUserDefaultDisabled: gameConfig.reviewKeyDisabled,
+            keyUserDefaultRuns: gameConfig.reviewKeyRuns,
+            keyUserDefaultLastAsk: gameConfig.reviewKeyLastAsk)
         
         gameConfig.sounds.forEach {
             let (key, (resource, type)) = $0
@@ -128,7 +134,9 @@ public class GameUI: NSObject, ObservableObject  {
     public internal(set) var triggerPoint: CGPoint?
 
     // MARK: Initialization
-    private init(gameDelegate: GameDelegate, startsOffLevel: Bool, offLevelTitle: String, inLevelTitle: String) {
+    private init(gameDelegate: GameDelegate, startsOffLevel: Bool,
+                 offLevelTitle: String, inLevelTitle: String)
+    {
         self.gameDelegate = gameDelegate
         self.navigator = GameNavigationModel(
             startsOffLevel: startsOffLevel,
@@ -229,6 +237,21 @@ public class GameUI: NSObject, ObservableObject  {
             isResumedShadow = true
             GameFrame.instance.resume()
             gameDelegate.resume()
+        }
+    }
+    
+    func setGameCenterAccessPoint(mode: GameCenterMode, location: GKAccessPoint.Location) {
+        log(mode, location.rawValue, GKAccessPoint.shared.isVisible, GameFrame.gameCenter.enabled)
+        GKAccessPoint.shared.location = location
+        switch mode {
+        case .None:
+            GKAccessPoint.shared.isActive = false
+        case .Compact:
+            GKAccessPoint.shared.showHighlights = false
+            GKAccessPoint.shared.isActive = GKLocalPlayer.local.isAuthenticated
+        case .Full:
+            GKAccessPoint.shared.showHighlights = true
+            GKAccessPoint.shared.isActive = GKLocalPlayer.local.isAuthenticated
         }
     }
     

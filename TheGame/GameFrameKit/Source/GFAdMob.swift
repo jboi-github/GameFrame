@@ -75,7 +75,8 @@ public class GFAdMob: NSObject, ObservableObject {
     
     // MARK: For Banner
     fileprivate func setBannerSize() {
-        gadAdSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(UIScreen.main.bounds.width)
+        gadAdSize = GADCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(
+            min(UIScreen.main.bounds.width, UIScreen.main.bounds.height))
         bannerSize = gadAdSize!.size
     }
     

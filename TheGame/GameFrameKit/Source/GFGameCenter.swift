@@ -31,10 +31,12 @@ public class GFGameCenter: NSObject, ObservableObject {
             if let viewController = viewController {
                 self.uiController = viewController
             }
-            
+
             // User authenticated
             if GKLocalPlayer.local.isAuthenticated {self.report()}
             self.enabled = self.uiController != nil || GKLocalPlayer.local.isAuthenticated
+            GKAccessPoint.shared.isActive = self.enabled
+            log(GKAccessPoint.shared.isActive, GKLocalPlayer.local.isAuthenticated, self.enabled)
         }
     }
     
@@ -65,12 +67,13 @@ public class GFGameCenter: NSObject, ObservableObject {
     internal func report() {
         guard GKLocalPlayer.local.isAuthenticated else {return}
         
-        GKScore.report(scores.map({
-            (key: String, value: GFScore) -> GKScore in
-            value.getGameCenterReporter(id: key)
-        })) {
-            (error) in
-            guard check(error) else {return}
+        scores.forEach {
+            (key: String, value: GFScore) in
+            GKLeaderboard.submitScore(
+                value.current, context: 0, player: GKLocalPlayer.local, leaderboardIDs: [key]) {
+                (error) in
+                guard check(error) else {return}
+            }
         }
         
         GKAchievement.report(achievements.map({

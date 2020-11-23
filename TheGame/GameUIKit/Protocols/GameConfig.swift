@@ -62,7 +62,6 @@ public protocol GameConfig: ObservableObject {
      Usually games, that have a minimalistic approach for the skin should let the player navigate by navigation bar.
      Games, that make heavy changes of the skin and build there own UX, probably want to use the navigation layer.
      */
-    #warning ("TODO: Should be localized")
     var offLevelNavigationBarTitle: String {get}
     
     /**
@@ -85,7 +84,10 @@ public protocol GameConfig: ObservableObject {
      The two dimensional array is layed out to rows and columns. Each row can have different number of columns.
      */
     func offLevelNavigation(frame: CGRect) -> [[Navigation]]
-    
+
+    /// Define if, how and where the Game Center Access Point should be displayed while off level.
+    var offLevelGameCenter: (mode: GameCenterMode, location: GKAccessPoint.Location) {get}
+
     // MARK: InLevel-Configuration
     /**
      Set information items to be shown while the player is in level. The information is shown as overlay to your game view.
@@ -102,7 +104,6 @@ public protocol GameConfig: ObservableObject {
      Usually games, that have a minimalistic approach for the skin should let the player navigate by navigation bar.
      Games, that make heavy changes of the skin and build there own UX, probably want to use the navigation layer.
      */
-    #warning ("TODO: Should be localized")
     var inLevelNavigationBarTitle: String {get}
     
     /**
@@ -126,6 +127,9 @@ public protocol GameConfig: ObservableObject {
      */
     func inLevelNavigation(frame: CGRect) -> [[Navigation]]
 
+    /// Define if, how and where the Game Center Access Point should be displayed while in level.
+    var inLevelGameCenter: (mode: GameCenterMode, location: GKAccessPoint.Location) {get}
+
     // MARK: Settings-Configuration
     /**
      Set information items to be shown while the player is in settings.
@@ -142,7 +146,6 @@ public protocol GameConfig: ObservableObject {
      Usually games, that have a minimalistic approach for the skin should let the player navigate by navigation bar.
      Games, that make heavy changes of the skin and build there own UX, probably want to use the navigation layer.
      */
-    #warning ("TODO: Should be localized")
     var settingsNavigationBarTitle: String {get}
     
     /**
@@ -203,7 +206,6 @@ public protocol GameConfig: ObservableObject {
      Usually games, that have a minimalistic approach for the skin should let the player navigate by navigation bar.
      Games, that make heavy changes of the skin and build there own UX, probably want to use the navigation layer.
      */
-    #warning ("TODO: Should be localized")
     var storeNavigationBarTitle: String {get}
     
     /**
@@ -249,14 +251,13 @@ public protocol GameConfig: ObservableObject {
     /**
      AppId as given in the App-Store and iTunesConnect
      */
-    var sharedAppId: Int {get}
+    var sharedAppId: String {get}
     
     /**
      Greeting to be used when sharing.
      
      When sharing via email, the greeting is used as subject. In the Share-Metadata it is used as subline.
      */
-    #warning ("TODO: Should be localized")
     var sharedGreeting: String {get}
     
     /**
@@ -264,6 +265,7 @@ public protocol GameConfig: ObservableObject {
      */
     var sharedInformations: [GFShareInformation] {get}
     
+    // MARK: Audio-Configuration
     /**
      List of all sounds and their keys. the keys are used throughout the game to play sounds either when navigation butons are pressed or
      anywhere in the skin. Use `View.gameSkinPlay(key)` to play a sound together with animations.
@@ -272,14 +274,31 @@ public protocol GameConfig: ObservableObject {
      - subdirectory is a directory in which the sounds are placed. Defaults to "Sounds"
      */
     var sounds: [String: (resource: String, type: String?)] {get}
+
+    // MARK: Review-Configuration
+    /// Times the level must run before the first review is asked. Include any leaning period here.
+    var reviewDoNotAskFirstBefore: Int {get}
+    /// Times levels must run before the player is asked again and the player ahs choosen to try again when asked the last time.
+    var reviewDoNotAskAgainBefore: Int {get}
+    /// Key to `UserDefaults` to store if review-questions are disabled.
+    var reviewKeyDisabled: String {get}
+    /// Key to `UserDefaults` to store number of levels already ran.
+    var reviewKeyRuns: String {get}
+    /// Key to `UserDefaults` to store number of levels at the moment the user has choosen to try again.
+    var reviewKeyLastAsk: String {get}
 }
 
 public enum NavigationLocation {
     case Bar, Layer
 }
 
+public enum GameCenterMode {
+    case None, Compact, Full
+}
+
 // MARK: - GameConfig implementation for PreView
 import GameFrameKit
+import GameKit
 
 class PreviewConfig: GameConfig {
     let gameZone: some View = EmptyView()
@@ -293,12 +312,14 @@ class PreviewConfig: GameConfig {
     var offLevelNavigationBarButton1: Navigation? = nil
     var offLevelNavigationBarButton2: Navigation? = nil
     func offLevelNavigation(frame: CGRect) -> [[Navigation]] {return [[Navigation]]()}
+    var offLevelGameCenter: (mode: GameCenterMode, location: GKAccessPoint.Location) = (.None, .topLeading)
 
     func inLevelInformation(frame: CGRect) -> [[Information]] {return [[Information]]()}
     var inLevelNavigationBarTitle: String = ""
     var inLevelNavigationBarButton1: Navigation? = nil
     var inLevelNavigationBarButton2: Navigation? = nil
     func inLevelNavigation(frame: CGRect) -> [[Navigation]] {return [[Navigation]]()}
+    var inLevelGameCenter: (mode: GameCenterMode, location: GKAccessPoint.Location) = (.None, .topLeading)
 
     func settingsInformation(frame: CGRect) -> [[Information]] {return [[Information]]()}
     var settingsNavigationBarTitle: String = ""
@@ -317,9 +338,15 @@ class PreviewConfig: GameConfig {
     let adUnitIdInterstitial: String? = nil
     let adNonCosumableId: String? = nil
 
-    let sharedAppId: Int = 0
+    let sharedAppId: String = ""
     let sharedGreeting: String = ""
     let sharedInformations = [GFShareInformation]()
     
     let sounds = [String: (resource: String, type: String?)]()
+    
+    let reviewDoNotAskFirstBefore: Int = 0
+    let reviewDoNotAskAgainBefore: Int = 0
+    let reviewKeyDisabled: String = ""
+    let reviewKeyRuns: String = ""
+    let reviewKeyLastAsk: String = ""
 }

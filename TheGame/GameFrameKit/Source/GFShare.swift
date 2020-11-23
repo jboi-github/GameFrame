@@ -31,10 +31,10 @@ public enum GFShareInformation {
 
 public class GFShare: NSObject {
     // MARK: - Initializaton
-    internal init(appId: Int, infos: [GFShareInformation], greeting: String?) {
+    internal init(appId: String, infos: [GFShareInformation], greeting: String?) {
         log()
         self.infos = infos
-        self.url = URL(string: "https://itunes.apple.com/app/id\(appId)")
+        self.url = URL(string: getStoreUrl(appId: appId))
         self.appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String ?? Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? ""
         self.greeting = greeting ?? ""
         self.logo = nil
@@ -76,12 +76,16 @@ public class GFShare: NSObject {
         
         //If user on iPad
         if UIDevice.current.userInterfaceIdiom == .pad {
-            #warning("TODO: Get rootViewController")
-            //ac.popoverPresentationController?.sourceView = rootViewController.view
-            ac.popoverPresentationController?.sourceRect = buttonFrame
+            if let rootViewController = rootViewController {
+                ac.popoverPresentationController?.sourceView = rootViewController.view
+                ac.popoverPresentationController?.sourceRect = buttonFrame
+                rootViewController.present(ac, animated: true)
+                return
+            }
+        } else {
+            //Present the shareView on iPhone
+            rootViewController?.present(ac, animated: true)
         }
-        //Present the shareView on iPhone
-        rootViewController?.present(ac, animated: true)
     }
 
     // MARK: - Internals

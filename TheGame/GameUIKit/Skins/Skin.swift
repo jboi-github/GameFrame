@@ -161,7 +161,7 @@ extension View {
         skin.build(item, view: self)
     }
     
-    /// Play a sound, that is registrered with the give key
+    /// Play a sound, that is registrered with the given key
     func play(_ key: String?, mix: GFAudio.Mix = .overlay) -> some View {
         if let key = key {GameFrame.audio.play(key, mix: mix)}
         return self

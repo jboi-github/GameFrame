@@ -81,6 +81,16 @@ public func canUrlAction(_ url: String) -> Bool {
     }
 }
 
+/// - returns: String to deep link to reviews
+public func getReviewUrl(appId: String) -> String {
+    return "https://apps.apple.com/app/id\(appId)?action=write-review"
+}
+
+/// - returns: String to deep link to reviews
+public func getStoreUrl(appId: String) -> String {
+    return "https://apps.apple.com/app/id\(appId)"
+}
+
 public extension SKProduct {
     /// - returns: The cost of the product formatted in the local currency.
     func localizedPrice(quantity: Int) -> String {

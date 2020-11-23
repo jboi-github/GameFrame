@@ -53,12 +53,6 @@ public class GFScore: ObservableObject, Identifiable {
         delegate.highest = Int64(highest)
     }
     
-    internal func getGameCenterReporter(id: String) -> GKScore {
-        let gkScore = GKScore(leaderboardIdentifier: id)
-        gkScore.value = Int64(current)
-        return gkScore
-    }
-
     internal func merge(prev: GFEntityScore) {
         current = Int(delegate.current)
         highest = Int(max(delegate.highest, prev.highest))

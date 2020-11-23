@@ -219,7 +219,7 @@ open class SimpleSkin: IdentitySkin {
                 return view.simpleSkinHide(parent == "InLevel").anyView()
             case let .NavigationLayer(parent: parent):
                 return view.simpleSkinHide(parent == "Store")
-                    .simpleSkinPosition(parent == "InLevel" ? .topLeading : nil)
+                    .simpleSkinPosition(parent == "InLevel" ? .top : nil)
                     .anyView()
             case let .Information(parent: parent):
                 return view.simpleSkinPosition(parent == "InLevel" ? .topTrailing : .bottom).anyView()
